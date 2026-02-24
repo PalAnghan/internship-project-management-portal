@@ -28,6 +28,15 @@ function Internships() {
     alert("Applied successfully");
   };
 
+  const matchSkills = (requiredSkills, userSkills) => {
+
+  if (!userSkills) return false;
+
+  return requiredSkills.some(skill =>
+    userSkills.includes(skill)
+  );
+};
+
   return (
     <div style={{ padding: "20px" }}>
       <h2>Available Internships</h2>
@@ -36,6 +45,12 @@ function Internships() {
         <div key={item._id}>
           <h3>{item.title}</h3>
           <p>Skills: {item.requiredSkills.join(", ")}</p>
+
+          {matchSkills(item.requiredSkills, ["react","javascript"]) && (
+            <p style={{color:"green"}}>
+              ⭐ Matched with your skills
+            </p>
+          )}
 
           <button onClick={() => handleApply(item._id)}>
             Apply

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -16,11 +16,11 @@ app.use(express.json());
 
 ConnectDB();
 
-app.use("/api/users", userRoutes);
 app.use("/api/internships", internshipRoutes);
 app.use("/api/applications", applicationRoutes);
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/users", require("./routes/userRoutes"));
+
 
 // Test API
 app.get("/api/test", (req, res) => {

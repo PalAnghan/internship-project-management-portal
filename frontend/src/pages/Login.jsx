@@ -8,16 +8,44 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
 
-    // simple login check (for now)
-    if(email && password){
-      navigate("/student");
+  try {
+
+    const res = await fetch("http://localhost:5000/api/users/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+
+      // ✅ SAVE USER IN LOCAL STORAGE
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      alert("Login successful");
+
+      navigate("/student-dashboard");
+
     } else {
-      alert("Enter email and password");
+      alert(data.message || "Login failed");
     }
 
-  };
+  } catch (error) {
+    console.log(error);
+    alert("Server error");
+  }
+
+
+
+  };  
 
   return (
     <div style={{ padding: "20px" }}>

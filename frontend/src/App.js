@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -10,10 +11,13 @@ import MyApplications from "./pages/MyApplications";
 import UploadResume from "./pages/UploadResume";
 import AdminLogin from "./pages/AdminLogin";
 import AdminRegister from "./pages/AdminRegister";
+import AddInternship from "./pages/AddInternship";
+import ViewApplications from "./pages/ViewApplications";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <Routes>
 
         <Route path="/" element={<Login />} />
@@ -22,7 +26,7 @@ function App() {
 
         <Route path="/register" element={<Register />} />
 
-        <Route path="/student" element={<StudentDashboard />} />
+        <Route path="/student-dashboard" element={<StudentDashboard />} />
 
         <Route path="/internships" element={<Internships />} />
 
@@ -36,8 +40,14 @@ function App() {
 
         <Route path="/admin-register" element={<AdminRegister />} />
 
+        <Route path="/add-internship" element={<AddInternship />} />
+
+        <Route path="/view-applications" element={<ViewApplications />} />
+
+        <Route path="/profile" element={<Profile />} />
+
       </Routes>
-    </Router>
+    </BrowserRouter>
   );
 }
 

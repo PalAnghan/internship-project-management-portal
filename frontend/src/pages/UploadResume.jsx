@@ -4,23 +4,24 @@ function UploadResume() {
 
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState("");
-
   const handleUpload = async () => {
 
-    const formData = new FormData();
-    formData.append("resume", file);
+  const formData = new FormData();
 
-    const res = await fetch("http://localhost:5000/api/users/upload-resume", {
-      method: "POST",
-      body: formData,
-    });
+  formData.append("resume", file);
 
-    const data = await res.json();
+  // ✅ GET LOGGED-IN USER AUTOMATICALLY
+  const user = JSON.parse(localStorage.getItem("user"));
 
-    setUploadedFile(data.file);
+  formData.append("userId", user._id);
 
-    alert("Resume uploaded successfully");
-  };
+  const res = await fetch("http://localhost:5000/api/users/upload-resume", {
+    method: "POST",
+    body: formData,
+  });
+
+  alert("Resume uploaded successfully");
+};
 
   return (
     <div style={{ padding: "20px" }}>

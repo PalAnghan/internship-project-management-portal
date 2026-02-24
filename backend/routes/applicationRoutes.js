@@ -33,4 +33,19 @@ router.get("/", async (req, res) => {
   }
 });
 
+// UPDATE application status
+router.put("/:id", async (req, res) => {
+  try {
+
+    const { status } = req.body;
+
+    await Application.findByIdAndUpdate(req.params.id, { status });
+
+    res.json({ message: "Status updated" });
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
