@@ -1,7 +1,11 @@
 const express = require("express");
+const router = express.Router();
+
 const Application = require("../models/Application");
 
-const router = express.Router();
+require("../models/User");
+require("../models/Internship");
+
 
 // Apply internship
 router.post("/apply", async (req, res) => {
@@ -13,13 +17,20 @@ router.post("/apply", async (req, res) => {
   }
 });
 
+
 // Get all applications
 router.get("/", async (req, res) => {
-  const applications = await Application.find()
-    .populate("studentId")
-    .populate("internshipId");
+  try {
+    const applications = await Application.find()
+      .populate("studentId")
+      .populate("internshipId");
 
-  res.json(applications);
+    res.json(applications);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 module.exports = router;

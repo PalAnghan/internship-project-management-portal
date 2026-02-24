@@ -20,6 +20,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/internships", internshipRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/uploads", express.static("uploads"));
+app.use("/api/users", require("./routes/userRoutes"));
 
 // Test API
 app.get("/api/test", (req, res) => {

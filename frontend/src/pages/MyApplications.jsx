@@ -16,7 +16,7 @@ function MyApplications() {
     <div style={{ padding: "20px" }}>
       <h2>My Applications</h2>
 
-      {applications.map((app) => (
+      {applications.map((app) => (  
         <div key={app._id}>
           <h3>{app.internshipId?.title}</h3>
 

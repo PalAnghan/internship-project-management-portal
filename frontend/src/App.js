@@ -8,6 +8,8 @@ import Internships from "./pages/Internships";
 import AdminDashboard from "./pages/AdminDashboard";
 import MyApplications from "./pages/MyApplications";
 import UploadResume from "./pages/UploadResume";
+import AdminLogin from "./pages/AdminLogin";
+import AdminRegister from "./pages/AdminRegister";
 
 function App() {
   return (
@@ -29,6 +31,10 @@ function App() {
         <Route path="/my-applications" element={<MyApplications />} />
 
         <Route path="/upload-resume" element={<UploadResume />} />
+
+        <Route path="/admin-login" element={<AdminLogin />} />
+
+        <Route path="/admin-register" element={<AdminRegister />} />
 
       </Routes>
     </Router>
