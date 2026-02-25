@@ -11,7 +11,7 @@ function AdminRegister() {
 
   const handleRegister = async () => {
 
-    const res = await fetch("http://localhost:5000/api/users/register", {
+    const res = await fetch("http://localhost:5000/api/admins/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

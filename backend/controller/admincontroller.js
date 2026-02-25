@@ -45,8 +45,11 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Invalid Password" });
     }
 
+    // ensure role exists for older records without the field
+    const role = company.role || "admin";
+
     const token = jwt.sign(
-      { id: company._id, role: company.role },
+      { id: company._id, role },
       process.env.JWT_SECRET1,
       { expiresIn: "1d" }
     );
@@ -57,9 +60,11 @@ exports.login = async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000
     });
 
+    // include role at top-level for easier checks on the frontend
     res.status(200).json({
       message: "Login Successful",
-      company
+      company,
+      role
     });
 
   } catch (error) {

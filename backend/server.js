@@ -6,8 +6,8 @@ const cookieParser = require("cookie-parser");
 
 
 const ConnectDB = require("./connect/db");
-const { studentprotect } = require("./middleware/authstudent");
-const { adminprotect } = require("./middleware/authadmin");
+// const { studentprotect } = require("./middleware/authstudent");
+// const { adminprotect } = require("./middleware/authadmin");
 const admin = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const internshipRoutes = require("./routes/internshipRoutes");
@@ -23,8 +23,8 @@ ConnectDB();
 app.use("/api/internships", internshipRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/api/users", studentprotect, userRoutes);
-app.use("/api/admins", adminprotect, admin);
+app.use("/api/users", userRoutes);
+app.use("/api/admins", admin);
 
 
 // Test API
