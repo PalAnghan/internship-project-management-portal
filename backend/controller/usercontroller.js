@@ -32,20 +32,33 @@ exports.register = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-// LOGIN
+//login controller
 exports.login = async (req, res) => {
   try {
+
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
+
     if (!user) {
-      return res.status(400).json({ message: "Invalid Email" });
+      return res.status(400).json({
+        message: "Invalid Email"
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid Password" });
+      return res.status(400).json({
+        message: "Invalid Password"
+      });
+    }
+
+    // only create token if JWT_SECRET exists
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({
+        message: "JWT_SECRET missing in .env"
+      });
     }
 
     const token = jwt.sign(
@@ -54,22 +67,22 @@ exports.login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: false,
-      maxAge: 24 * 60 * 60 * 1000
-    });
-
     res.status(200).json({
       message: "Login Successful",
-      user
+      user,
+      token
     });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+
+    console.log(error);
+
+    res.status(500).json({
+      error: error.message
+    });
+
   }
 };
-
 
 // GET all users
 exports.studentdetalis= async (req, res) => {
