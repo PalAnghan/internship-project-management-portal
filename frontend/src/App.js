@@ -14,12 +14,14 @@ import AdminRegister from "./pages/AdminRegister";
 import AddInternship from "./pages/AddInternship";
 import ViewApplications from "./pages/ViewApplications";
 import Profile from "./pages/Profile";
+import HomePage from "./pages/HomePage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-
+        <Route path="/" element={<HomePage />} />
+        
         <Route path="/login" element={<Login />} />
 
         <Route path="/register" element={<Register />} />

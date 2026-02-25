@@ -4,13 +4,13 @@ function UploadResume() {
 
   const [file, setFile] = useState(null);
   const [uploadedFile, setUploadedFile] = useState("");
-  const handleUpload = async () => {
+
+const handleUpload = async () => {
 
   const formData = new FormData();
 
   formData.append("resume", file);
 
-  // ✅ GET LOGGED-IN USER AUTOMATICALLY
   const user = JSON.parse(localStorage.getItem("user"));
 
   formData.append("userId", user._id);
@@ -19,6 +19,8 @@ function UploadResume() {
     method: "POST",
     body: formData,
   });
+
+  const data = await res.json();
 
   alert("Resume uploaded successfully");
 };

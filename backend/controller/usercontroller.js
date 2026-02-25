@@ -84,8 +84,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// GET all users
-exports.studentdetalis= async (req, res) => {
+exports.studentdetails = async (req, res) => {
   try {
     const students = await User.find({ role: "student" });
     res.status(200).json(students);
