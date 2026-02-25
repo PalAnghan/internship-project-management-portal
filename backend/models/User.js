@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
       default: "student",
     },
 
-    skills: {
+    Skills: {
       type: [String], // for matching logic
       default: [],
     },
