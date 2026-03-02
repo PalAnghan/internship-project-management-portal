@@ -15,6 +15,7 @@ import AddInternship from "./pages/AddInternship";
 import ViewApplications from "./pages/ViewApplications";
 import Profile from "./pages/Profile";
 import HomePage from "./pages/HomePage";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
