@@ -5,19 +5,100 @@ function AdminDashboard() {
 
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    localStorage.removeItem("user"); // remove logged user
+    navigate("/admin-login"); // redirect to login
+  };
+
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Admin Dashboard</h2>
 
-      <button onClick={() => navigate("/add-internship")}>
-        Add Internship
-      </button>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(to right,#141e30,#243b55)"
+      }}
+    >
 
-      <br /><br />
+      {/* Top Navbar */}
 
-      <button onClick={() => navigate("/view-applications")}>
-        View Applications
-      </button>
+      <nav className="navbar navbar-dark bg-dark px-4">
+
+        <h5 className="text-white">Admin Panel</h5>
+
+        <div>
+
+          <button
+            className="btn btn-outline-light me-2"
+            onClick={() => navigate("/add-internship")}
+          >
+            Add Internship
+          </button>
+
+          <button
+            className="btn btn-outline-light me-2"
+            onClick={() => navigate("/view-applications")}
+          >
+            View Applications
+          </button>
+
+          <button
+            className="btn btn-danger"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+
+        </div>
+
+      </nav>
+
+
+      {/* Dashboard Content */}
+
+      <div className="container mt-5 text-center">
+
+        <h2 className="text-white mb-4">Admin Dashboard</h2>
+
+        <div className="row justify-content-center">
+
+          <div className="col-md-4">
+
+            <div className="card shadow p-4">
+
+              <h5>Add Internship</h5>
+
+              <button
+                className="btn btn-primary mt-2"
+                onClick={() => navigate("/add-internship")}
+              >
+                Open
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div className="col-md-4">
+
+            <div className="card shadow p-4">
+
+              <h5>View Applications</h5>
+
+              <button
+                className="btn btn-success mt-2"
+                onClick={() => navigate("/view-applications")}
+              >
+                Open
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
   );

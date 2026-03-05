@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function AddInternship() {
 
@@ -6,6 +7,8 @@ function AddInternship() {
   const [description, setDescription] = useState("");
   const [skills, setSkills] = useState("");
   const [duration, setDuration] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
 
@@ -22,8 +25,6 @@ function AddInternship() {
       }),
     });
 
-    const data = await res.json();
-
     if (res.ok) {
       alert("Internship added successfully");
     } else {
@@ -33,40 +34,83 @@ function AddInternship() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Add Internship</h2>
 
-      <input
-        placeholder="Title"
-        onChange={(e) => setTitle(e.target.value)}
-      />
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(to right,#141e30,#243b55)"
+      }}
+    >
 
-      <br /><br />
+      {/* Navbar */}
 
-      <input
-        placeholder="Description"
-        onChange={(e) => setDescription(e.target.value)}
-      />
+      <nav className="navbar navbar-dark bg-dark px-4">
 
-      <br /><br />
+        <h5 className="text-white">Admin Panel</h5>
 
-      <input
-        placeholder="Skills (comma separated)"
-        onChange={(e) => setSkills(e.target.value)}
-      />
+        <button
+          className="btn btn-outline-light"
+          onClick={() => navigate("/admin")}
+        >
+          🏠 Home
+        </button>
 
-      <br /><br />
+      </nav>
 
-      <input
-        placeholder="Duration"
-        onChange={(e) => setDuration(e.target.value)}
-      />
 
-      <br /><br />
+      {/* Form */}
 
-      <button onClick={handleSubmit}>
-        Add Internship
-      </button>
+      <div className="container mt-5">
+
+        <div
+          className="card shadow p-4"
+          style={{ maxWidth: "500px", margin: "auto" }}
+        >
+
+          <h3 className="text-center mb-4">Add Internship</h3>
+
+          <input
+            className="form-control"
+            placeholder="Internship Title"
+            onChange={(e) => setTitle(e.target.value)}
+          />
+
+          <br />
+
+          <textarea
+            className="form-control"
+            placeholder="Description"
+            onChange={(e) => setDescription(e.target.value)}
+          />
+
+          <br />
+
+          <input
+            className="form-control"
+            placeholder="Skills (comma separated)"
+            onChange={(e) => setSkills(e.target.value)}
+          />
+
+          <br />
+
+          <input
+            className="form-control"
+            placeholder="Duration (ex: 3 Months)"
+            onChange={(e) => setDuration(e.target.value)}
+          />
+
+          <br />
+
+          <button
+            className="btn btn-primary w-100"
+            onClick={handleSubmit}
+          >
+            Add Internship
+          </button>
+
+        </div>
+
+      </div>
 
     </div>
   );
