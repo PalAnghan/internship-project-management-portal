@@ -7,11 +7,22 @@ function Internships() {
   const navigate = useNavigate();
 
   useEffect(() => {
+
+  const loadInternships = () => {
     fetch("http://localhost:5000/api/internships")
       .then(res => res.json())
       .then(data => setInternships(data));
-  }, []);
+  };
 
+  loadInternships();
+
+  const timer = setInterval(() => {
+    loadInternships();
+  }, 1000);
+
+  return () => clearInterval(timer);
+
+}, []);
   const handleApply = async (internshipId) => {
 
     const studentId = "699c337e2453cdc868a1878c";
@@ -30,25 +41,35 @@ function Internships() {
     alert("Applied successfully");
   };
 
-  const matchSkills = (requiredSkills, userSkills) => {
+ const getRemainingTime = (deadline) => {
 
-    if (!userSkills) return false;
+  const now = new Date().getTime();
+  const end = new Date(deadline).getTime();
+  const distance = end - now;
 
-    return requiredSkills.some(skill =>
-      userSkills.includes(skill)
-    );
-  };
+  if (distance <= 0) return "Closed";
 
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+
+  const hours = Math.floor(
+    (distance % (1000 * 60 * 60 * 24)) /
+    (1000 * 60 * 60)
+  );
+
+  const minutes = Math.floor(
+    (distance % (1000 * 60 * 60)) /
+    (1000 * 60)
+  );
+
+  const seconds = Math.floor(
+    (distance % (1000 * 60)) / 1000
+  );
+
+  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+};
   return (
 
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(to right,#141e30,#243b55)"
-      }}
-    >
-
-      {/* Navbar */}
+    <div style={{ minHeight: "100vh", background: "linear-gradient(to right,#141e30,#243b55)" }}>
 
       <nav className="navbar navbar-dark bg-dark px-4">
 
@@ -63,54 +84,53 @@ function Internships() {
 
       </nav>
 
-
-      {/* Page Title */}
-
       <div className="container mt-4">
 
         <h2 className="text-white text-center mb-4">
           Available Internships
         </h2>
 
-
         <div className="row">
 
-          {internships.map((item) => (
+          {internships.map((item) => {
 
-            <div className="col-md-4 mb-4" key={item._id}>
+            const timeLeft = getRemainingTime(item.applicationDeadline);
+            const closed = timeLeft === "Closed";
 
-              <div className="card shadow p-3">
+            return (
 
-                <h5>{item.title}</h5>
+              <div className="col-md-4 mb-4" key={item._id}>
 
-                <p>
-                  <b>Required Skills:</b>
-                  <br />
-                  {item.requiredSkills.join(", ")}
-                </p>
+                <div className="card shadow p-3">
 
+                  <h5>{item.title}</h5>
 
-                {matchSkills(item.requiredSkills, ["react","javascript"]) && (
+                  <p><b>Skills:</b> {item.requiredSkills.join(", ")}</p>
 
-                  <p style={{ color: "green", fontWeight: "bold" }}>
-                    ⭐ Matched with your skills
+                  <p><b>Duration:</b> {item.duration}</p>
+
+                  <p>
+                    <b>Deadline:</b>{" "}
+                    <span style={{ color: closed ? "red" : "green" }}>
+                      {timeLeft}
+                    </span>
                   </p>
 
-                )}
+                  <button
+                    className="btn btn-primary mt-2"
+                    disabled={closed}
+                    onClick={() => handleApply(item._id)}
+                  >
+                    {closed ? "Closed" : "Apply Internship"}
+                  </button>
 
-
-                <button
-                  className="btn btn-primary mt-2"
-                  onClick={() => handleApply(item._id)}
-                >
-                  Apply Internship
-                </button>
+                </div>
 
               </div>
 
-            </div>
+            );
 
-          ))}
+          })}
 
         </div>
 

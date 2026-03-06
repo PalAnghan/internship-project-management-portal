@@ -84,11 +84,26 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.studentdetails = async (req, res) => {
+exports.getUserById = async (req, res) => {
+
   try {
-    const students = await User.find({ role: "student" });
-    res.status(200).json(students);
+
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    res.json(user);
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+
+    res.status(500).json({
+      error: error.message
+    });
+
   }
-};  
+
+};

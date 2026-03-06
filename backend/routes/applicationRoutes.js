@@ -1,26 +1,51 @@
 const express = require("express");
 const router = express.Router();
-
 const Application = require("../models/Application");
 
-require("../models/User");
-require("../models/Internship");
-
-
-// Apply internship
+// =======================
+// APPLY INTERNSHIP
+// =======================
 router.post("/apply", async (req, res) => {
+
   try {
-    const application = await Application.create(req.body);
-    res.status(201).json(application);
+
+    const { studentId, internshipId } = req.body;
+
+    const existing = await Application.findOne({
+      studentId,
+      internshipId
+    });
+
+    if (existing) {
+      return res.status(400).json({
+        message: "Already applied"
+      });
+    }
+
+    const application = await Application.create({
+      studentId,
+      internshipId,
+      status: "Pending"
+    });
+
+    res.json(application);
+
   } catch (error) {
-    res.status(400).json({ error: error.message });
+
+    res.status(500).json({ error: error.message });
+
   }
+
 });
 
 
-// Get all applications
+// =======================
+// GET ALL APPLICATIONS
+// =======================
 router.get("/", async (req, res) => {
+
   try {
+
     const applications = await Application.find()
       .populate("studentId")
       .populate("internshipId");
@@ -28,24 +53,37 @@ router.get("/", async (req, res) => {
     res.json(applications);
 
   } catch (error) {
-    console.error(error);
+
     res.status(500).json({ error: error.message });
+
   }
+
 });
 
-// UPDATE application status
+
+// =======================
+// UPDATE STATUS
+// =======================
 router.put("/:id", async (req, res) => {
+
   try {
 
     const { status } = req.body;
 
-    await Application.findByIdAndUpdate(req.params.id, { status });
+    const application = await Application.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
 
-    res.json({ message: "Status updated" });
+    res.json(application);
 
   } catch (error) {
+
     res.status(500).json({ error: error.message });
+
   }
+
 });
 
 module.exports = router;

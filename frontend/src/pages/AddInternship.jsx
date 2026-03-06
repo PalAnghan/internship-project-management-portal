@@ -7,6 +7,7 @@ function AddInternship() {
   const [description, setDescription] = useState("");
   const [skills, setSkills] = useState("");
   const [duration, setDuration] = useState("");
+  const [deadline, setDeadline] = useState("");
 
   const navigate = useNavigate();
 
@@ -22,11 +23,13 @@ function AddInternship() {
         description,
         requiredSkills: skills.split(","),
         duration,
+        applicationDeadline: deadline
       }),
     });
 
     if (res.ok) {
       alert("Internship added successfully");
+      navigate("/admin");
     } else {
       alert("Error adding internship");
     }
@@ -35,17 +38,9 @@ function AddInternship() {
 
   return (
 
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(to right,#141e30,#243b55)"
-      }}
-    >
-
-      {/* Navbar */}
+    <div style={{ minHeight: "100vh", background: "linear-gradient(to right,#141e30,#243b55)" }}>
 
       <nav className="navbar navbar-dark bg-dark px-4">
-
         <h5 className="text-white">Admin Panel</h5>
 
         <button
@@ -54,18 +49,11 @@ function AddInternship() {
         >
           🏠 Home
         </button>
-
       </nav>
-
-
-      {/* Form */}
 
       <div className="container mt-5">
 
-        <div
-          className="card shadow p-4"
-          style={{ maxWidth: "500px", margin: "auto" }}
-        >
+        <div className="card shadow p-4" style={{ maxWidth: "500px", margin: "auto" }}>
 
           <h3 className="text-center mb-4">Add Internship</h3>
 
@@ -97,6 +85,16 @@ function AddInternship() {
             className="form-control"
             placeholder="Duration (ex: 3 Months)"
             onChange={(e) => setDuration(e.target.value)}
+          />
+
+          <br />
+
+          <label>Application Deadline</label>
+
+          <input
+            type="datetime-local"
+            className="form-control"
+            onChange={(e) => setDeadline(e.target.value)}
           />
 
           <br />

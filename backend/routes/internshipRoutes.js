@@ -3,20 +3,87 @@ const Internship = require("../models/Internship");
 
 const router = express.Router();
 
-// Create internship
+
+// ===============================
+// CREATE INTERNSHIP (Admin)
+// ===============================
 router.post("/", async (req, res) => {
+
   try {
-    const internship = await Internship.create(req.body);
-    res.status(201).json(internship);
+
+    const {
+      title,
+      description,
+      requiredSkills,
+      duration,
+      applicationDeadline
+    } = req.body;
+
+    const internship = await Internship.create({
+      title,
+      description,
+      requiredSkills,
+      duration,
+      applicationDeadline
+    });
+
+    res.status(201).json({
+      message: "Internship created successfully",
+      internship
+    });
+
   } catch (error) {
-    res.status(400).json({ error: error.message });
+
+    res.status(500).json({
+      error: error.message
+    });
+
   }
+
 });
 
-// Get all internships
+
+// ===============================
+// GET ALL INTERNSHIPS
+// ===============================
 router.get("/", async (req, res) => {
-  const internships = await Internship.find();
-  res.json(internships);
+
+  try {
+
+    const internships = await Internship.find();
+
+    const updatedInternships = internships.map((internship) => {
+
+      // check deadline
+      if (internship.applicationDeadline) {
+
+        if (new Date() > new Date(internship.applicationDeadline)) {
+
+          internship.status = "closed";
+
+        } else {
+
+          internship.status = "open";
+
+        }
+
+      }
+
+      return internship;
+
+    });
+
+    res.json(updatedInternships);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
+    });
+
+  }
+
 });
+
 
 module.exports = router;

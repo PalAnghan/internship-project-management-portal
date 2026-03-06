@@ -8,13 +8,15 @@ function Profile() {
 
   useEffect(() => {
 
-    const loggedUser = JSON.parse(localStorage.getItem("user"));
+  const loggedUser = JSON.parse(localStorage.getItem("user"));
 
-    if (loggedUser) {
-      setUser(loggedUser);
-    }
+  if (!loggedUser) return;
 
-  }, []);
+  fetch(`http://localhost:5000/api/users/${loggedUser._id}`)
+    .then(res => res.json())
+    .then(data => setUser(data));
+
+}, []);
 
   if (!user) {
     return <h2 style={{color:"white"}}>No user logged in</h2>;
@@ -63,20 +65,22 @@ function Profile() {
 
           {user.resume && (
 
-            <div className="mt-3">
+  <div className="mt-3">
 
-              <p><b>Resume Preview</b></p>
+    <p><b>Resume</b></p>
 
-              <img
-                src={`http://localhost:5000/uploads/${user.resume}`}
-                width="200"
-                alt="resume"
-                style={{borderRadius:"8px"}}
-              />
+    <a
+      href={`http://localhost:5000/uploads/${user.resume}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="btn btn-primary"
+    >
+      View Resume
+    </a>
 
-            </div>
+  </div>
 
-          )}
+)}
 
         </div>
 
