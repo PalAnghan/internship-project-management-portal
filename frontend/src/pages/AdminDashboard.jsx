@@ -6,8 +6,8 @@ function AdminDashboard() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("user"); // remove logged user
-    navigate("/admin-login"); // redirect to login
+    localStorage.removeItem("user");
+    navigate("/admin-login");
   };
 
   return (
@@ -19,7 +19,7 @@ function AdminDashboard() {
       }}
     >
 
-      {/* Top Navbar */}
+      {/* Navbar */}
 
       <nav className="navbar navbar-dark bg-dark px-4">
 
@@ -41,6 +41,15 @@ function AdminDashboard() {
             View Applications
           </button>
 
+          {/* NEW BUTTON */}
+
+          <button
+            className="btn btn-outline-info me-2"
+            onClick={() => navigate("/all-students")}
+          >
+            All Students
+          </button>
+
           <button
             className="btn btn-danger"
             onClick={handleLogout}
@@ -52,8 +61,7 @@ function AdminDashboard() {
 
       </nav>
 
-
-      {/* Dashboard Content */}
+      {/* Dashboard */}
 
       <div className="container mt-5 text-center">
 
@@ -62,38 +70,41 @@ function AdminDashboard() {
         <div className="row justify-content-center">
 
           <div className="col-md-4">
-
             <div className="card shadow p-4">
-
               <h5>Add Internship</h5>
-
               <button
                 className="btn btn-primary mt-2"
                 onClick={() => navigate("/add-internship")}
               >
                 Open
               </button>
-
             </div>
-
           </div>
 
-
           <div className="col-md-4">
-
             <div className="card shadow p-4">
-
               <h5>View Applications</h5>
-
               <button
                 className="btn btn-success mt-2"
                 onClick={() => navigate("/view-applications")}
               >
                 Open
               </button>
-
             </div>
+          </div>
 
+          {/* NEW CARD */}
+
+          <div className="col-md-4">
+            <div className="card shadow p-4">
+              <h5>All Students</h5>
+              <button
+                className="btn btn-info mt-2"
+                onClick={() => navigate("/all-students")}
+              >
+                View
+              </button>
+            </div>
           </div>
 
         </div>

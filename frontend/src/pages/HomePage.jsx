@@ -133,6 +133,13 @@ function HomePage() {
                 Admin Register
               </button>
 
+              <button
+                className="btn btn-outline-light me-2"
+                onClick={() => navigate("/")}
+              >
+                Home
+              </button>
+
             </div>
 
           </div>

@@ -1,4 +1,5 @@
 const Admin = require("../models/admin");
+const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -81,4 +82,49 @@ exports.admindetalis= async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+// Get All Students
+exports.getAllStudents = async (req, res) => {
+  try {
+
+    const students = await User.find({ role: "student" })
+      .select("-password");
+
+    res.status(200).json({
+      success: true,
+      totalStudents: students.length,
+      students
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+exports.downloadResume = async (req, res) => {
+
+  try {
+
+    const student = await User.findById(req.params.id);
+
+    if (!student || !student.resume) {
+      return res.status(404).json({
+        message: "Resume not found"
+      });
+    }
+
+    res.download(student.resume);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
 };

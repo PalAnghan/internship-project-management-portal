@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import StudentDashboard from "./pages/StudentDashboard";
 import Internships from "./pages/Internships";
+import AllStudents from "./pages/AllStudents";
 import AdminDashboard from "./pages/AdminDashboard";
 import MyApplications from "./pages/MyApplications";
 import UploadResume from "./pages/UploadResume";
@@ -28,6 +29,8 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         <Route path="/student-dashboard" element={<StudentDashboard />} />
+
+        <Route path="/all-students" element={<AllStudents />} />
 
         <Route path="/internships" element={<Internships />} />
 
