@@ -12,6 +12,8 @@ const userRoutes = require("./routes/userRoutes");
 const internshipRoutes = require("./routes/internshipRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
 
+const exportExcel = require("./routes/exportExcel");
+
 const app = express();
 
 // Middleware
@@ -30,6 +32,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/admins", adminRoutes);
 app.use("/api/internships", internshipRoutes);
 app.use("/api/applications", applicationRoutes);
+app.use("/api/export", exportExcel);
 
 // Test API
 app.get("/api/test", (req, res) => {

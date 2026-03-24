@@ -1,45 +1,49 @@
 const mongoose = require("mongoose");
 
-const internshipSchema = new mongoose.Schema(
-{
-  title: {
-    type: String,
-    required: true
-  },
+const internshipSchema = new mongoose.Schema({
 
-  description: {
-    type: String,
-    required: true
-  },
+ title:{
+  type:String,
+  required:true
+ },
 
-  requiredSkills: {
-    type: [String],
-    required: true
-  },
+ description:{
+  type:String,
+  required:true
+ },
 
-  duration: {
-    type: String,
-    required: true
-  },
+ requiredSkills:{
+  type:[String],
+  required:true
+ },
 
-  applicationDeadline: {
-    type: Date,
-    required: true
-  },
+ duration:{
+  type:String,
+  required:true
+ },
 
-  status: {
-    type: String,
-    enum: ["open","closed"],
-    default: "open"
-  },
+ applicationDeadline:{
+  type:Date,
+  required:true
+ },
 
-  createdBy: {
-    type: String,
-    default: "admin"
-  }
+ maxApplicants:{
+  type:Number,
+  // default:50
+ },
 
-},
-{ timestamps: true }
-);
+ status:{
+  type:String,
+  enum:["open","closed"],
+  default:"open"
+ },
 
-module.exports = mongoose.model("Internship", internshipSchema);
+ createdBy:{
+  type:String,
+  default:"admin"
+ }
+
+},{ timestamps:true });
+
+module.exports =
+mongoose.model("Internship", internshipSchema);

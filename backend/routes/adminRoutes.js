@@ -8,4 +8,6 @@ admin.get("/", admindetalis);
 admin.get("/students", getAllStudents);
 admin.get("/students/resume/:id", downloadResume);
 
+
+
 module.exports = admin;

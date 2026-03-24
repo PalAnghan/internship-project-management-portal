@@ -7,7 +7,9 @@ function MyApplications() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/applications")
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    fetch(`http://localhost:5000/api/applications/student/${user._id}`) 
       .then(res => res.json())
       .then(data => setApplications(data));
   }, []);
@@ -53,6 +55,7 @@ function MyApplications() {
             key={app._id}
             className="card shadow p-3 mb-3"
           >
+            
 
             <h5>{app.internshipId?.title}</h5>
 
@@ -72,7 +75,46 @@ function MyApplications() {
               </b>
             </p>
 
+            <button
+
+              className="btn btn-danger btn-sm mt-2"
+
+              onClick={()=>{
+
+              fetch(
+
+              `http://localhost:5000/api/applications/${app._id}`,
+
+              {
+
+              method:"DELETE"
+
+              }
+
+              )
+
+              .then(()=>{
+
+              setApplications(
+
+              applications.filter(
+              a => a._id !== app._id
+              )
+
+              );
+
+              });
+
+              }}
+
+              >
+
+              Withdraw
+
+              </button>
+
           </div>
+          
 
         ))}
 

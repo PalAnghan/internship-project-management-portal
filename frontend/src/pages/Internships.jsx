@@ -25,7 +25,10 @@ function Internships() {
 }, []);
   const handleApply = async (internshipId) => {
 
-    const studentId = "699c337e2453cdc868a1878c";
+    // const studentId = "699c337e2453cdc868a1878c";
+    const student = JSON.parse(localStorage.getItem("user"));
+
+  const studentId = student?._id;
 
     await fetch("http://localhost:5000/api/applications/apply", {
       method: "POST",
@@ -39,33 +42,44 @@ function Internships() {
     });
 
     alert("Applied successfully");
-  };
+  };  
+    const getRemainingTime = (deadline) => {
 
- const getRemainingTime = (deadline) => {
+ const now = new Date().getTime();
 
-  const now = new Date().getTime();
-  const end = new Date(deadline).getTime();
-  const distance = end - now;
+ const end = new Date(deadline).getTime();
 
-  if (distance <= 0) return "Closed";
+ const distance = end - now;
 
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
 
-  const hours = Math.floor(
-    (distance % (1000 * 60 * 60 * 24)) /
-    (1000 * 60 * 60)
-  );
+ if (distance <= 0) {
+  return "Closed";
+ }
 
-  const minutes = Math.floor(
-    (distance % (1000 * 60 * 60)) /
-    (1000 * 60)
-  );
 
-  const seconds = Math.floor(
-    (distance % (1000 * 60)) / 1000
-  );
+ const days =
+ Math.floor(distance / (1000 * 60 * 60 * 24));
 
-  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+ const hours =
+ Math.floor(
+  (distance % (1000 * 60 * 60 * 24)) /
+  (1000 * 60 * 60)
+ );
+
+ const minutes =
+ Math.floor(
+  (distance % (1000 * 60 * 60)) /
+  (1000 * 60)
+ );
+
+ const seconds =
+ Math.floor(
+  (distance % (1000 * 60)) / 1000
+ );
+
+
+ return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
 };
   return (
 
@@ -90,12 +104,17 @@ function Internships() {
           Available Internships
         </h2>
 
-        <div className="row">
+        <div className="row"> 
 
           {internships.map((item) => {
 
-            const timeLeft = getRemainingTime(item.applicationDeadline);
-            const closed = timeLeft === "Closed";
+            const timeLeft =
+            item.applicationDeadline
+            ? getRemainingTime(item.applicationDeadline)
+            : "Closed";
+
+            const closed =
+            timeLeft === "Closed";
 
             return (
 
@@ -108,20 +127,50 @@ function Internships() {
                   <p><b>Skills:</b> {item.requiredSkills.join(", ")}</p>
 
                   <p><b>Duration:</b> {item.duration}</p>
+                  <p><b>
 
-                  <p>
-                    <b>Deadline:</b>{" "}
-                    <span style={{ color: closed ? "red" : "green" }}>
-                      {timeLeft}
-                    </span>
+                  Seats Left: 
+
+                  {
+                  item.maxApplicants
+                  }
+
+                  positions
+                  </b>
                   </p>
 
-                  <button
-                    className="btn btn-primary mt-2"
-                    disabled={closed}
-                    onClick={() => handleApply(item._id)}
+                  {/* <p>
+
+                    Deadline:
+
+                    {getRemainingTime(item.applicationDeadline)}
+
+                    </p> */}
+
+                  
+                    <p>
+                    <b>Deadline:</b>{" "}
+                    <span style={{ color: closed ? "red" : "green" }}>
+                    {timeLeft}
+                    </span>
+                    </p>
+
+                 <button
+
+                  onClick={() => handleApply(item._id)}
+
+                  disabled={closed}
+
+                  className={
+                  closed
+                  ? "btn btn-secondary"
+                  : "btn btn-primary"
+                  }
+
                   >
-                    {closed ? "Closed" : "Apply Internship"}
+
+                  {closed ? "Closed" : "Apply"}
+
                   </button>
 
                 </div>

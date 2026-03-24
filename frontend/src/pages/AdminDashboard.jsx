@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function AdminDashboard() {
@@ -9,6 +9,15 @@ function AdminDashboard() {
     localStorage.removeItem("user");
     navigate("/admin-login");
   };
+  const [stats,setStats] = useState({});
+
+useEffect(()=>{
+
+ fetch("http://localhost:5000/api/applications/stats")
+ .then(res=>res.json())
+ .then(data=>setStats(data));
+
+},[]);
 
   return (
 
@@ -93,6 +102,15 @@ function AdminDashboard() {
             </div>
           </div>
 
+          {/* <button
+          onClick={() =>
+            // window.open(`http://localhost:5000/api/export/${item._id}`)
+            window.open("http://localhost:5000/api/export/test")
+          }
+        >
+        Download Excel
+        </button> */}
+
           {/* NEW CARD */}
 
           <div className="col-md-4">
@@ -110,8 +128,20 @@ function AdminDashboard() {
         </div>
 
       </div>
+      <div>
+
+        <h3>Total: {stats.total}</h3>
+
+        <h3>Approved: {stats.approved}</h3>
+
+        <h3>Rejected: {stats.rejected}</h3>
+
+        <h3>Pending: {stats.pending}</h3>
+
+        </div>
 
     </div>
+    
   );
 }
 

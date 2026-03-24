@@ -17,6 +17,7 @@ import ViewApplications from "./pages/ViewApplications";
 import Profile from "./pages/Profile";
 import HomePage from "./pages/HomePage";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import CompanyDashboard from "./pages/CompanyDashboard";
 
 function App() {
   return (
@@ -49,6 +50,8 @@ function App() {
         <Route path="/view-applications" element={<ViewApplications />} />
 
         <Route path="/profile" element={<Profile />} />
+
+        <Route path="/company" element={<CompanyDashboard/>}/>
 
       </Routes>
     </BrowserRouter>

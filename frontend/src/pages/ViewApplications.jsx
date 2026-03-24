@@ -5,9 +5,14 @@ function ViewApplications() {
 
   const [applications, setApplications] = useState([]);
   const navigate = useNavigate();
+  const [search,setSearch] = useState("");
+  const [internships,setInternships] = useState([]);
 
   useEffect(() => {
     loadApplications();
+    fetch("http://localhost:5000/api/internships")
+    .then(res=>res.json())
+    .then(data=>setInternships(data));
   }, []);
 
   const loadApplications = async () => {
@@ -30,6 +35,8 @@ function ViewApplications() {
 
     loadApplications();
   };
+
+
 
   return (
 
@@ -55,6 +62,13 @@ function ViewApplications() {
 
       </nav>
 
+      <input
+      placeholder="Search student"
+      className="form-control mb-3"
+
+      onChange={(e)=>setSearch(e.target.value)}
+      />
+      
 
       {/* Page Title */}
 
@@ -64,61 +78,207 @@ function ViewApplications() {
           Internship Applications
         </h2>
 
-
         <div className="row">
 
-          {applications.map(app => (
+{
+internships.map(internship => {
 
-            <div className="col-md-4 mb-4" key={app._id}>
+const companyApps =
+applications.filter(
+a => a.internshipId._id === internship._id
+);
 
-              <div className="card shadow p-3">
+return(
 
-                <p><b>Student:</b> {app.studentId?.name}</p>
+<div key={internship._id} className="mb-5">
 
-                <p><b>Internship:</b> {app.internshipId?.title}</p>
+<h4 style={{
+ textAlign:"center",
+ color:"#ffffff",
+ fontWeight:"600"
+}}>
+{internship.title}
+</h4>
 
-                <p>
-                  <b>Status:</b>{" "}
-                  <span
-                    style={{
-                      color:
-                        app.status === "Approved"
-                          ? "green"
-                          : app.status === "Rejected"
-                          ? "red"
-                          : "orange",
-                      fontWeight: "bold"
-                    }}
-                  >
-                    {app.status}
-                  </span>
-                </p>
 
-                <div className="d-flex justify-content-between mt-2">
+<p style={{
+ textAlign:"center",
+ color:"#cbd5e1"
+}}>
+Total Applicants: {companyApps.length}
+</p>
 
-                  <button
-                    className="btn btn-success btn-sm"
-                    onClick={() => updateStatus(app._id, "Approved")}
-                  >
-                    Approve
-                  </button>
+<p style={{
+ textAlign:"center",
+ color:"#94a3b8"
+}}>
 
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => updateStatus(app._id, "Rejected")}
-                  >
-                    Reject
-                  </button>
+Seats Left:
 
-                </div>
+{
+internship.maxApplicants
+? internship.maxApplicants - companyApps.length
+: "No limit"
+}
 
-              </div>
+/
 
-            </div>
+{
+internship.maxApplicants
+? internship.maxApplicants
+: "∞"
+}
 
-          ))}
 
-        </div>
+
+</p>
+
+
+<div className="text-center mb-3">
+
+<button
+className="btn btn-primary btn-sm"
+
+onClick={()=>window.open(
+`http://localhost:5000/api/export/${internship._id}`
+)}
+
+>
+
+Download Excel
+
+</button>
+
+</div>
+
+
+<div className="row">
+
+{
+companyApps.map(app => (
+
+<div
+className="col-md-4 mb-4"
+key={app._id}
+>
+
+<div className="card shadow p-3">
+
+<p>
+<b>Student:</b>
+{" "}
+{app.studentId?.name}
+</p>
+
+
+<p>
+
+<b>Status:</b>
+
+<span style={{
+color:
+app.status === "Approved"
+? "green"
+: app.status === "Rejected"
+? "red"
+: "orange",
+fontWeight:"bold"
+}}>
+
+{" "}
+{app.status}
+
+</span>
+
+</p>
+
+
+<div className="d-flex justify-content-between">
+
+<button
+className="btn btn-success btn-sm"
+
+onClick={()=>
+updateStatus(app._id,"Approved")
+}
+>
+
+Approve
+
+</button>
+
+
+<button
+className="btn btn-danger btn-sm"
+
+onClick={()=>
+updateStatus(app._id,"Rejected")
+}
+>
+
+Reject
+
+</button>
+
+</div>
+
+
+<br/>
+
+
+<a
+href={`http://localhost:5000/${app.resume}`}
+target="_blank"
+rel="noreferrer"
+>
+
+<button
+className="btn btn-secondary btn-sm w-100"
+>
+
+View Resume
+
+</button>
+
+</a>
+
+
+</div>
+
+</div>
+
+))
+}
+
+
+{companyApps.length === 0 && (
+
+<p style={{
+textAlign:"center",
+color:"#94a3b8"
+}}>
+
+No students applied yet
+
+</p>
+
+)}
+
+</div>
+
+</div>
+
+);
+
+})
+}
+
+</div>
+        
+              
+
+             
+        
 
       </div>
 

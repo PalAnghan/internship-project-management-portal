@@ -1,47 +1,66 @@
 const express = require("express");
 const router = express.Router();
 const Application = require("../models/Application");
+const nodemailer = require("nodemailer");
 
-// =======================
+const Internship =
+require("../models/Internship");
+
 // APPLY INTERNSHIP
-// =======================
-router.post("/apply", async (req, res) => {
 
-  try {
+router.post("/apply", async (req,res)=>{
 
-    const { studentId, internshipId } = req.body;
+try{
 
-    const existing = await Application.findOne({
-      studentId,
-      internshipId
-    });
+// get student and internship id from frontend
+const { studentId, internshipId } = req.body;
 
-    if (existing) {
-      return res.status(400).json({
-        message: "Already applied"
-      });
-    }
 
-    const application = await Application.create({
-      studentId,
-      internshipId,
-      status: "Pending"
-    });
+// check if student already applied
+const alreadyApplied =
+await Application.findOne({
 
-    res.json(application);
-
-  } catch (error) {
-
-    res.status(500).json({ error: error.message });
-
-  }
+ studentId: studentId,
+ internshipId: internshipId
 
 });
 
 
-// =======================
+if(alreadyApplied){
+
+ return res.send("You already applied for this internship");
+
+}
+
+
+// create new application
+const newApplication =
+new Application({
+
+ studentId: studentId,
+ internshipId: internshipId
+
+});
+
+
+await newApplication.save();
+
+
+res.send("Applied successfully");
+
+}
+
+catch(err){
+
+console.log(err);
+res.status(500).send("error");
+
+}
+
+});
+
 // GET ALL APPLICATIONS
-// =======================
+
 router.get("/", async (req, res) => {
 
   try {
@@ -61,9 +80,8 @@ router.get("/", async (req, res) => {
 });
 
 
-// =======================
 // UPDATE STATUS
-// =======================
+
 router.put("/:id", async (req, res) => {
 
   try {
@@ -83,6 +101,169 @@ router.put("/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
 
   }
+
+  const count =
+ await Application.countDocuments({
+  internshipId
+ });
+
+const internship =
+ await Internship.findById(internshipId);
+
+if(count >= internship.maxApplicants){
+
+ return res.send("Limit reached");
+
+}
+
+});
+
+// router.put("/status/:id", async (req,res)=>{
+
+//  const application =
+//  await Application.findById(req.params.id)
+//  .populate("studentId");
+
+//  application.status = req.body.status;
+
+//  await application.save();
+
+//  // email send inside async function
+//  await transporter.sendMail({
+
+//   to: application.studentId.email,
+
+//   subject:"Internship status",
+
+//   text:`Your application is ${req.body.status}`
+
+//  });
+
+//  res.json(application);
+
+// });
+
+// get applications by student
+router.get("/student/:studentId", async (req,res)=>{
+
+ try{
+
+ const applications =
+ await Application.find({
+
+  studentId: req.params.studentId
+
+ })
+ .populate("internshipId");
+
+ res.json(applications);
+
+ }
+
+ catch(err){
+
+ res.status(500).send("error");
+
+ }
+
+});
+
+// update status and send email
+
+
+router.put("/status/:id", async (req,res)=>{
+
+ try{
+
+ const application =
+ await Application.findById(req.params.id)
+
+ .populate("studentId")
+
+ .populate("internshipId");
+
+
+ application.status = req.body.status;
+
+ await application.save();
+
+
+ // send email only if approved
+
+ if(req.body.status === "Approved"){
+
+  console.log("Sending email to:",
+  application.studentId.email);
+
+ const transporter =
+ nodemailer.createTransport({
+
+ service:"gmail",
+
+ auth:{
+
+ user:"palanghan8@gmail.com",
+
+ pass:"lvpp yiow tahk pjyp"
+
+ }
+
+ });
+
+
+ await transporter.sendMail({
+
+ to: application.studentId.email,
+
+ subject:"Internship Approved",
+
+ text:
+
+ `Congratulations!
+
+ You are selected for:
+
+ ${application.internshipId.title}
+
+ Login to portal for details.`
+
+ });
+
+ }
+
+
+ res.json(application);
+
+ }
+
+ catch(err){
+
+ res.status(500).send(err);
+
+ }
+
+});
+
+// delete application
+router.delete("/:id", async (req,res)=>{
+
+await Application.findByIdAndDelete(req.params.id);
+
+res.send("deleted");
+
+});
+
+const transporter = nodemailer.createTransport({
+
+ service:"gmail",
+
+ auth:{
+
+ user:"palanghan8@gmail.com",
+
+ pass:"lvpp yiow tahk pjyp"
+
+ }
 
 });
 

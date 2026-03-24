@@ -3,11 +3,20 @@ import { useNavigate } from "react-router-dom";
 
 function AddInternship() {
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [skills, setSkills] = useState("");
-  const [duration, setDuration] = useState("");
-  const [deadline, setDeadline] = useState("");
+  // const [title, setTitle] = useState("");
+  // const [description, setDescription] = useState("");
+  // const [skills, setSkills] = useState("");
+  // const [duration, setDuration] = useState("");
+  // const [deadline, setDeadline] = useState("");
+
+  const [internship, setInternship] = useState({
+  title: "",
+  description: "",
+  requiredSkills: "",
+  duration: "",
+  applicationDeadline: "",
+  maxApplicants: ""
+});
 
   const navigate = useNavigate();
 
@@ -19,12 +28,25 @@ function AddInternship() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title,
-        description,
-        requiredSkills: skills.split(","),
-        duration,
-        applicationDeadline: deadline
-      }),
+
+        title: internship.title,
+
+        description: internship.description,
+
+        requiredSkills:
+        internship.requiredSkills
+          .split(",")
+          .map(skill => skill.trim()),
+
+        duration: internship.duration,
+
+        applicationDeadline:
+        internship.applicationDeadline,
+
+        maxApplicants:
+        Number(internship.maxApplicants)
+
+        }),
     });
 
     if (res.ok) {
@@ -60,15 +82,26 @@ function AddInternship() {
           <input
             className="form-control"
             placeholder="Internship Title"
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) =>
+              setInternship({
+                ...internship,
+                title: e.target.value
+              })
+              }
           />
+       
 
           <br />
 
           <textarea
             className="form-control"
             placeholder="Description"
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) =>
+              setInternship({
+                ...internship,
+                description: e.target.value
+              })
+              }
           />
 
           <br />
@@ -76,16 +109,27 @@ function AddInternship() {
           <input
             className="form-control"
             placeholder="Skills (comma separated)"
-            onChange={(e) => setSkills(e.target.value)}
+            onChange={(e) =>
+              setInternship({
+                ...internship,
+                requiredSkills: e.target.value
+              })
+              }
           />
 
           <br />
 
           <input
             className="form-control"
-            placeholder="Duration (ex: 3 Months)"
-            onChange={(e) => setDuration(e.target.value)}
-          />
+            placeholder="Duration"
+
+            onChange={(e) =>
+              setInternship({
+              ...internship,
+              duration: e.target.value
+              })
+            }
+            />
 
           <br />
 
@@ -94,10 +138,31 @@ function AddInternship() {
           <input
             type="datetime-local"
             className="form-control"
-            onChange={(e) => setDeadline(e.target.value)}
-          />
+            onChange={(e)=>
+
+            setInternship({
+
+              ...internship,
+              applicationDeadline:e.target.value
+
+            })
+
+            }
+/>
 
           <br />
+          <input
+          type="number"
+          className="form-control"
+          placeholder="Max students allowed"
+          onChange={(e) =>
+            setInternship({
+              ...internship,
+              maxApplicants: e.target.value
+            })
+          }
+        />
+
 
           <button
             className="btn btn-primary w-100"
@@ -107,6 +172,8 @@ function AddInternship() {
           </button>
 
         </div>
+        
+        <br/>
 
       </div>
 
