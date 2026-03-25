@@ -4,32 +4,37 @@ import { useNavigate } from "react-router-dom";
 function AdminDashboard() {
 
   const navigate = useNavigate();
+  const [stats, setStats] = useState({
+    total: 0,
+    approved: 0,
+    rejected: 0,
+    pending: 0
+  });
 
+  // ✅ Fetch stats
+  useEffect(() => {
+    fetch("http://localhost:5000/api/applications/stats")
+      .then(res => res.json())
+      .then(data => setStats(data))
+      .catch(err => console.log(err));
+  }, []);
+
+  // ✅ Logout
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/admin-login");
   };
-  const [stats,setStats] = useState({});
-
-useEffect(()=>{
-
- fetch("http://localhost:5000/api/applications/stats")
- .then(res=>res.json())
- .then(data=>setStats(data));
-
-},[]);
 
   return (
-
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(to right,#141e30,#243b55)"
+        background: "linear-gradient(to right,#141e30,#243b55)",
+        paddingBottom: "40px"
       }}
     >
 
-      {/* Navbar */}
-
+      {/* 🔥 Navbar */}
       <nav className="navbar navbar-dark bg-dark px-4">
 
         <h5 className="text-white">Admin Panel</h5>
@@ -40,23 +45,21 @@ useEffect(()=>{
             className="btn btn-outline-light me-2"
             onClick={() => navigate("/add-internship")}
           >
-            Add Internship
+            ➕ Add Internship
           </button>
 
           <button
             className="btn btn-outline-light me-2"
             onClick={() => navigate("/view-applications")}
           >
-            View Applications
+            📄 Applications
           </button>
-
-          {/* NEW BUTTON */}
 
           <button
             className="btn btn-outline-info me-2"
             onClick={() => navigate("/all-students")}
           >
-            All Students
+            👨‍🎓 Students
           </button>
 
           <button
@@ -70,17 +73,53 @@ useEffect(()=>{
 
       </nav>
 
-      {/* Dashboard */}
+      {/* 🔥 Dashboard */}
+      <div className="container mt-5">
 
-      <div className="container mt-5 text-center">
+        <h2 className="text-white text-center mb-4">
+          Admin Dashboard
+        </h2>
 
-        <h2 className="text-white mb-4">Admin Dashboard</h2>
+        {/* ✅ STATS CARDS */}
+        <div className="row text-center mb-5">
 
-        <div className="row justify-content-center">
+          <div className="col-md-3">
+            <div className="card p-3 shadow">
+              <h5>Total</h5>
+              <h3>{stats.total}</h3>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="card p-3 shadow bg-success text-white">
+              <h5>Approved</h5>
+              <h3>{stats.approved}</h3>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="card p-3 shadow bg-danger text-white">
+              <h5>Rejected</h5>
+              <h3>{stats.rejected}</h3>
+            </div>
+          </div>
+
+          <div className="col-md-3">
+            <div className="card p-3 shadow bg-warning">
+              <h5>Pending</h5>
+              <h3>{stats.pending}</h3>
+            </div>
+          </div>
+
+        </div>
+
+        {/* ✅ ACTION CARDS */}
+        <div className="row g-4">
 
           <div className="col-md-4">
-            <div className="card shadow p-4">
+            <div className="card shadow text-center p-4">
               <h5>Add Internship</h5>
+
               <button
                 className="btn btn-primary mt-2"
                 onClick={() => navigate("/add-internship")}
@@ -91,8 +130,9 @@ useEffect(()=>{
           </div>
 
           <div className="col-md-4">
-            <div className="card shadow p-4">
+            <div className="card shadow text-center p-4">
               <h5>View Applications</h5>
+
               <button
                 className="btn btn-success mt-2"
                 onClick={() => navigate("/view-applications")}
@@ -102,20 +142,10 @@ useEffect(()=>{
             </div>
           </div>
 
-          {/* <button
-          onClick={() =>
-            // window.open(`http://localhost:5000/api/export/${item._id}`)
-            window.open("http://localhost:5000/api/export/test")
-          }
-        >
-        Download Excel
-        </button> */}
-
-          {/* NEW CARD */}
-
           <div className="col-md-4">
-            <div className="card shadow p-4">
+            <div className="card shadow text-center p-4">
               <h5>All Students</h5>
+
               <button
                 className="btn btn-info mt-2"
                 onClick={() => navigate("/all-students")}
@@ -128,20 +158,8 @@ useEffect(()=>{
         </div>
 
       </div>
-      <div>
-
-        <h3>Total: {stats.total}</h3>
-
-        <h3>Approved: {stats.approved}</h3>
-
-        <h3>Rejected: {stats.rejected}</h3>
-
-        <h3>Pending: {stats.pending}</h3>
-
-        </div>
 
     </div>
-    
   );
 }
 

@@ -2,189 +2,180 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Internships() {
-
   const [internships, setInternships] = useState([]);
+  const [appliedInternships, setAppliedInternships] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const student = JSON.parse(localStorage.getItem("user"));
+    const studentId = student?._id;
 
-  const loadInternships = () => {
-    fetch("http://localhost:5000/api/internships")
-      .then(res => res.json())
-      .then(data => setInternships(data));
+    const loadInternships = () => {
+      fetch("http://localhost:5000/api/internships")
+        .then((res) => res.json())
+        .then((data) => setInternships(data))
+        .catch((err) => console.log(err));
+    };
+
+    const loadAppliedInternships = () => {
+      if (!studentId) return;
+
+      fetch(`http://localhost:5000/api/applications/student/${studentId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const appliedIds = data
+            .filter((app) => app.internshipId)
+            .map((app) => app.internshipId._id);
+
+          setAppliedInternships(appliedIds);
+        })
+        .catch((err) => console.log(err));
+    };
+
+    loadInternships();
+    loadAppliedInternships();
+
+    const timer = setInterval(() => {
+      loadInternships();
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleApply = async (internshipId) => {
+    const student = JSON.parse(localStorage.getItem("user"));
+    const studentId = student?._id;
+
+    try {
+      const res = await fetch("http://localhost:5000/api/applications/apply", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          studentId,
+          internshipId,
+        }),
+      });
+
+      const contentType = res.headers.get("content-type");
+      let data = {};
+
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        data.message = text;
+      }
+
+      if (res.ok) {
+        alert(data.message || "Applied successfully");
+        setAppliedInternships((prev) => [...prev, internshipId]);
+      } else {
+        alert(data.message || "You already applied for this internship");
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Error applying internship");
+    }
   };
 
-  loadInternships();
+  const getRemainingTime = (deadline) => {
+    const now = new Date().getTime();
+    const end = new Date(deadline).getTime();
+    const distance = end - now;
 
-  const timer = setInterval(() => {
-    loadInternships();
-  }, 1000);
+    if (distance <= 0) {
+      return "Closed";
+    }
 
-  return () => clearInterval(timer);
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor(
+      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor(
+      (distance % (1000 * 60 * 60)) / (1000 * 60)
+    );
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-}, []);
-  const handleApply = async (internshipId) => {
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  };
 
-    // const studentId = "699c337e2453cdc868a1878c";
-    const student = JSON.parse(localStorage.getItem("user"));
-
-  const studentId = student?._id;
-
-    await fetch("http://localhost:5000/api/applications/apply", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        studentId,
-        internshipId,
-      }),
-    });
-
-    alert("Applied successfully");
-  };  
-    const getRemainingTime = (deadline) => {
-
- const now = new Date().getTime();
-
- const end = new Date(deadline).getTime();
-
- const distance = end - now;
-
-
- if (distance <= 0) {
-  return "Closed";
- }
-
-
- const days =
- Math.floor(distance / (1000 * 60 * 60 * 24));
-
- const hours =
- Math.floor(
-  (distance % (1000 * 60 * 60 * 24)) /
-  (1000 * 60 * 60)
- );
-
- const minutes =
- Math.floor(
-  (distance % (1000 * 60 * 60)) /
-  (1000 * 60)
- );
-
- const seconds =
- Math.floor(
-  (distance % (1000 * 60)) / 1000
- );
-
-
- return `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-};
   return (
-
-    <div style={{ minHeight: "100vh", background: "linear-gradient(to right,#141e30,#243b55)" }}>
-
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(to right,#141e30,#243b55)",
+      }}
+    >
       <nav className="navbar navbar-dark bg-dark px-4">
-
         <h5 className="text-white">Student Portal</h5>
 
         <button
           className="btn btn-outline-light"
           onClick={() => navigate("/student-dashboard")}
         >
-          🏠 Home
+          ?? Home
         </button>
-
       </nav>
 
       <div className="container mt-4">
-
         <h2 className="text-white text-center mb-4">
           Available Internships
         </h2>
 
-        <div className="row"> 
-
+        <div className="row">
           {internships.map((item) => {
+            const timeLeft = item.applicationDeadline
+              ? getRemainingTime(item.applicationDeadline)
+              : "Closed";
 
-            const timeLeft =
-            item.applicationDeadline
-            ? getRemainingTime(item.applicationDeadline)
-            : "Closed";
-
-            const closed =
-            timeLeft === "Closed";
+            const closed = timeLeft === "Closed";
+            const alreadyApplied = appliedInternships.includes(item._id);
 
             return (
-
               <div className="col-md-4 mb-4" key={item._id}>
-
                 <div className="card shadow p-3">
-
                   <h5>{item.title}</h5>
 
-                  <p><b>Skills:</b> {item.requiredSkills.join(", ")}</p>
-
-                  <p><b>Duration:</b> {item.duration}</p>
-                  <p><b>
-
-                  Seats Left: 
-
-                  {
-                  item.maxApplicants
-                  }
-
-                  positions
-                  </b>
+                  <p>
+                    <b>Skills:</b> {item.requiredSkills.join(", ")}
                   </p>
 
-                  {/* <p>
+                  <p>
+                    <b>Duration:</b> {item.duration}
+                  </p>
 
-                    Deadline:
+                  <p>
+                    <b>
+                      Seats Left: {item.maxApplicants} positions
+                    </b>
+                  </p>
 
-                    {getRemainingTime(item.applicationDeadline)}
-
-                    </p> */}
-
-                  
-                    <p>
+                  <p>
                     <b>Deadline:</b>{" "}
                     <span style={{ color: closed ? "red" : "green" }}>
-                    {timeLeft}
+                      {timeLeft}
                     </span>
-                    </p>
+                  </p>
 
-                 <button
-
-                  onClick={() => handleApply(item._id)}
-
-                  disabled={closed}
-
-                  className={
-                  closed
-                  ? "btn btn-secondary"
-                  : "btn btn-primary"
-                  }
-
+                  <button
+                    onClick={() => handleApply(item._id)}
+                    disabled={closed || alreadyApplied}
+                    className={
+                      closed || alreadyApplied
+                        ? "btn btn-secondary"
+                        : "btn btn-primary"
+                    }
                   >
-
-                  {closed ? "Closed" : "Apply"}
-
+                    {closed ? "Closed" : alreadyApplied ? "Applied" : "Apply"}
                   </button>
-
                 </div>
-
               </div>
-
             );
-
           })}
-
         </div>
-
       </div>
-
     </div>
   );
 }

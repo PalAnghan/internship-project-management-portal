@@ -13,8 +13,7 @@ router.get("/:id", getUserById);
 router.post("/upload-resume", upload.single("resume"), async (req, res) => {
   try {
 
-    const { userId } = req.body;
-
+    const { userId, enrollment } = req.body;
     if (!req.file) {
       return res.status(400).json({
         message: "No file uploaded"
@@ -30,6 +29,7 @@ router.post("/upload-resume", upload.single("resume"), async (req, res) => {
     }
 
     user.resume = req.file.filename;
+    user.enrollment = enrollment;   
 
     await user.save();
 

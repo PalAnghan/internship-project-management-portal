@@ -1,86 +1,89 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 
 function Profile() {
 
-  const [user, setUser] = useState(null);
-  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  useEffect(() => {
+  const [form, setForm] = useState({
+    name: user?.name || "",
+    skills: user?.skills || "",
+    bio: user?.bio || "",
+    github: user?.github || "",
+    linkedin: user?.linkedin || ""
+  });
 
-  const loggedUser = JSON.parse(localStorage.getItem("user"));
+  const handleUpdate = async () => {
+    await fetch(`http://localhost:5000/api/users/${user._id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form)
+    });
 
-  if (!loggedUser) return;
-
-  fetch(`http://localhost:5000/api/users/${loggedUser._id}`)
-    .then(res => res.json())
-    .then(data => setUser(data));
-
-}, []);
-
-  if (!user) {
-    return <h2 style={{color:"white"}}>No user logged in</h2>;
-  }
+    alert("Profile updated");
+  };
 
   return (
 
+    // ✅ FULL BACKGROUND STYLE
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(to right,#141e30,#243b55)"
+        background: "linear-gradient(to right,#141e30,#243b55)",
+        paddingBottom: "40px"
       }}
     >
 
-      {/* Navbar */}
-
-      <nav className="navbar navbar-dark bg-dark px-4">
-
-        <h5 className="text-white">Student Portal</h5>
-
-        <button
-          className="btn btn-outline-light"
-          onClick={() => navigate("/student-dashboard")}
-        >
-          🏠 Home
-        </button>
-
-      </nav>
-
-
-      {/* Profile Section */}
-
-      <div className="container mt-5">
+      {/* Content Container */}
+      <div className="container pt-5">
 
         <div
-          className="card shadow p-4 text-center"
-          style={{ maxWidth: "400px", margin: "auto" }}
+          className="card shadow p-4"
+          style={{ maxWidth: "500px", margin: "auto" }}
         >
 
-          <h3 className="mb-3">Student Profile</h3>
+          <h2 className="text-center mb-3">Profile</h2>
 
-          <p><b>Name:</b> {user.name}</p>
-          <p><b>Email:</b> {user.email}</p>
-          <p><b>Role:</b> {user.role}</p>
+          <input
+            className="form-control mb-2"
+            placeholder="Name"
+            value={form.name}
+            onChange={e => setForm({ ...form, name: e.target.value })}
+          />
 
+          <input
+            className="form-control mb-2"
+            placeholder="Skills"
+            value={form.skills}
+            onChange={e => setForm({ ...form, skills: e.target.value })}
+          />
 
-          {user.resume && (
+          <textarea
+            className="form-control mb-2"
+            placeholder="Bio"
+            value={form.bio}
+            onChange={e => setForm({ ...form, bio: e.target.value })}
+          />
 
-  <div className="mt-3">
+          <input
+            className="form-control mb-2"
+            placeholder="GitHub"
+            value={form.github}
+            onChange={e => setForm({ ...form, github: e.target.value })}
+          />
 
-    <p><b>Resume</b></p>
+          <input
+            className="form-control mb-2"
+            placeholder="LinkedIn"
+            value={form.linkedin}
+            onChange={e => setForm({ ...form, linkedin: e.target.value })}
+          />
 
-    <a
-      href={`http://localhost:5000/uploads/${user.resume}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="btn btn-primary"
-    >
-      View Resume
-    </a>
-
-  </div>
-
-)}
+          <button
+            className="btn btn-primary mt-2 w-100"
+            onClick={handleUpdate}
+          >
+            Update Profile
+          </button>
 
         </div>
 

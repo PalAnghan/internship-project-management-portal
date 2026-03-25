@@ -24,6 +24,8 @@ router.get("/:internshipId", async (req, res) => {
 
   Internship: app.internshipId?.title || "No Internship",
 
+  enrollment: app.studentId?.enrollment || "No Enrollment",
+
   Status: app.status || "Applied"
 
 }));
