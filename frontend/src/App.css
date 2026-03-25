@@ -36,3 +36,21 @@
     transform: rotate(360deg);
   }
 }
+
+.card:hover{
+ transform: translateY(-4px);
+ transition: 0.2s;
+}
+
+.card{
+ border-radius:10px;
+}
+
+.card:hover{
+ transform: translateY(-3px);
+ transition: 0.2s;
+}
+
+.btn{
+ border-radius:6px;
+}

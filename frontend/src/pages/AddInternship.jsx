@@ -33,10 +33,19 @@ function AddInternship() {
 
         description: internship.description,
 
-        requiredSkills:
-        internship.requiredSkills
-          .split(",")
-          .map(skill => skill.trim()),
+        // requiredSkills:
+        // internship.requiredSkills
+        //   .split(",")
+        //   .map(skill => skill.trim()),
+
+        skills: internship.requiredSkills
+        .split(",")
+        .map(skill =>
+        skill
+        .toLowerCase()
+        .replace(/[^a-z\s]/g,"")
+        .trim()
+        ),
 
         duration: internship.duration,
 

@@ -75,6 +75,16 @@ function MyApplications() {
               </b>
             </p>
 
+            <p>
+
+            <b>Applied on:</b>{" "}
+
+            {new Date(app.createdAt).toLocaleDateString()}
+
+            </p>
+
+            
+
             <button
 
               className="btn btn-danger btn-sm mt-2"

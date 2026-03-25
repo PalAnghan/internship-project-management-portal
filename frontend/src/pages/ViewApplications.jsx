@@ -170,6 +170,22 @@ key={app._id}
 {app.studentId?.name}
 </p>
 
+<p>
+
+<b>Match:</b>{" "}
+
+{
+
+app.matchScore !== undefined
+
+? `${app.matchScore ?? 0}%`
+
+: "Calculating..."
+
+}
+
+</p>
+
 
 <p>
 

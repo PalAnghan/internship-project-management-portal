@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 function Internships() {
 
   const [internships, setInternships] = useState([]);
+  const [appliedIds, setAppliedIds] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -12,6 +13,25 @@ function Internships() {
     fetch("http://localhost:5000/api/internships")
       .then(res => res.json())
       .then(data => setInternships(data));
+  
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  fetch(
+  `http://localhost:5000/api/applications/student/${user._id}`
+  )
+
+  .then(res => res.json())
+
+  .then(data => {
+
+  const ids = data.map(app =>
+  app.internshipId._id
+  );
+
+  setAppliedIds(ids);
+
+  });
+
   };
 
   loadInternships();
@@ -120,23 +140,31 @@ function Internships() {
 
               <div className="col-md-4 mb-4" key={item._id}>
 
-                <div className="card shadow p-3">
+                <div className="card shadow-lg p-3 h-100 border-0">
 
-                  <h5>{item.title}</h5>
+                  <h5 style={{
+                    fontWeight:"600",
+                    marginBottom:"10px"
+                    }}>
+                    {item.title}
+                  </h5>
 
                   <p><b>Skills:</b> {item.requiredSkills.join(", ")}</p>
 
                   <p><b>Duration:</b> {item.duration}</p>
-                  <p><b>
+                  <p>
 
-                  Seats Left: 
+                  <b>Seats Left:</b>{" "}
 
                   {
+
                   item.maxApplicants
+                  ? `${item.maxApplicants - (item.appliedCount || 0)} / ${item.maxApplicants}`
+
+                  : "Unlimited"
+
                   }
 
-                  positions
-                  </b>
                   </p>
 
                   {/* <p>
@@ -149,13 +177,23 @@ function Internships() {
 
                   
                     <p>
-                    <b>Deadline:</b>{" "}
-                    <span style={{ color: closed ? "red" : "green" }}>
-                    {timeLeft}
-                    </span>
-                    </p>
 
-                 <button
+                <b>Deadline:</b>{" "}
+
+                <span style={{
+
+                color: closed ? "#ef4444" : "#22c55e",
+                fontWeight:"500"
+
+                }}>
+
+                {timeLeft}
+
+                </span>
+
+                </p>
+
+                 {/* <button
 
                   onClick={() => handleApply(item._id)}
 
@@ -171,7 +209,47 @@ function Internships() {
 
                   {closed ? "Closed" : "Apply"}
 
-                  </button>
+                  </button> */}
+
+                  <button
+
+                    onClick={() => handleApply(item._id)}
+
+                    disabled={
+
+                    closed ||
+
+                    appliedIds.includes(item._id)
+
+                    }
+
+                    className={
+
+                    closed ||
+
+                    appliedIds.includes(item._id)
+
+                    ? "btn btn-secondary"
+
+                    : "btn btn-primary"
+
+                    }
+
+                    >
+
+                    {
+
+                    closed
+                    ? "Closed"
+
+                    : appliedIds.includes(item._id)
+                    ? "Already Applied"
+
+                    : "Apply"
+
+                    }
+
+                    </button>
 
                 </div>
 

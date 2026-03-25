@@ -2,9 +2,16 @@ const express = require("express");
 const router = express.Router();
 const Application = require("../models/Application");
 const nodemailer = require("nodemailer");
+const mammoth = require("mammoth");
 
 const Internship =
 require("../models/Internship");
+
+const fs = require("fs");
+const pdf = require("pdf-parse");
+
+const calculateMatch =
+require("../utils/matchSkills");
 
 // APPLY INTERNSHIP
 
@@ -17,7 +24,7 @@ const { studentId, internshipId } = req.body;
 
 
 // check if student already applied
-const alreadyApplied =
+const alreadyApplied =  
 await Application.findOne({
 
  studentId: studentId,
@@ -61,62 +68,174 @@ res.status(500).send("error");
 
 // GET ALL APPLICATIONS
 
-router.get("/", async (req, res) => {
+router.get("/", async (req,res)=>{
 
-  try {
+ try{
 
-    const applications = await Application.find()
-      .populate("studentId")
-      .populate("internshipId");
+ const applications =
+ await Application.find()
 
-    res.json(applications);
+ .populate("studentId")
 
-  } catch (error) {
+ .populate("internshipId");
 
-    res.status(500).json({ error: error.message });
 
-  }
+ const updatedApps =
+ await Promise.all(
+
+ applications.map(async app => {
+
+let matchScore = 0;
+
+try{
+
+ if(app.studentId?.resume){
+
+  const filePath =
+`${__dirname}/../uploads/${app.studentId.resume}`;
+
+let resumeText = "";
+
+if(fs.existsSync(filePath)){
+
+ if(filePath.endsWith(".pdf")){
+
+ const data = await pdf(
+ fs.readFileSync(filePath)
+ );
+
+ resumeText = data.text;
+
+ console.log("RESUME TEXT:", resumeText.substring(0,200));
+
+}
+
+ else if(filePath.endsWith(".docx")){
+
+ const data =
+ await mammoth.extractRawText({
+
+ path: filePath
+``
+ });
+
+ resumeText = data.value;
+
+}
+
+}
+
+matchScore =
+calculateMatch(
+
+app.internshipId.skills || [],
+
+ resumeText || ""
+
+) || 0;
+
+ }
+
+ }
+
+
+catch(err){
+
+ console.log("Match error:", err);
+
+ matchScore = 0;
+
+}
+
+return {
+
+ ...app._doc,
+ matchScore: matchScore
+
+};  
+
+ })
+
+ );
+
+ res.json(updatedApps);
+
+ }
+ catch(err){
+
+ console.log(err);
+
+ res.json([]);
+
+ }
 
 });
 
 
 // UPDATE STATUS
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req,res)=>{
 
-  try {
+try{
 
-    const { status } = req.body;
+const { status } = req.body;
 
-    const application = await Application.findByIdAndUpdate(
-      req.params.id,
-      { status },
-      { new: true }
-    );
+const application =
+await Application.findByIdAndUpdate(
 
-    res.json(application);
+req.params.id,
 
-  } catch (error) {
+{ status },
 
-    res.status(500).json({ error: error.message });
+{ new:true }
 
-  }
+).populate("studentId")
+ .populate("internshipId");
 
-  const count =
- await Application.countDocuments({
-  internshipId
- });
 
-const internship =
- await Internship.findById(internshipId);
+// send email when approved
+if(status === "Approved"){
 
-if(count >= internship.maxApplicants){
+const transporter =
+nodemailer.createTransport({
 
- return res.send("Limit reached");
+service:"gmail",
+
+auth:{
+ user:"palanghan8@gmail.com",
+ pass:"lvpp yiow tahk pjyp" 
+}
+
+});
+
+await transporter.sendMail({
+
+to: application.studentId.email,
+
+subject:"Internship Approved",
+
+text:
+`Congratulations!
+You are selected for
+${application.internshipId.title}`
+
+});
+
+}
+
+res.json(application);
+
+}
+
+catch(err){
+
+console.log(err);
+res.status(500).send("error");
 
 }
 
 });
+
 
 // router.put("/status/:id", async (req,res)=>{
 
