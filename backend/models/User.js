@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
   required:true
  },
 
+ enrollment: {
+  type: String,
+},
+
  role:{
   type:String,
   enum:["student","admin"],

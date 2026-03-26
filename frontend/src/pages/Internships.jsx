@@ -5,266 +5,249 @@ function Internships() {
 
   const [internships, setInternships] = useState([]);
   const [appliedIds, setAppliedIds] = useState([]);
+
   const navigate = useNavigate();
 
+
+  // get internships + applied internships
   useEffect(() => {
 
-  const loadInternships = () => {
     fetch("http://localhost:5000/api/internships")
       .then(res => res.json())
       .then(data => setInternships(data));
-  
-  const user = JSON.parse(localStorage.getItem("user"));
 
-  fetch(
-  `http://localhost:5000/api/applications/student/${user._id}`
-  )
+    const user = JSON.parse(localStorage.getItem("user"));
 
-  .then(res => res.json())
+    if(user){
 
-  .then(data => {
+      fetch(
+        `http://localhost:5000/api/applications/student/${user._id}`
+      )
+      .then(res => res.json())
+      .then(data => {
 
-  const ids = data.map(app =>
-  app.internshipId._id
-  );
+        const ids =
+        data.map(app =>
+          app.internshipId._id
+        );
 
-  setAppliedIds(ids);
+        setAppliedIds(ids);
 
-  });
+      });
+
+    }
+
+  }, []);
+
+
+
+  // apply function
+  const handleApply = async(id) => {
+
+    const user =
+    JSON.parse(localStorage.getItem("user"));
+
+    const res = await fetch(
+      "http://localhost:5000/api/applications/apply",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+
+          studentId:user._id,
+          internshipId:id
+
+        })
+      }
+    );
+
+    alert(await res.text());
+
+    window.location.reload();
 
   };
 
-  loadInternships();
-
-  const timer = setInterval(() => {
-    loadInternships();
-  }, 1000);
-
-  return () => clearInterval(timer);
-
-}, []);
-  const handleApply = async (internshipId) => {
-
-    // const studentId = "699c337e2453cdc868a1878c";
-    const student = JSON.parse(localStorage.getItem("user"));
-
-  const studentId = student?._id;
-
-    await fetch("http://localhost:5000/api/applications/apply", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        studentId,
-        internshipId,
-      }),
-    });
-
-    alert("Applied successfully");
-  };  
-    const getRemainingTime = (deadline) => {
-
- const now = new Date().getTime();
-
- const end = new Date(deadline).getTime();
-
- const distance = end - now;
 
 
- if (distance <= 0) {
-  return "Closed";
- }
+  // deadline timer
+  const getRemainingTime = (deadline) => {
+
+    const now = new Date();
+    const end = new Date(deadline);
+
+    const diff = end - now;
+
+    if(diff <= 0){
+
+      return "Closed";
+
+    }
+
+    const days =
+    Math.floor(diff/(1000*60*60*24));
+
+    const hours =
+    Math.floor(
+
+      (diff%(1000*60*60*24))/
+      (1000*60*60)
+
+    );
+
+    return `${days}d ${hours}h`;
+
+  };
 
 
- const days =
- Math.floor(distance / (1000 * 60 * 60 * 24));
 
- const hours =
- Math.floor(
-  (distance % (1000 * 60 * 60 * 24)) /
-  (1000 * 60 * 60)
- );
-
- const minutes =
- Math.floor(
-  (distance % (1000 * 60 * 60)) /
-  (1000 * 60)
- );
-
- const seconds =
- Math.floor(
-  (distance % (1000 * 60)) / 1000
- );
-
-
- return `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-};
   return (
 
-    <div style={{ minHeight: "100vh", background: "linear-gradient(to right,#141e30,#243b55)" }}>
+    <div className="container mt-4">
 
-      <nav className="navbar navbar-dark bg-dark px-4">
+      <h2 className="mb-4">
+        Available Internships
+      </h2>
 
-        <h5 className="text-white">Student Portal</h5>
 
-        <button
-          className="btn btn-outline-light"
-          onClick={() => navigate("/student-dashboard")}
-        >
-          🏠 Home
-        </button>
+      <div className="row">
 
-      </nav>
+        {internships.map(item => {
 
-      <div className="container mt-4">
-
-        <h2 className="text-white text-center mb-4">
-          Available Internships
-        </h2>
-
-        <div className="row"> 
-
-          {internships.map((item) => {
-
-            const timeLeft =
+          const timeLeft =
+          getRemainingTime(
             item.applicationDeadline
-            ? getRemainingTime(item.applicationDeadline)
-            : "Closed";
+          );
 
-            const closed =
-            timeLeft === "Closed";
+          const closed =
+          timeLeft === "Closed";
 
-            return (
+          const alreadyApplied =
+          appliedIds.includes(item._id);
 
-              <div className="col-md-4 mb-4" key={item._id}>
 
-                <div className="card shadow-lg p-3 h-100 border-0">
+          return(
 
-                  <h5 style={{
-                    fontWeight:"600",
-                    marginBottom:"10px"
-                    }}>
-                    {item.title}
-                  </h5>
+            <div
+              key={item._id}
+              className="col-md-4 mb-3"
+            >
 
-                  <p><b>Skills:</b> {item.requiredSkills.join(", ")}</p>
+              <div className="card shadow p-3">
 
-                  <p><b>Duration:</b> {item.duration}</p>
-                  <p>
+                <h5>
+                  {item.title}
+                </h5>
 
-                  <b>Seats Left:</b>{" "}
 
-                  {
+                <p>
 
-                  item.maxApplicants
-                  ? `${item.maxApplicants - (item.appliedCount || 0)} / ${item.maxApplicants}`
+                  <b>Skills:</b>{" "}
 
-                  : "Unlimited"
-
-                  }
-
-                  </p>
-
-                  {/* <p>
-
-                    Deadline:
-
-                    {getRemainingTime(item.applicationDeadline)}
-
-                    </p> */}
-
-                  
-                    <p>
-
-                <b>Deadline:</b>{" "}
-
-                <span style={{
-
-                color: closed ? "#ef4444" : "#22c55e",
-                fontWeight:"500"
-
-                }}>
-
-                {timeLeft}
-
-                </span>
+                  {item.requiredSkills?.join(", ")}
 
                 </p>
 
-                 {/* <button
 
-                  onClick={() => handleApply(item._id)}
+                <p>
 
-                  disabled={closed}
+                  <b>Duration:</b>{" "}
 
-                  className={
-                  closed
-                  ? "btn btn-secondary"
-                  : "btn btn-primary"
-                  }
+                  {item.duration}
+
+                </p>
+
+
+                <p>
+
+                  <b>Seats Left:</b>{" "}
+
+                  {item.maxApplicants}
+
+                </p>
+
+
+                <p>
+
+                  <b>Deadline:</b>{" "}
+
+                  <span
+
+                    style={{
+
+                      color:
+                      closed
+                      ? "#ef4444"
+                      : "#22c55e",
+
+                      fontWeight:"500"
+
+                    }}
 
                   >
 
-                  {closed ? "Closed" : "Apply"}
+                    {timeLeft}
 
-                  </button> */}
+                  </span>
 
-                  <button
+                </p>
 
-                    onClick={() => handleApply(item._id)}
 
-                    disabled={
 
+                <button
+
+                  onClick={() =>
+                  handleApply(item._id)
+                  }
+
+                  disabled={
                     closed ||
+                    alreadyApplied
+                  }
 
-                    appliedIds.includes(item._id)
-
-                    }
-
-                    className={
-
+                  className={
                     closed ||
-
-                    appliedIds.includes(item._id)
+                    alreadyApplied
 
                     ? "btn btn-secondary"
 
                     : "btn btn-primary"
+                  }
 
-                    }
+                >
 
-                    >
-
-                    {
+                  {
 
                     closed
+
                     ? "Closed"
 
-                    : appliedIds.includes(item._id)
+                    : alreadyApplied
+
                     ? "Already Applied"
 
                     : "Apply"
 
-                    }
+                  }
 
-                    </button>
+                </button>
 
-                </div>
 
               </div>
 
-            );
+            </div>
 
-          })}
+          );
 
-        </div>
+        })}
 
       </div>
 
     </div>
+
   );
+
 }
 
 export default Internships;

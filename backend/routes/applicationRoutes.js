@@ -66,6 +66,24 @@ res.status(500).send("error");
 
 });
 
+router.get("/student-stats/:studentId", async (req, res) => {
+  try {
+    const studentId = req.params.studentId;
+
+    const total = await Application.countDocuments({ studentId });
+    const approved = await Application.countDocuments({ studentId, status: "Approved" });
+    const rejected = await Application.countDocuments({ studentId, status: "Rejected" });
+    const pending = await Application.countDocuments({
+      studentId,
+      $or: [{ status: "Pending" }, { status: { $exists: false } }]
+    });
+
+    res.json({ total, approved, rejected, pending });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // GET ALL APPLICATIONS
 
 router.get("/", async (req,res)=>{

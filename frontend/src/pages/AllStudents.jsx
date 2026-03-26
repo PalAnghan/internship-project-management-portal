@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 function AllStudents() {
 
   const [students, setStudents] = useState([]);
+  const [search, setSearch] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,28 +19,33 @@ function AllStudents() {
 
   }, []);
 
+  // 🔍 Search filter
+  const filteredStudents = students.filter(s =>
+    s.name?.toLowerCase().includes(search.toLowerCase()) ||
+    s.email?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
 
     <div
       style={{
         minHeight: "100vh",
-        background: "linear-gradient(to right,#141e30,#243b55)"
+        background: "linear-gradient(to right,#141e30,#243b55)",
+        paddingBottom: "40px"
       }}
     >
 
       {/* Navbar */}
-
       <nav className="navbar navbar-dark bg-dark px-4">
 
         <h5 className="text-white">Admin Panel</h5>
 
         <div>
-
           <button
             className="btn btn-outline-light me-2"
             onClick={() => navigate("/")}
           >
-            Home
+            🏠 Home
           </button>
 
           <button
@@ -47,22 +54,28 @@ function AllStudents() {
           >
             Dashboard
           </button>
-
         </div>
 
       </nav>
 
-      {/* Students Table */}
-
+      {/* Content */}
       <div className="container mt-5">
 
         <h2 className="text-center text-white mb-4">
           All Students
         </h2>
 
+        {/* 🔍 Search */}
+        <input
+          type="text"
+          placeholder="Search by name or email..."
+          className="form-control mb-3"
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
         <div className="card shadow p-4">
 
-          <table className="table table-bordered">
+          <table className="table table-bordered table-striped text-center">
 
             <thead>
               <tr>
@@ -75,39 +88,58 @@ function AllStudents() {
 
             <tbody>
 
-              {students.map((s) => (
+              {filteredStudents.length > 0 ? (
+                filteredStudents.map((s) => (
 
-                <tr key={s._id}>
+                  <tr key={s._id}>
 
-                  <td>{s.name}</td>
+                    <td>{s.name}</td>
 
-                  <td>{s.email}</td>
+                    <td>{s.email}</td>
 
-                  <td>
-                    {s.Skills && s.Skills.length > 0
-                      ? s.Skills.join(", ")
-                      : "No Skills"}
-                  </td>
-                  <td>
+                    <td>
+                      {s.skills && s.skills.length > 0
+                        ? s.skills.join(", ")
+                        : "No Skills"}
+                    </td>
 
-                    {s.resume ? (
-                        <a
-                            className="btn btn-primary btn-sm"
-                            href={`http://localhost:5000/${s.resume}`}
+                    <td>
+                      {s.resume ? (
+                        <div className="d-flex justify-content-center gap-2">
+
+                          {/* View */}
+                          <a
+                            className="btn btn-success btn-sm"
+                            href={`http://localhost:5000/uploads/${s.resume}`}
                             target="_blank"
                             rel="noreferrer"
-                        >
-                          📄 Download
-                        </a>
-                    ) : (
+                          >
+                            👁 View
+                          </a>
+
+                          {/* Download */}
+                          <a
+                            className="btn btn-primary btn-sm"
+                            href={`http://localhost:5000/uploads/${s.resume}`}
+                            download
+                          >
+                            📄 Download
+                          </a>
+
+                        </div>
+                      ) : (
                         <span className="text-danger">No Resume</span>
-                    )}
+                      )}
+                    </td>
 
-                  </td>
+                  </tr>
 
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="4">No students found</td>
                 </tr>
-
-              ))}
+              )}
 
             </tbody>
 

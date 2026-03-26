@@ -43,7 +43,16 @@ router.post("/", async (req, res) => {
 });
 
 
-
+router.get("/company/:companyId", async (req, res) => {
+  try {
+    const internships = await Internship.find({
+      companyId: req.params.companyId
+    });
+    res.json(internships);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 // GET ALL INTERNSHIPS
 
 
