@@ -17,6 +17,16 @@ const internshipSchema = new mongoose.Schema({
   required:true
  },
 
+ companyName: {
+  type: String,
+  default: ""
+},
+
+companyAddress: {
+  type: String,
+  default: ""
+},
+
  duration:{
   type:String,
   required:true
@@ -31,6 +41,11 @@ const internshipSchema = new mongoose.Schema({
   type:Number,
   // default:50
  },
+
+skills: {
+  type: [String],
+  default: []
+},
 
  status:{
   type:String,

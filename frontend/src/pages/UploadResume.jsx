@@ -46,7 +46,19 @@ function UploadResume() {
     }}>
 
       <nav className="navbar navbar-dark bg-dark px-4">
+
         <h5 className="text-white">Student Portal</h5>
+
+        <div>
+
+          <button
+          className="btn btn-outline-light"
+          onClick={() => navigate("/student-dashboard")}
+        >
+          🏠 Home
+        </button>
+        </div>
+
       </nav>
 
       <div className="container mt-5">
@@ -93,12 +105,6 @@ function UploadResume() {
       </div>
 
       <div style={{ textAlign: "center", marginBottom: "30px" }}>
-        <button
-          className="btn btn-light px-4"
-          onClick={() => navigate("/student-dashboard")}
-        >
-          🏠 Back to Home
-        </button>
       </div>
 
     </div>

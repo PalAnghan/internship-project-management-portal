@@ -15,7 +15,9 @@ function AddInternship() {
   requiredSkills: "",
   duration: "",
   applicationDeadline: "",
-  maxApplicants: ""
+  maxApplicants: "",
+  companyName: "",      
+  companyAddress: "" 
 });
 
   const navigate = useNavigate();
@@ -39,13 +41,11 @@ function AddInternship() {
         //   .map(skill => skill.trim()),
 
         skills: internship.requiredSkills
-        .split(",")
-        .map(skill =>
-        skill
-        .toLowerCase()
-        .replace(/[^a-z\s]/g,"")
-        .trim()
-        ),
+  ? internship.requiredSkills
+      .split(",")
+      .map(skill => skill.trim())
+      .filter(skill => skill !== "")
+  : [],
 
         duration: internship.duration,
 
@@ -53,7 +53,10 @@ function AddInternship() {
         internship.applicationDeadline,
 
         maxApplicants:
-        Number(internship.maxApplicants)
+        Number(internship.maxApplicants),
+
+        companyName: internship.companyName,      
+        companyAddress: internship.companyAddress   
 
         }),
     });
@@ -85,8 +88,34 @@ function AddInternship() {
       <div className="container mt-5">
 
         <div className="card shadow p-4" style={{ maxWidth: "500px", margin: "auto" }}>
+              <h3 className="text-center mb-4">Add Internship</h3>
+          {/* Company Name */}
+<input
+  className="form-control"
+  placeholder="Company Name"
+  onChange={(e) =>
+    setInternship({
+      ...internship,
+      companyName: e.target.value
+    })
+  }
+/>
 
-          <h3 className="text-center mb-4">Add Internship</h3>
+<br />
+
+{/* Company Address */}
+<input
+  className="form-control"
+  placeholder="Company Address"
+  onChange={(e) =>
+    setInternship({
+      ...internship,
+      companyAddress: e.target.value
+    })
+  }
+/>
+
+<br />
 
           <input
             className="form-control"

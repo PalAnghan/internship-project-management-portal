@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ FIX
 
 function Profile() {
+
+  const navigate = useNavigate(); // ✅ FIX
 
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -13,6 +16,7 @@ function Profile() {
   });
 
   const handleUpdate = async () => {
+
     await fetch(`http://localhost:5000/api/users/${user._id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -20,11 +24,11 @@ function Profile() {
     });
 
     alert("Profile updated");
+
   };
 
   return (
 
-    // ✅ FULL BACKGROUND STYLE
     <div
       style={{
         minHeight: "100vh",
@@ -33,7 +37,23 @@ function Profile() {
       }}
     >
 
-      {/* Content Container */}
+      <nav className="navbar navbar-dark bg-dark px-4">
+
+        <h5 className="text-white">Student Portal</h5>
+
+        <div>
+
+          <button
+            className="btn btn-outline-light"
+            onClick={() => navigate("/student-dashboard")}
+          >
+            🏠 Home
+          </button>
+
+        </div>
+
+      </nav>
+
       <div className="container pt-5">
 
         <div

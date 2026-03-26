@@ -16,7 +16,10 @@ router.post("/", async (req, res) => {
       description,
       requiredSkills,
       duration,
-      applicationDeadline
+      applicationDeadline,
+      maxApplicants,
+      companyName,
+      companyAddress
     } = req.body;
 
     const internship = await Internship.create({
@@ -24,7 +27,10 @@ router.post("/", async (req, res) => {
       description,
       requiredSkills,
       duration,
-      applicationDeadline
+      applicationDeadline,
+      maxApplicants,
+      companyName,
+      companyAddress
     });
 
     res.status(201).json({
@@ -101,5 +107,75 @@ router.get("/", async (req,res)=>{
 
 });
 
+router.post("/apply", async (req, res) => {
+  try {
+    const { studentId, internshipId } = req.body;
+
+    console.log("BODY:", req.body);
+
+    if (!studentId || !internshipId) {
+      return res.status(400).json({
+        message: "Missing studentId or internshipId"
+      });
+    }
+
+    const alreadyApplied = await Application.findOne({
+      studentId,
+      internshipId
+    });
+
+
+    if (alreadyApplied) {
+      return res.status(400).json({
+        message: "Already applied"
+      });
+    }
+
+    const total = await Application.countDocuments({
+      internshipId
+    });
+
+    const internship = await Internship.findById(internshipId);
+
+    if (
+      internship.maxApplicants &&
+      total >= internship.maxApplicants
+    ) {
+      return res.status(400).json({
+        message: "Internship Full"
+      });
+    }
+
+    await Application.create({
+      studentId,
+      internshipId
+    });
+
+    res.status(201).json({
+      message: "Applied successfully"
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: "Server error"
+    });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    await Internship.findByIdAndDelete(req.params.id);
+
+    // OPTIONAL: delete related applications
+    await Application.deleteMany({
+      internshipId: req.params.id
+    });
+
+    res.json({ message: "Internship deleted" });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 module.exports = router;
