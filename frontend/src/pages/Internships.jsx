@@ -3,8 +3,27 @@ import { useNavigate } from "react-router-dom";
 
 function Internships() {
 
-  const [internships, setInternships] = useState([]);
+  
   const [appliedIds, setAppliedIds] = useState([]);
+
+  const [internships,setInternships] = useState([]);
+
+  const user =
+  JSON.parse(localStorage.getItem("user"));
+
+ const studentSkills =
+(user?.skills || []).map(
+s => s.toLowerCase().trim()
+);
+
+  const sortedInternships =
+  [...internships].sort(
+  (a,b)=>
+  (b.matchScore || 0) -
+  (a.matchScore || 0)
+  );
+
+
 
   const navigate = useNavigate();
 
@@ -15,24 +34,37 @@ function Internships() {
   }, []);
 
   // ✅ FETCH INTERNSHIPS
-  const fetchInternships = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/internships");
-      const data = await res.json();
+ const fetchInternships = async () => {
 
-      const now = new Date();
+try {
 
-      const filtered = data.filter(item => {
-        const end = new Date(item.applicationDeadline);
-        return end > now;
-      });
+const res = await fetch(
+`http://localhost:5000/api/internships?studentId=${user._id}`
+);
 
-      setInternships(filtered);
+const data = await res.json();
 
-    } catch (err) {
-      console.error(err);
-    }
-  };
+const now = new Date();
+
+const filtered = data.filter(item => {
+
+const end =
+new Date(item.applicationDeadline);
+
+return end > now;
+
+});
+
+setInternships(filtered);
+
+}
+catch(err){
+
+console.error(err);
+
+}
+
+};
 
   // ✅ FETCH APPLIED INTERNSHIPS
   const fetchApplied = async () => {
@@ -129,6 +161,8 @@ function Internships() {
       (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
     );
 
+    
+
     return `${days}d ${hours}h`;
   };
 
@@ -150,7 +184,7 @@ function Internships() {
           className="btn btn-outline-light"
           onClick={() => navigate("/student-dashboard")}
         >
-          🏠 Home
+           Home
         </button>
       </nav>
 
@@ -165,9 +199,12 @@ function Internships() {
 
           {internships.length > 0 ? (
 
-            internships.map(item => {
+            sortedInternships.map(item =>  {
 
               const timeLeft = getRemainingTime(item.applicationDeadline);
+              
+              const isClosed = timeLeft === "Closed";
+
 
               const alreadyApplied = appliedIds.includes(item._id);
 
@@ -179,82 +216,350 @@ function Internships() {
 
               return (
 
-                <div key={item._id} className="col-md-4 mb-3">
+<div key={item._id} className="col-md-4 mb-4">
 
-                  <div className="card shadow p-3">
+<div
+className="card shadow-lg border-0 h-100"
+style={{
+borderRadius: "14px",
+transition: "0.2s",
+background:"#ffffff"
+}}
+>
 
-                    <p><b>Company:</b> {item.companyName || "Not Provided"}</p>
-                    <p><b>Address:</b> {item.companyAddress || "Not Provided"}</p>
+<div className="card-body d-flex flex-column">
 
-                    <h5>{item.title}</h5>
+  <span
+className="badge bg-success mb-2"
+>
 
-                    <p>
-  <b>Skills:</b>{" "}
-  {Array.isArray(item.skills) && item.skills.length > 0
-    ? item.skills.join(", ")
-    : "Not Provided"}
+{item.matchScore}% Match
+
+</span>
+
+<div className="progress mb-2">
+
+<div
+
+className="progress-bar bg-success"
+
+style={{
+
+width:
+
+`${item.matchScore}%`
+
+}}
+
+>
+
+{item.matchScore}%
+
+</div>
+
+</div>
+
+
+
+{/* TITLE */}
+
+<h5
+className="text-center mb-3"
+style={{
+fontWeight:"600",
+color:"#1e293b"
+}}
+>
+
+{item.title}
+
+</h5>
+
+
+{/* COMPANY */}
+
+<p className="mb-1">
+
+<b> Company:</b><br/>
+
+<span style={{color:"#334155"}}>
+
+{item.companyName || "Not Provided"}
+
+</span>
+
 </p>
 
-                    <p><b>Duration:</b> {item.duration}</p>
 
-                    <p>
-                      <b>Seats Left:</b>{" "}
-                      {item.maxApplicants ? seatsLeft : "No Limit"}
-                    </p>
+{/* ADDRESS */}
 
-                    <p>
-                      <b>Status:</b>{" "}
-                      <span style={{ color: isFull ? "red" : "#22c55e" }}>
-                        {isFull ? "Full" : "Open"}
-                      </span>
-                    </p>
+<p className="mb-1">
 
-                    <p>
-                      <b>Deadline:</b>{" "}
-                      <span style={{ color: "#22c55e" }}>
-                        {timeLeft}
-                      </span>
-                    </p>
+<b> Location:</b><br/>
 
-                    {/* APPLY BUTTON */}
-                    <button
-                      onClick={() => handleApply(item._id)}
-                      disabled={alreadyApplied || isFull}
-                      className={
-                        alreadyApplied || isFull
-                          ? "btn btn-secondary w-100"
-                          : "btn btn-primary w-100"
-                      }
-                    >
-                      {alreadyApplied
-                        ? "Already Applied"
-                        : isFull
-                        ? "Full / Closed"
-                        : "Apply"}
-                    </button>
+<span style={{color:"#334155"}}>
 
-                  </div>
+{item.companyAddress || "Not Provided"}
 
-                </div>
+</span>
 
-              );
+</p>
 
-            })
 
-          ) : (
 
-            <h5 className="text-center text-white">
-              No active internships available
-            </h5>
+{/* SKILLS */}
 
-          )}
+<div className="mb-2">
 
-        </div>
+<b> Skills:</b>
 
-      </div>
+<div className="mt-1">
 
-    </div>
-  );
+{
+item.requiredSkills?.length
+? item.requiredSkills.map((skill,i)=>(
+
+<span
+key={i}
+className="badge bg-primary me-1 mb-1"
+>
+
+{skill}
+
+</span>
+
+))
+
+: <span className="text-muted">Not Provided</span>
+}
+
+</div>
+
+</div>
+
+
+<p>
+
+<b>Applications:</b>
+
+{item.applications?.length || 0}
+
+</p>
+
+
+{/* DURATION */}
+
+<p className="mb-1">
+
+<b> Duration:</b>
+
+<span style={{color:"#334155"}}>
+
+{item.duration}
+
+</span>
+
+</p>
+
+
+{/* SEATS */}
+
+<p className="mb-1">
+
+<b>Seats Left:</b>
+
+<span style={{color:"#334155"}}>
+
+{
+
+seatsLeft !== null
+? seatsLeft
+: "No Limit"
+
+}
+
+</span>
+
+</p>
+
+
+{/* STATUS */}
+
+<p className="mb-1">
+
+<b> Status:</b>
+
+<span
+
+style={{
+
+color: isFull
+? "#ef4444"
+: "#22c55e",
+
+fontWeight:"600"
+
+}}
+
+>
+
+{
+
+isFull
+? "Full"
+: "Open"
+
+}
+
+</span>
+
+</p>
+
+
+{/* DEADLINE */}
+
+<p className="mb-3">
+
+<b> Deadline:</b>
+
+<span
+
+style={{
+
+color: isClosed
+? "#ef4444"
+: "#22c55e",
+
+fontWeight:"600"
+
+}}
+
+>
+
+{timeLeft}
+
+</span>
+
+</p>
+
+<p>
+
+<b>Matched:</b>{" "}
+
+{
+
+item.requiredSkills
+?.map(skill => skill.toLowerCase().trim())
+
+.filter(skill =>
+
+studentSkills.includes(skill)
+
+)
+
+.join(", ")
+
+|| "None"
+
+}
+
+</p>
+<p>
+
+<b>Missing:</b>{" "}
+
+{
+
+item.requiredSkills
+?.map(skill => skill.toLowerCase().trim())
+
+.filter(skill =>
+
+!studentSkills.includes(skill)
+
+)
+
+.join(", ")
+
+|| "None"
+
+}
+
+</p>
+
+
+{/* BUTTON */}
+
+<button
+
+onClick={() =>
+handleApply(item._id)
+}
+
+disabled={
+isClosed ||
+alreadyApplied ||
+isFull
+}
+
+className={
+
+isClosed ||
+alreadyApplied ||
+isFull
+
+? "btn btn-secondary w-100"
+
+: "btn btn-primary w-100"
+
+}
+
+style={{
+borderRadius:"8px",
+fontWeight:"500"
+}}
+
+>
+
+{
+
+isClosed
+? "Closed"
+
+: isFull  
+? "Full"
+
+: alreadyApplied
+? "Already Applied"
+
+: "Apply Now"
+
+}
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+);
+})
+) : (
+
+<p className="text-white text-center">
+No internships available
+</p>
+
+)}
+
+</div>
+</div>
+
+</div>
+
+);
 }
 
 export default Internships;

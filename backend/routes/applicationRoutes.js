@@ -4,6 +4,8 @@ const Application = require("../models/Application");
 const nodemailer = require("nodemailer");
 const mammoth = require("mammoth");
 
+const detectSkills = require("../utils/detectSkills");
+
 const Internship =
 require("../models/Internship");
 
@@ -44,8 +46,12 @@ if(alreadyApplied){
 const newApplication =
 new Application({
 
- studentId: studentId,
- internshipId: internshipId
+studentId,
+internshipId,
+
+matchScore,
+
+detectedSkills
 
 });
 
@@ -123,6 +129,12 @@ if(fs.existsSync(filePath)){
  );
 
  resumeText = data.text;
+
+ const detectedSkills =
+detectSkills(resumeText);
+
+console.log("Detected skills:",
+detectedSkills);
 
  console.log("RESUME TEXT:", resumeText.substring(0,200));
 

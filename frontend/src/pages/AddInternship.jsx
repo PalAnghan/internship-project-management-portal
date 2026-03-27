@@ -40,12 +40,12 @@ function AddInternship() {
         //   .split(",")
         //   .map(skill => skill.trim()),
 
-        skills: internship.requiredSkills
-  ? internship.requiredSkills
-      .split(",")
-      .map(skill => skill.trim())
-      .filter(skill => skill !== "")
-  : [],
+        requiredSkills: internship.requiredSkills
+          ? internship.requiredSkills
+          .split(",")
+          .map(skill => skill.trim())
+          .filter(skill => skill !== "")
+          : [],
 
         duration: internship.duration,
 

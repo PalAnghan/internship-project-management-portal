@@ -4,6 +4,7 @@ const router = express.Router();
 const { register, login, getUserById } = require("../controller/usercontroller");
 const upload = require("../middleware/resume");
 
+
 const User = require("../models/User");
 
 router.post("/register", upload.single("resume"), register);
@@ -48,5 +49,44 @@ router.post("/upload-resume", upload.single("resume"), async (req, res) => {
 
   }
 });
+
+router.put("/profile", async (req,res)=>{
+
+try{
+
+const { name, skills, bio, github, linkedin } = req.body;
+
+const userId = req.body._id || req.body.id;
+
+const updatedUser =
+await User.findByIdAndUpdate(
+
+userId,
+
+{
+name,
+skills,
+bio,
+github,
+linkedin
+},
+
+{ new:true }
+
+);
+
+res.json(updatedUser);
+
+}
+catch(err){
+
+res.status(500).json({
+error: err.message
+});
+
+}
+
+});
+
 
 module.exports = router;

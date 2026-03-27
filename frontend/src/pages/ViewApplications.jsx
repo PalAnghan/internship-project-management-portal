@@ -25,7 +25,7 @@ function ViewApplications() {
     setInternships(data);
   };
 
-  // ✅ UPDATE STATUS
+  //  UPDATE STATUS
   const updateStatus = async (id, status) => {
     await fetch(`http://localhost:5000/api/applications/status/${id}`, {
       method: "PUT",
@@ -37,7 +37,7 @@ function ViewApplications() {
     loadApplications();
   };
 
-  // ✅ DELETE INTERNSHIP
+  //  DELETE INTERNSHIP
   const deleteInternship = async (id) => {
 
     if (!window.confirm("Delete this internship?")) return;
@@ -48,7 +48,7 @@ function ViewApplications() {
 
     alert("Internship deleted");
 
-    // 🔥 AUTO UPDATE UI
+    //  AUTO UPDATE UI
     setInternships(internships.filter(i => i._id !== id));
     loadApplications();
   };
@@ -67,7 +67,7 @@ function ViewApplications() {
           className="btn btn-outline-light"
           onClick={() => navigate("/admin")}
         >
-          🏠 Home
+           Home
         </button>
       </nav>
 
@@ -97,6 +97,8 @@ function ViewApplications() {
           return (
             <div key={internship._id} className="mb-5">
 
+              
+
               {/* TITLE */}
               <h4 style={{ textAlign: "center", color: "#fff" }}>
                 {internship.title}
@@ -114,13 +116,13 @@ function ViewApplications() {
                 / {internship.maxApplicants || "∞"}
               </p>
 
-              {/* 🔥 DELETE BUTTON */}
+              {/*  DELETE BUTTON */}
               <div className="text-center mb-3">
                 <button
                   className="btn btn-danger btn-sm"
                   onClick={() => deleteInternship(internship._id)}
                 >
-                  🗑 Delete Internship
+                   Delete Internship
                 </button>
               </div>
 
@@ -139,81 +141,142 @@ function ViewApplications() {
               </div>
 
               {/* APPLICATIONS */}
-              <div className="row">
 
-                {companyApps.length > 0 ? (
+                  <div className="row">
+
+                  {companyApps.length > 0 ? (
+
                   companyApps.map(app => (
-                    <div className="col-md-4 mb-4" key={app._id}>
-                      <div className="card shadow p-3">
 
-                        <p><b>Student:</b> {app.studentId?.name}</p>
-                        <p><b>Email:</b> {app.studentId?.email}</p>
+                  <div className="col-md-4 mb-4" key={app._id}>
 
-                        <p>
-                          <b>Status:</b>
-                          <span style={{
-                            color:
-                              app.status === "Approved"
-                                ? "green"
-                                : app.status === "Rejected"
-                                ? "red"
-                                : "orange",
-                            fontWeight: "bold"
-                          }}>
-                            {" "}{app.status}
-                          </span>
-                        </p>
+                  <div className="card shadow p-3">
 
-                        <div className="d-flex justify-content-between mb-2">
+                  <p><b>Student:</b> {app.studentId?.name}</p>
 
-                          <button
-                            className="btn btn-success btn-sm"
-                            onClick={() => updateStatus(app._id, "Approved")}
-                          >
-                            Approve
-                          </button>
+                  <p><b>Email:</b> {app.studentId?.email}</p>
 
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => updateStatus(app._id, "Rejected")}
-                          >
-                            Reject
-                          </button>
 
-                        </div>
+                  <div>
 
-                        {/* RESUME */}
-                        {app.studentId?.resume ? (
-                          <a
-                            href={`http://localhost:5000/uploads/${app.studentId.resume}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <button className="btn btn-secondary btn-sm w-100">
-                              View Resume
-                            </button>
-                          </a>
-                        ) : (
-                          <button className="btn btn-secondary btn-sm w-100" disabled>
-                            No Resume
-                          </button>
-                        )}
+                  <b>Detected Skills:</b>
 
-                      </div>
-                    </div>
+                  <div className="mt-1">
+
+                  {
+
+                  app.detectedSkills?.length > 0
+
+                  ? app.detectedSkills.map((skill,i)=>(
+
+                  <span
+                  key={i}
+                  className="badge bg-success me-1 mb-1"
+                  >
+
+                  {skill}
+
+                  </span>
+
                   ))
-                ) : (
-                  <p style={{ textAlign: "center", color: "#aaa" }}>
-                    No students applied
-                  </p>
-                )}
 
-              </div>
+                  : "No skills detected"
+
+                  }
+
+                  </div>
+
+                  </div>
+
+
+                  <p>
+
+                  <b>Status:</b>
+
+                  <span style={{
+
+                  color:
+
+                  app.status === "Approved"
+
+                  ? "green"
+
+                  : app.status === "Rejected"
+
+                  ? "red"
+
+                  : "orange"
+
+                  }}>
+
+                  {app.status}
+
+                  </span>
+
+                  </p>
+
+
+                  {/* resume */}
+
+                  {
+
+                  app.studentId?.resume ? (
+
+                  <a
+
+                  href={`http://localhost:5000/uploads/${app.studentId.resume}`}
+
+                  target="_blank"
+
+                  rel="noreferrer"
+
+                  >
+
+                  <button className="btn btn-secondary btn-sm w-100">
+
+                  View Resume
+
+                  </button>
+
+                  </a>
+
+                  ) : (
+
+                  <button className="btn btn-secondary btn-sm w-100" disabled>
+
+                  No Resume
+
+                  </button>
+
+                  )
+
+                  }
+
+                  </div>
+
+                  </div>
+
+                  ))
+
+                  ) : (
+
+                  <p className="text-center text-muted">
+
+                  No students applied
+
+                  </p>
+
+                  )}
+
+                  </div>
 
             </div>
           );
-        })}
+      
 
+      }
+
+      )}
       </div>
     </div>
   );

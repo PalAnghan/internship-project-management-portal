@@ -42,10 +42,10 @@ companyAddress: {
   // default:50
  },
 
-skills: {
-  type: [String],
-  default: []
-},
+// skills: {
+//   type: [String],
+//   default: []
+// },
 
  status:{
   type:String,

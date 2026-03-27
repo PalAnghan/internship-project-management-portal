@@ -1,9 +1,57 @@
 const express = require("express");
 const Internship = require("../models/Internship");
 const Application = require("../models/Application");
+const matchSkills = require("../utils/matchSkills");
+const User = require("../models/User");
 
 const router = express.Router();
 
+router.get("/", async (req,res)=>{
+
+try{
+
+const studentId = req.query.studentId;
+
+const student =
+await User.findById(studentId);
+
+const internships =
+await Internship.find();
+
+const result =
+internships.map(internship => {
+
+const matchScore =
+matchSkills(
+
+student?.skills || [],
+
+internship.requiredSkills || []
+
+);
+
+return {
+
+...internship._doc,
+
+matchScore
+
+};
+
+});
+
+res.json(result);
+
+}
+catch(err){
+
+res.status(500).json({
+error: err.message
+});
+
+}
+
+});
 
 // CREATE INTERNSHIP (Admin)
 
@@ -176,6 +224,42 @@ router.delete("/:id", async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+
+router.get("/", async (req,res)=>{
+
+const studentId = req.query.studentId;
+
+const student =
+await User.findById(studentId);
+
+const internships =
+await Internship.find();
+
+const result = internships.map(internship => {
+
+const matchScore =
+matchSkills(
+
+student.skills,
+
+internship.requiredSkills
+
+);
+
+return {
+
+...internship._doc,
+
+matchScore
+
+};
+
+});
+
+res.json(result);
+
 });
 
 module.exports = router;

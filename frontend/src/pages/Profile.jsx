@@ -1,116 +1,275 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ FIX
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
 
-  const navigate = useNavigate(); // ✅ FIX
+const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem("user"));
+const user =
+JSON.parse(localStorage.getItem("user"));
 
-  const [form, setForm] = useState({
-    name: user?.name || "",
-    skills: user?.skills || "",
-    bio: user?.bio || "",
-    github: user?.github || "",
-    linkedin: user?.linkedin || ""
-  });
+const [form, setForm] = useState({
 
-  const handleUpdate = async () => {
+name: user?.name || "",
 
-    await fetch(`http://localhost:5000/api/users/${user._id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form)
-    });
+skills: user?.skills
+? user.skills.join(", ")
+: "",
 
-    alert("Profile updated");
+bio: user?.bio || "",
 
-  };
+github: user?.github || "",
 
-  return (
+linkedin: user?.linkedin || ""
 
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(to right,#141e30,#243b55)",
-        paddingBottom: "40px"
-      }}
-    >
+});
 
-      <nav className="navbar navbar-dark bg-dark px-4">
 
-        <h5 className="text-white">Student Portal</h5>
+const handleUpdate = async () => {
 
-        <div>
+const updatedData = {
 
-          <button
-            className="btn btn-outline-light"
-            onClick={() => navigate("/student-dashboard")}
-          >
-            🏠 Home
-          </button>
+...form,
 
-        </div>
+_id: user._id,
 
-      </nav>
+skills: form.skills
+.split(",")
+.map(s => s.trim().toLowerCase())
 
-      <div className="container pt-5">
+};    
 
-        <div
-          className="card shadow p-4"
-          style={{ maxWidth: "500px", margin: "auto" }}
-        >
+await fetch(
 
-          <h2 className="text-center mb-3">Profile</h2>
+`http://localhost:5000/api/users/profile`,
 
-          <input
-            className="form-control mb-2"
-            placeholder="Name"
-            value={form.name}
-            onChange={e => setForm({ ...form, name: e.target.value })}
-          />
+{
 
-          <input
-            className="form-control mb-2"
-            placeholder="Skills"
-            value={form.skills}
-            onChange={e => setForm({ ...form, skills: e.target.value })}
-          />
+method: "PUT",
 
-          <textarea
-            className="form-control mb-2"
-            placeholder="Bio"
-            value={form.bio}
-            onChange={e => setForm({ ...form, bio: e.target.value })}
-          />
+headers: {
 
-          <input
-            className="form-control mb-2"
-            placeholder="GitHub"
-            value={form.github}
-            onChange={e => setForm({ ...form, github: e.target.value })}
-          />
+"Content-Type": "application/json"
 
-          <input
-            className="form-control mb-2"
-            placeholder="LinkedIn"
-            value={form.linkedin}
-            onChange={e => setForm({ ...form, linkedin: e.target.value })}
-          />
+},
 
-          <button
-            className="btn btn-primary mt-2 w-100"
-            onClick={handleUpdate}
-          >
-            Update Profile
-          </button>
+body: JSON.stringify(updatedData)
 
-        </div>
+}
 
-      </div>
+);
 
-    </div>
-  );
+alert("Profile updated successfully");
+
+};
+
+
+return (
+
+<div
+
+style={{
+
+minHeight: "100vh",
+
+background:
+
+"linear-gradient(to right,#141e30,#243b55)",
+
+paddingBottom: "40px"
+
+}}
+
+>
+
+
+<nav className="navbar navbar-dark bg-dark px-4">
+
+<h5 className="text-white">
+
+Student Portal
+
+</h5>
+
+
+<button
+
+className="btn btn-outline-light"
+
+onClick={() => navigate("/student-dashboard")}
+
+>
+
+Home
+
+</button>
+
+</nav>
+
+
+<div className="container pt-5">
+
+
+<div
+
+className="card shadow p-4"
+
+style={{
+
+maxWidth: "500px",
+
+margin: "auto",
+
+borderRadius: "12px"
+
+}}
+
+>
+
+
+<h2 className="text-center mb-3">
+
+Profile
+
+</h2>
+
+
+<input
+
+className="form-control mb-2"
+
+placeholder="Name"
+
+value={form.name}
+
+onChange={e =>
+
+setForm({
+
+...form,
+
+name: e.target.value
+
+})
+
+}
+
+/>
+
+
+<input
+
+className="form-control mb-2"
+
+placeholder="Skills (comma separated)"
+
+value={form.skills}
+
+onChange={e =>
+
+setForm({
+
+...form,
+
+skills: e.target.value
+
+})
+
+}
+
+/>
+
+
+<textarea
+
+className="form-control mb-2"
+
+placeholder="Bio"
+
+value={form.bio}
+
+onChange={e =>
+
+setForm({
+
+...form,
+
+bio: e.target.value
+
+})
+
+}
+
+/>
+
+
+<input
+
+className="form-control mb-2"
+
+placeholder="Github link"
+
+value={form.github}
+
+onChange={e =>
+
+setForm({
+
+...form,
+
+github: e.target.value
+
+})
+
+}
+
+/>
+
+
+<input
+
+className="form-control mb-3"
+
+placeholder="LinkedIn link"
+
+value={form.linkedin}
+
+onChange={e =>
+
+setForm({
+
+...form,
+
+linkedin: e.target.value
+
+})
+
+}
+
+/>
+
+
+<button
+
+className="btn btn-primary w-100"
+
+onClick={handleUpdate}
+
+>
+
+Update Profile
+
+</button>
+
+
+</div>
+
+</div>
+
+</div>
+
+);
+
 }
 
 export default Profile;

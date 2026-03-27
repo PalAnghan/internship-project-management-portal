@@ -43,42 +43,41 @@ const commonSkills = [
 
 ];
 
+function normalize(skill){
+return skill
+.toLowerCase()
+.trim()
+.replace(".js","")
+.replace("js","javascript");
+}
 
-function normalizeText(text){
 
- return text
- .toLowerCase()
+function matchSkills(studentSkills=[], requiredSkills=[]){
 
- // html css versions
- .replace(/html5/g,"html")
- .replace(/css3/g,"css")
+const student =
+studentSkills.map(s =>
+s.toLowerCase().trim()
+);
 
- // javascript variations
- .replace(/javascript/g,"javascript")
- .replace(/\bjs\b/g,"javascript")
- .replace(/es6/g,"javascript")
+const required =
+requiredSkills.map(s =>
+s.toLowerCase().trim()
+);
 
- // react variations
- .replace(/react.js/g,"react")
- .replace(/reactjs/g,"react")
+const matched =
+required.filter(skill =>
+student.includes(skill)
+);
 
- // node variations
- .replace(/node.js/g,"node")
- .replace(/nodejs/g,"node")
-
- // express variations
- .replace(/express.js/g,"express")
- .replace(/expressjs/g,"express")
-
- // database variations
- .replace(/mongo db/g,"mongodb")
- .replace(/mongo/g,"mongodb")
-
- // remove symbols
- .replace(/[^a-z\s]/g," ");
+return required.length === 0
+? 0
+: Math.round(
+(matched.length / required.length) * 100
+);
 
 }
 
+module.exports = matchSkills;
 
 
 function extractSkillsFromText(text){
@@ -128,5 +127,24 @@ function calculateMatch(internshipSkills, resumeText){
  );
 
 }
+function matchSkills(studentSkills = [], requiredSkills = []) {
 
-module.exports = calculateMatch;
+if(!studentSkills.length || !requiredSkills.length)
+return 0;
+
+const matched =
+requiredSkills.filter(skill =>
+
+studentSkills.includes(skill.toLowerCase())
+
+);
+
+return Math.round(
+
+(matched.length / requiredSkills.length) * 100
+
+);
+
+}
+
+module.exports = matchSkills;
