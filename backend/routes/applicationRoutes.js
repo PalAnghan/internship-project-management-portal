@@ -17,41 +17,58 @@ require("../utils/matchSkills");
 
 // APPLY INTERNSHIP
 
-router.post("/apply", async (req,res)=>{
+router.post("/apply", async (req, res) => {
 
-try{
+try {
 
-// get student and internship id from frontend
 const { studentId, internshipId } = req.body;
 
 
-// check if student already applied
-const alreadyApplied =  
-await Application.findOne({
+// check already applied
+const alreadyApplied = await Application.findOne({
 
- studentId: studentId,
- internshipId: internshipId
+studentId,
+internshipId
 
 });
 
+if (alreadyApplied) {
 
-if(alreadyApplied){
-
- return res.send("You already applied for this internship");
+return res.send("You already applied for this internship");
 
 }
 
 
-// create new application
-const newApplication =
-new Application({
+// get internship details
+const internship = await Internship.findById(internshipId);
+
+
+// get student profile
+const User = require("../models/User");
+
+const student = await User.findById(studentId);
+
+
+// calculate match %
+const matchScore = calculateMatch(
+
+student?.skills || [],
+
+internship?.requiredSkills || []
+
+);
+
+
+// create application
+const newApplication = new Application({
 
 studentId,
+
 internshipId,
 
 matchScore,
 
-detectedSkills
+detectedSkills: student?.skills || []
 
 });
 
@@ -61,11 +78,13 @@ await newApplication.save();
 
 res.send("Applied successfully");
 
+
 }
 
-catch(err){
+catch (err) {
 
 console.log(err);
+
 res.status(500).send("error");
 
 }

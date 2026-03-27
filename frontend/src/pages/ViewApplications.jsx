@@ -33,6 +33,7 @@ function ViewApplications() {
       body: JSON.stringify({ status }),
     });
 
+
     alert(`Status updated to ${status}`);
     loadApplications();
   };
@@ -139,6 +140,7 @@ function ViewApplications() {
                   Download Excel
                 </button>
               </div>
+              
 
               {/* APPLICATIONS */}
 
@@ -150,70 +152,105 @@ function ViewApplications() {
 
                   <div className="col-md-4 mb-4" key={app._id}>
 
-                  <div className="card shadow p-3">
+                  <div style={{
 
-                  <p><b>Student:</b> {app.studentId?.name}</p>
-
-                  <p><b>Email:</b> {app.studentId?.email}</p>
-
-
-                  <div>
-
-                  <b>Detected Skills:</b>
-
-                  <div className="mt-1">
-
-                  {
-
-                  app.detectedSkills?.length > 0
-
-                  ? app.detectedSkills.map((skill,i)=>(
-
-                  <span
-                  key={i}
-                  className="badge bg-success me-1 mb-1"
-                  >
-
-                  {skill}
-
-                  </span>
-
-                  ))
-
-                  : "No skills detected"
-
-                  }
-
-                  </div>
-
-                  </div>
-
-
-                  <p>
-
-                  <b>Status:</b>
-
-                  <span style={{
-
-                  color:
-
-                  app.status === "Approved"
-
-                  ? "green"
-
-                  : app.status === "Rejected"
-
-                  ? "red"
-
-                  : "orange"
+                  background:"#f8fafc",
+                  padding:"15px",
+                  borderRadius:"10px",
+                  boxShadow:"0 4px 10px rgba(0,0,0,0.08)",
+                  marginBottom:"20px",
+                  width:"320px"
 
                   }}>
 
-                  {app.status}
+                        <p><b>Student:</b> {app.studentId?.name}</p>
 
-                  </span>
+                        <p><b>Email:</b> {app.studentId?.email}</p>
 
-                  </p>
+                        <p>
+                        <b>Detected Skills:</b>
+
+                        {app.detectedSkills?.length > 0
+                        ? app.detectedSkills.join(", ")
+                        : "No skills detected"}
+                        </p>
+
+
+                        <p>
+                        <b><span style={{
+
+padding:"4px 10px",
+borderRadius:"20px",
+fontSize:"12px",
+fontWeight:"600",
+
+background:
+
+app.status==="Approved"
+? "#dcfce7"
+
+: app.status==="Rejected"
+? "#fee2e2"
+
+: "#fef3c7",
+
+color:
+
+app.status==="Approved"
+? "#166534" 
+
+: app.status==="Rejected"
+? "#991b1b"
+
+: "#92400e"
+
+}}>
+Status:
+</span></b>
+
+                        <span style={{
+
+                        color:
+                        app.status==="Approved"
+                        ? "green"
+                        :
+                        app.status==="Rejected"
+                        ? "red"
+                        :
+                        "orange"
+
+                        }}>
+
+                        {app.status}
+
+                        </span>
+
+                        </p>
+
+
+                        <div>
+
+                        <button
+                        onClick={()=>updateStatus(app._id,"Approved")}
+                        >
+
+                        Approve
+
+                        </button>
+
+
+                        <button
+                        onClick={()=>updateStatus(app._id,"Rejected")}
+                        >
+
+                        Reject
+
+                        </button>
+
+                        </div>
+
+
+
 
 
                   {/* resume */}
@@ -280,6 +317,7 @@ function ViewApplications() {
       </div>
     </div>
   );
+
 }
 
 export default ViewApplications;

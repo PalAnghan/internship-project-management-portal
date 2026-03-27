@@ -1,13 +1,27 @@
 const express = require("express");
 const admin = express.Router();
-const { admindetalis, register, login, getAllStudents, downloadResume } = require("../controller/admincontroller");
 
+const {
+  admindetails,
+  register,
+  login,
+  getAllStudents,
+  downloadResume
+} = require("../controller/admincontroller");
+
+
+// register & login
 admin.post("/register", register);
 admin.post("/login", login);
-admin.get("/", admindetalis);
-admin.get("/students", getAllStudents);
-admin.get("/students/resume/:id", downloadResume);
 
+// admin details
+admin.get("/", admindetails);
+
+// get all students
+admin.get("/students", getAllStudents);
+
+// download resume
+admin.get("/students/resume/:id", downloadResume);
 
 
 module.exports = admin;
