@@ -8,54 +8,92 @@ const navigate = useNavigate();
 const user =
 JSON.parse(localStorage.getItem("user"));
 
-const [form, setForm] = useState({
+const [department,setDepartment] =
+useState(user.department || "");
 
-name: user?.name || "",
+const [form,setForm] = useState({
 
-skills: user?.skills
-? user.skills.join(", ")
-: "",
+ name:user?.name || "",
 
-bio: user?.bio || "",
+ skills:user?.skills
+ ? user.skills.join(", ")
+ : "",
 
-github: user?.github || "",
+ bio:user?.bio || "",
 
-linkedin: user?.linkedin || ""
+ github:user?.github || "",
+
+ linkedin:user?.linkedin || "",
+
+ enrollment:
+user?.enrollment || ""
 
 });
 
 
 const handleUpdate = async () => {
 
-const updatedData = {
+const userData =
+JSON.parse(localStorage.getItem("user"));
 
-...form,
-
-_id: user._id,
-
-skills: form.skills
+const skillsArray =
+form.skills
 .split(",")
-.map(s => s.trim().toLowerCase())
+.map(s => s.trim().toLowerCase());
 
-};    
+const updatedUser = {
 
-await fetch(
+_id: userData._id,
 
-`http://localhost:5000/api/users/profile`,
+name: form.name,
+
+bio: form.bio,
+
+github: form.github,
+
+linkedin: form.linkedin,
+
+skills: skillsArray,
+
+department: department,
+
+enrollment:form.enrollment
+
+};
+
+console.log("sending",updatedUser);
+
+
+const res = await fetch(
+
+"http://localhost:5000/api/users/profile",
 
 {
 
-method: "PUT",
+method:"PUT",
 
-headers: {
+headers:{
 
-"Content-Type": "application/json"
+"Content-Type":"application/json"
 
 },
 
-body: JSON.stringify(updatedData)
+body: JSON.stringify(updatedUser)
 
 }
+
+);
+
+const data = await res.json();
+
+console.log("response",data);
+
+
+localStorage.setItem(
+
+"user",
+
+JSON.stringify(data)
 
 );
 
@@ -64,39 +102,42 @@ alert("Profile updated successfully");
 };
 
 
+
 return (
 
 <div
 
 style={{
 
-minHeight: "100vh",
+minHeight:"100vh",
 
 background:
+"linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
 
-"linear-gradient(to right,#141e30,#243b55)",
-
-paddingBottom: "40px"
+paddingBottom:"50px"
 
 }}
 
 >
 
+{/* NAVBAR */}
 
 <nav className="navbar navbar-dark bg-dark px-4">
 
-<h5 className="text-white">
+<h5 className="text-white m-0">
 
 Student Portal
 
 </h5>
 
-
 <button
 
 className="btn btn-outline-light"
 
-onClick={() => navigate("/student-dashboard")}
+onClick={()=>
+navigate("/student-dashboard")
+
+}
 
 >
 
@@ -107,160 +148,397 @@ Home
 </nav>
 
 
-<div className="container pt-5">
 
+{/* CARD */}
+
+<div className="container pt-5">
 
 <div
 
-className="card shadow p-4"
+className="card border-0"
 
 style={{
 
-maxWidth: "500px",
+maxWidth:"520px",
 
-margin: "auto",
+margin:"auto",
 
-borderRadius: "12px"
+borderRadius:"18px",
+
+background:"rgba(255,255,255,0.95)",
+
+backdropFilter:"blur(10px)",
+
+boxShadow:
+"0 20px 60px rgba(0,0,0,0.25)",
+
+padding:"30px"
 
 }}
 
 >
 
+{/* AVATAR */}
 
-<h2 className="text-center mb-3">
+<div className="text-center mb-3">
 
-Profile
+<div
 
-</h2>
+style={{
 
+width:"85px",
 
-<input
+height:"85px",
 
-className="form-control mb-2"
+borderRadius:"50%",
 
-placeholder="Name"
+margin:"auto",
 
-value={form.name}
+display:"flex",
 
-onChange={e =>
+justifyContent:"center",
 
-setForm({
+alignItems:"center",
 
-...form,
+fontSize:"30px",
 
-name: e.target.value
+color:"white",
 
-})
+background:
+"linear-gradient(90deg,#2979ff,#00b0ff)"
 
-}
+}}
 
-/>
+>
 
+👤
 
-<input
+</div>
 
-className="form-control mb-2"
+<h4 className="mt-2 fw-bold">
 
-placeholder="Skills (comma separated)"
+Student Profile
 
-value={form.skills}
+</h4>
 
-onChange={e =>
+<p className="text-muted">
 
-setForm({
+Improve AI internship matching
 
-...form,
+</p>
 
-skills: e.target.value
-
-})
-
-}
-
-/>
+</div>
 
 
-<textarea
 
-className="form-control mb-2"
+{/* NAME */}
 
-placeholder="Bio"
+<label className="fw-semibold">
 
-value={form.bio}
+Name
 
-onChange={e =>
-
-setForm({
-
-...form,
-
-bio: e.target.value
-
-})
-
-}
-
-/>
-
-
-<input
-
-className="form-control mb-2"
-
-placeholder="Github link"
-
-value={form.github}
-
-onChange={e =>
-
-setForm({
-
-...form,
-
-github: e.target.value
-
-})
-
-}
-
-/>
-
+</label>
 
 <input
 
 className="form-control mb-3"
 
-placeholder="LinkedIn link"
+value={form.name}
 
-value={form.linkedin}
+placeholder="Enter name"
 
-onChange={e =>
+onChange={(e)=>
 
 setForm({
 
 ...form,
 
-linkedin: e.target.value
+name:e.target.value
 
 })
 
 }
 
+style={{
+
+borderRadius:"10px",
+
+padding:"10px"
+
+}}
+
+/>
+
+{/* ENROLLMENT NUMBER */}
+<label>Enrollment Number</label>
+
+<input
+className="form-control mb-3"
+
+value={form.enrollment || ""}
+
+onChange={(e)=>
+setForm({
+...form,
+enrollment:e.target.value
+})
+}
 />
 
 
+
+{/* SKILLS */}
+
+<label className="fw-semibold">
+
+Skills
+
+</label>
+
+<input
+
+className="form-control mb-3"
+
+value={form.skills}
+
+placeholder="react, node, css"
+
+onChange={(e)=>
+
+setForm({
+
+...form,
+
+skills:e.target.value
+
+})
+
+}
+
+style={{
+
+borderRadius:"10px",
+
+padding:"10px"
+
+}}
+
+/>
+
+
+
+{/* BIO */}
+
+<label className="fw-semibold">
+
+Bio
+
+</label>
+
+<textarea
+
+className="form-control mb-3"
+
+value={form.bio}
+
+placeholder="short intro"
+
+onChange={(e)=>
+
+setForm({
+
+...form,
+
+bio:e.target.value
+
+})
+
+}
+
+style={{
+
+borderRadius:"10px",
+
+height:"80px"
+
+}}
+
+/>
+
+
+
+{/* DEPARTMENT */}
+
+<label className="fw-semibold">
+
+Department
+
+</label>
+
+<select
+
+className="form-control mb-4"
+
+value={department}
+
+onChange={(e)=>
+
+setDepartment(e.target.value)
+
+}
+
+style={{
+
+borderRadius:"10px",
+
+padding:"10px"
+
+}}
+
+>
+
+<option value="">
+
+Select Department
+
+</option>
+
+<option value="BCA">
+
+BCA
+
+</option>
+
+<option value="B.Tech">
+
+B.Tech
+
+</option>
+
+<option value="Diploma">
+
+Diploma
+
+</option>
+
+<option value="BBA">
+
+BBA
+
+</option>
+
+</select>
+
+
+
+{/* LINKS */}
+
+<label className="fw-semibold">
+
+Github
+
+</label>
+
+<input
+
+className="form-control mb-3"
+
+value={form.github}
+
+placeholder="github url"
+
+onChange={(e)=>
+
+setForm({
+
+...form,
+
+github:e.target.value
+
+})
+
+}
+
+style={{
+
+borderRadius:"10px"
+
+}}
+
+/>
+
+<label className="fw-semibold">
+
+LinkedIn
+
+</label>
+
+<input
+
+className="form-control mb-4"
+
+value={form.linkedin}
+
+placeholder="linkedin url"
+
+onChange={(e)=>
+
+setForm({
+
+...form,
+
+linkedin:e.target.value
+
+})
+
+}
+
+style={{
+
+borderRadius:"10px"
+
+}}
+
+/>
+
+
+
+
+{/* BUTTON */}
+
 <button
 
-className="btn btn-primary w-100"
+className="btn w-100"
 
 onClick={handleUpdate}
+
+style={{
+
+padding:"12px",
+
+borderRadius:"12px",
+
+fontWeight:"600",
+
+color:"white",
+
+border:"none",
+
+background:
+"linear-gradient(90deg,#2979ff,#00b0ff)",
+
+boxShadow:
+"0 8px 25px rgba(0,176,255,0.45)",
+
+transition:"0.3s"
+
+}}
 
 >
 
 Update Profile
 
 </button>
-
 
 </div>
 

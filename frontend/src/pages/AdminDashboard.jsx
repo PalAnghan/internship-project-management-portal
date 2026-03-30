@@ -1,166 +1,626 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function AdminDashboard() {
 
-  const navigate = useNavigate();
-  const [stats, setStats] = useState({
-    total: 0,
-    approved: 0,
-    rejected: 0,
-    pending: 0
-  });
+ const navigate = useNavigate();
 
-  // ✅ Fetch stats
-  useEffect(() => {
-    fetch("http://localhost:5000/api/applications/stats")
-      .then(res => res.json())
-      .then(data => setStats(data))
-      .catch(err => console.log(err));
-  }, []);
+ const [stats, setStats] = useState({
 
-  // ✅ Logout
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    navigate("/admin-login");
-  };
+  total:0,
+  approved:0,
+  rejected:0,
+  pending:0
 
-  return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(to right,#141e30,#243b55)",
-        paddingBottom: "40px"
-      }}
-    >
+ });
 
-      {/* 🔥 Navbar */}
-      <nav className="navbar navbar-dark bg-dark px-4">
 
-        <h5 className="text-white">Admin Panel</h5>
+ const handleLogout = () => {
 
-        <div>
+  localStorage.removeItem("user");
 
-          <button
-            className="btn btn-outline-light me-2"
-            onClick={() => navigate("/add-internship")}
-          >
-            ➕ Add Internship
-          </button>
+  navigate("/admin-login");
 
-          <button
-            className="btn btn-outline-light me-2"
-            onClick={() => navigate("/view-applications")}
-          >
-            📄 Applications
-          </button>
+ };
 
-          <button
-            className="btn btn-outline-info me-2"
-            onClick={() => navigate("/all-students")}
-          >
-            👨‍🎓 Students
-          </button>
 
-          <button
-            className="btn btn-danger"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+ return(
 
-        </div>
+ <div
 
-      </nav>
+ style={{
 
-      {/* 🔥 Dashboard */}
-      <div className="container mt-5">
+ minHeight:"100vh",
 
-        <h2 className="text-white text-center mb-4">
-          Admin Dashboard
-        </h2>
+ background:
+ "linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
 
-        {/* ✅ STATS CARDS */}
-        <div className="row text-center mb-5">
+ paddingBottom:"50px"
 
-          <div className="col-md-3">
-            <div className="card p-3 shadow">
-              <h5>Total</h5>
-              <h3>{stats.total}</h3>
-            </div>
-          </div>
+ }}
 
-          <div className="col-md-3">
-            <div className="card p-3 shadow bg-success text-white">
-              <h5>Approved</h5>
-              <h3>{stats.approved}</h3>
-            </div>
-          </div>
+ >
 
-          <div className="col-md-3">
-            <div className="card p-3 shadow bg-danger text-white">
-              <h5>Rejected</h5>
-              <h3>{stats.rejected}</h3>
-            </div>
-          </div>
+ {/* NAVBAR */}
 
-          <div className="col-md-3">
-            <div className="card p-3 shadow bg-warning">
-              <h5>Pending</h5>
-              <h3>{stats.pending}</h3>
-            </div>
-          </div>
+ <nav
 
-        </div>
+ className="navbar px-4"
 
-        {/* ✅ ACTION CARDS */}
-        <div className="row g-4">
+ style={{
 
-          <div className="col-md-4">
-            <div className="card shadow text-center p-4">
-              <h5>Add Internship</h5>
+ background:"rgba(0,0,0,0.6)",
 
-              <button
-                className="btn btn-primary mt-2"
-                onClick={() => navigate("/add-internship")}
-              >
-                Open
-              </button>
-            </div>
-          </div>
+ backdropFilter:"blur(10px)",
 
-          <div className="col-md-4">
-            <div className="card shadow text-center p-4">
-              <h5>View Applications</h5>
+ boxShadow:
+ "0 4px 25px rgba(0,0,0,0.4)"
 
-              <button
-                className="btn btn-success mt-2"
-                onClick={() => navigate("/view-applications")}
-              >
-                Open
-              </button>
-            </div>
-          </div>
+ }}
 
-          <div className="col-md-4">
-            <div className="card shadow text-center p-4">
-              <h5>All Students</h5>
+ >
 
-              <button
-                className="btn btn-info mt-2"
-                onClick={() => navigate("/all-students")}
-              >
-                View
-              </button>
-            </div>
-          </div>
+ <h5 className="text-white fw-bold">
 
-        </div>
+ 🛠 Admin Panel
 
-      </div>
+ </h5>
 
-    </div>
-  );
+
+ <div>
+
+ <button
+
+ className="btn btn-outline-light me-2"
+
+ onClick={()=>navigate("/add-internship")}
+
+ >
+
+ ➕ Add Internship
+
+ </button>
+
+
+ <button
+
+ className="btn btn-outline-light me-2"
+
+ onClick={()=>navigate("/view-applications")}
+
+ >
+
+ 📄 Applications
+
+ </button>
+
+
+ <button
+
+ className="btn btn-outline-info me-2"
+
+ onClick={()=>navigate("/all-students")}
+
+ >
+
+ 🎓 Students
+
+ </button>
+
+
+ <button
+
+ className="btn btn-danger"
+
+ onClick={handleLogout}
+
+ >
+
+ Logout
+
+ </button>
+
+ </div>
+
+ </nav>
+
+
+
+ {/* TITLE */}
+
+ <div className="container mt-5">
+
+ <h2
+
+ className="text-white text-center fw-bold mb-5"
+
+ >
+
+ Admin Dashboard
+
+ </h2>
+
+
+
+ {/* ACTION CARDS */}
+
+ <div className="row g-4 justify-content-center">
+
+
+
+ {/* ADD INTERNSHIP */}
+
+ <div className="col-md-4">
+
+ <div
+
+ className="p-4 text-center"
+
+ style={{
+
+ borderRadius:"18px",
+
+ background:
+ "linear-gradient(135deg,#667eea,#764ba2)",
+
+ color:"white",
+
+ boxShadow:
+ "0 20px 60px rgba(0,0,0,0.4)",
+
+ transition:"0.3s",
+
+ cursor:"pointer"
+
+ }}
+
+ onMouseEnter={e=>{
+
+ e.currentTarget.style.transform="translateY(-8px)"
+
+ }}
+
+ onMouseLeave={e=>{
+
+ e.currentTarget.style.transform="translateY(0)"
+
+ }}
+
+ >
+
+ <div style={{fontSize:"40px"}}>
+
+ ➕
+
+ </div>
+
+ <h5 className="mt-3">
+
+ Add Internship
+
+ </h5>
+
+ <p>
+
+ create new opportunity
+
+ </p>
+
+ <button
+
+ className="btn btn-light w-100"
+
+ onClick={()=>navigate("/add-internship")}
+
+ >
+
+ Open
+
+ </button>
+
+ </div>
+
+ </div>
+
+
+
+ {/* APPLICATIONS */}
+
+ <div className="col-md-4">
+
+ <div
+
+ className="p-4 text-center"
+
+ style={{
+
+ borderRadius:"18px",
+
+ background:
+ "linear-gradient(135deg,#43e97b,#38f9d7)",
+
+ color:"white",
+
+ boxShadow:
+ "0 20px 60px rgba(0,0,0,0.4)",
+
+ transition:"0.3s",
+
+ cursor:"pointer"
+
+ }}
+
+ onMouseEnter={e=>{
+
+ e.currentTarget.style.transform="translateY(-8px)"
+
+ }}
+
+ onMouseLeave={e=>{
+
+ e.currentTarget.style.transform="translateY(0)"
+
+ }}
+
+ >
+
+ <div style={{fontSize:"40px"}}>
+
+ 📄
+
+ </div>
+
+ <h5 className="mt-3">
+
+ Applications
+
+ </h5>
+
+ <p>
+
+ approve or reject
+
+ </p>
+
+ <button
+
+ className="btn btn-light w-100"
+
+ onClick={()=>navigate("/view-applications")}
+
+ >
+
+ Open
+
+ </button>
+
+ </div>
+
+ </div>
+
+
+
+ {/* STUDENTS */}
+
+ <div className="col-md-4">
+
+ <div
+
+ className="p-4 text-center"
+
+ style={{
+
+ borderRadius:"18px",
+
+ background:
+ "linear-gradient(135deg,#ff9966,#ff5e62)",
+
+ color:"white",
+
+ boxShadow:
+ "0 20px 60px rgba(0,0,0,0.4)",
+
+ transition:"0.3s",
+
+ cursor:"pointer"
+
+ }}
+
+ onMouseEnter={e=>{
+
+ e.currentTarget.style.transform="translateY(-8px)"
+
+ }}
+
+ onMouseLeave={e=>{
+
+ e.currentTarget.style.transform="translateY(0)"
+
+ }}
+
+ >
+
+ <div style={{fontSize:"40px"}}>
+
+ 🎓
+
+ </div>
+
+ <h5 className="mt-3">
+
+ Students
+
+ </h5>
+
+ <p>
+
+ view registered users
+
+ </p>
+
+ <button
+
+ className="btn btn-light w-100"
+
+ onClick={()=>navigate("/all-students")}
+
+ >
+
+ View
+
+ </button>
+
+ </div>
+
+ </div>
+
+
+
+ {/* INTERNSHIPS */}
+
+ <div className="col-md-4">
+
+ <div
+
+ className="p-4 text-center"
+
+ style={{
+
+ borderRadius:"18px",
+
+ background:
+ "linear-gradient(135deg,#f7971e,#ffd200)",
+
+ color:"white",
+
+ boxShadow:
+ "0 20px 60px rgba(0,0,0,0.4)",
+
+ transition:"0.3s",
+
+ cursor:"pointer"
+
+ }}
+
+ onMouseEnter={e=>{
+
+ e.currentTarget.style.transform="translateY(-8px)"
+
+ }}
+
+ onMouseLeave={e=>{
+
+ e.currentTarget.style.transform="translateY(0)"
+
+ }}
+
+ >
+
+ <div style={{fontSize:"40px"}}>
+
+ 💼
+
+ </div>
+
+ <h5 className="mt-3">
+
+ Manage Internships
+
+ </h5>
+
+ <p>
+
+ edit or delete internships
+
+ </p>
+
+ <button
+
+ className="btn btn-light w-100"
+
+ onClick={()=>navigate("/admin-internships")}
+
+ >
+
+ Manage
+
+ </button>
+
+ </div>
+
+ </div>
+
+
+
+ {/* EXPORT */}
+
+ <div className="col-md-4">
+
+ <div
+
+ className="p-4 text-center"
+
+ style={{
+
+ borderRadius:"18px",
+
+ background:
+ "linear-gradient(135deg,#00c6ff,#0072ff)",
+
+ color:"white",
+
+ boxShadow:
+ "0 20px 60px rgba(0,0,0,0.4)",
+
+ transition:"0.3s",
+
+ cursor:"pointer"
+
+ }}
+
+ onMouseEnter={e=>{
+
+ e.currentTarget.style.transform="translateY(-8px)"
+
+ }}
+
+ onMouseLeave={e=>{
+
+ e.currentTarget.style.transform="translateY(0)"
+
+ }}
+
+ >
+
+ <div style={{fontSize:"40px"}}>
+
+ 📊
+
+ </div>
+
+ <h5 className="mt-3">
+
+ Export Data
+
+ </h5>
+
+ <p>
+
+ download excel report
+
+ </p>
+
+ <button
+
+ className="btn btn-light w-100"
+
+ onClick={()=>
+
+ window.open(
+
+ "http://localhost:5000/api/export"
+
+ )
+
+ }
+
+ >
+
+ Download
+
+ </button>
+
+ </div>
+
+ </div>
+
+
+
+ {/* SEARCH */}
+
+ <div className="col-md-4">
+
+ <div
+
+ className="p-4 text-center"
+
+ style={{
+
+ borderRadius:"18px",
+
+ background:
+ "linear-gradient(135deg,#7f00ff,#e100ff)",
+
+ color:"white",
+
+ boxShadow:
+ "0 20px 60px rgba(0,0,0,0.4)",
+
+ transition:"0.3s",
+
+ cursor:"pointer"
+
+ }}
+
+ onMouseEnter={e=>{
+
+ e.currentTarget.style.transform="translateY(-8px)"
+
+ }}
+
+ onMouseLeave={e=>{
+
+ e.currentTarget.style.transform="translateY(0)"
+
+ }}
+
+ >
+
+ <div style={{fontSize:"40px"}}>
+
+ 🔍
+
+ </div>
+
+ <h5 className="mt-3">
+
+ Search Data
+
+ </h5>
+
+ <p>
+
+ find students or apps
+
+ </p>
+
+ <button
+
+ className="btn btn-light w-100"
+
+ onClick={()=>navigate("/search")}
+
+ >
+
+ Search
+
+ </button>
+
+ </div>
+
+ </div>
+
+
+
+ </div>
+
+ </div>
+
+ </div>
+
+ );
+
 }
 
 export default AdminDashboard;

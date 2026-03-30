@@ -18,10 +18,6 @@ const userSchema = new mongoose.Schema({
   required:true
  },
 
- enrollment: {
-  type: String,
-},
-
  role:{
   type:String,
   enum:["student","admin"],
@@ -35,7 +31,16 @@ const userSchema = new mongoose.Schema({
 
  resume:{
   type:String
- }
+ },
+ 
+ department:{
+ type:String
+},
+
+enrollment:{
+  type:String
+ },
+
 
 });
 

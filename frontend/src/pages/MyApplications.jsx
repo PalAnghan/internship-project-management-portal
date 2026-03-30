@@ -3,112 +3,357 @@ import { useNavigate } from "react-router-dom";
 
 function MyApplications() {
 
-  const [applications, setApplications] = useState([]);
-  const navigate = useNavigate();
+ const [applications, setApplications] = useState([]);
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
+ const navigate = useNavigate();
 
-    fetch(`http://localhost:5000/api/applications/student/${user._id}`)
-      .then(res => res.json())
-      .then(data => setApplications(data));
-  }, []);
+ useEffect(() => {
 
-  return (
+  const user =
+  JSON.parse(localStorage.getItem("user"));
 
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(to right,#141e30,#243b55)"
-      }}
-    >
+  fetch(
 
-      {/* Navbar */}
-      <nav className="navbar navbar-dark bg-dark px-4">
-        <h5 className="text-white">Student Portal</h5>
+   `http://localhost:5000/api/applications/student/${user._id}`
 
-        <button
-          className="btn btn-outline-light"
-          onClick={() => navigate("/student-dashboard")}
-        >
-          🏠 Home
-        </button>
-      </nav>
+  )
 
-      {/* Content */}
-      <div className="container mt-5">
+  .then(res => res.json())
 
-        <h2 className="text-white text-center mb-4">
-          My Applications
-        </h2>
+  .then(data => setApplications(data));
 
-        {applications.map(app => (
+ }, []);
 
-          <div key={app._id} className="card shadow p-3 mb-3">
 
-            <h5>{app.internshipId?.title}</h5>
 
-            <p>
-              Status:
-              <b
-                style={{
-                  color:
-                    app.status === "Approved"
-                      ? "green"
-                      : app.status === "Rejected"
-                      ? "red"
-                      : "orange"
-                }}
-              >
-                {" "} {app.status}
-              </b>
-            </p>
+ return (
 
-            <p>
-              <b>Applied on:</b>{" "}
-              {new Date(app.createdAt).toLocaleDateString()}
-            </p>
+ <div
 
-            {/* ✅ CONDITION HERE */}
-            {app.status !== "Approved" && (
-              <button
-                className="btn btn-danger btn-sm mt-2"
-                onClick={() => {
+ style={{
 
-                  if (!window.confirm("Are you sure to withdraw?")) return;
+ minHeight:"100vh",
 
-                  fetch(
-                    `http://localhost:5000/api/applications/${app._id}`,
-                    {
-                      method: "DELETE"
-                    }
-                  )
-                  .then(() => {
-                    setApplications(
-                      applications.filter(a => a._id !== app._id)
-                    );
-                  });
-                }}
-              >
-                Withdraw
-              </button>
-            )}
+ background:
+ "linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
 
-            {/* ✅ SHOW MESSAGE IF APPROVED */}
-            {app.status === "Approved" && (
-              <p className="text-success mt-2">
-                🎉 You are selected.
-              </p>
-            )}
+ paddingBottom:"50px"
 
-          </div>
+ }}
 
-        ))}
+ >
 
-      </div>
+ {/* NAVBAR */}
 
-    </div>
-  );
+ <nav
+
+ className="navbar px-4"
+
+ style={{
+
+ background:"rgba(0,0,0,0.6)",
+
+ backdropFilter:"blur(8px)",
+
+ boxShadow:
+ "0 4px 20px rgba(0,0,0,0.3)"
+
+ }}
+
+ >
+
+ <h5 className="text-white fw-bold">
+
+ 📄 My Applications
+
+ </h5>
+
+
+ <button
+
+ className="btn btn-outline-light"
+
+ onClick={() => navigate("/student-dashboard")}
+
+ >
+
+ 🏠 Dashboard
+
+ </button>
+
+ </nav>
+
+
+
+ {/* PAGE */}
+
+ <div className="container mt-5">
+
+ <h2
+
+ className="text-center text-white fw-bold mb-4"
+
+ >
+
+ Application Status
+
+ </h2>
+
+
+
+ <div className="row g-4">
+
+ {applications.map(app => (
+
+ <div
+
+ key={app._id}
+
+ className="col-md-6"
+
+ >
+
+ {/* CARD */}
+
+ <div
+
+ className="p-4"
+
+ style={{
+
+ borderRadius:"18px",
+
+ background:"rgba(255,255,255,0.95)",
+
+ backdropFilter:"blur(10px)",
+
+ boxShadow:
+ "0 20px 50px rgba(0,0,0,0.25)",
+
+ transition:"0.3s"
+
+ }}
+
+ onMouseEnter={e=>{
+
+ e.currentTarget.style.transform="translateY(-6px)"
+
+ }}
+
+ onMouseLeave={e=>{
+
+ e.currentTarget.style.transform="translateY(0)"
+
+ }}
+
+ >
+
+ {/* TITLE */}
+
+ <h5 className="fw-bold">
+
+ {app.internshipId?.title}
+
+ </h5>
+
+
+
+ {/* DATE */}
+
+ <p className="text-muted mb-2">
+
+ Applied on:
+
+ {
+
+ new Date(
+
+ app.createdAt
+
+ ).toLocaleDateString()
+
+ }
+
+ </p>
+
+
+
+ {/* STATUS */}
+
+ <div
+
+ style={{
+
+ padding:"6px 14px",
+
+ borderRadius:"20px",
+
+ display:"inline-block",
+
+ fontWeight:"600",
+
+ color:"white",
+
+ marginBottom:"10px",
+
+ background:
+
+ app.status === "Approved"
+
+ ? "linear-gradient(90deg,#00c853,#64dd17)"
+
+ :
+
+ app.status === "Rejected"
+
+ ? "linear-gradient(90deg,#ff1744,#d50000)"
+
+ :
+
+ "linear-gradient(90deg,#ff9800,#ffc107)"
+
+ }}
+
+ >
+
+ {app.status}
+
+ </div>
+
+
+
+ {/* ACTION */}
+
+ {app.status !== "Approved" && (
+
+ <button
+
+ className="btn btn-danger w-100 mt-2"
+
+ onClick={() => {
+
+ if (!window.confirm("Withdraw application?"))
+
+ return;
+
+ fetch(
+
+ `http://localhost:5000/api/applications/${app._id}`,
+
+ {
+
+ method:"DELETE"
+
+ }
+
+ )
+
+ .then(() => {
+
+ setApplications(
+
+ applications.filter(
+
+ a => a._id !== app._id
+
+ )
+
+ );
+
+ });
+
+ }}
+
+ >
+
+ Withdraw Application
+
+ </button>
+
+ )}
+
+
+
+ {/* APPROVED MESSAGE */}
+
+ {app.status === "Approved" && (
+
+ <div
+
+ style={{
+
+ marginTop:"10px",
+
+ padding:"10px",
+
+ borderRadius:"10px",
+
+ background:"#e8f5e9",
+
+ color:"#2e7d32",
+
+ fontWeight:"600",
+
+ textAlign:"center"
+
+ }}
+
+ >
+
+ 🎉 Congratulations! Selected
+
+ </div>
+
+ )}
+
+ </div>
+
+ </div>
+
+ ))}
+
+ </div>
+
+
+
+ {/* EMPTY STATE */}
+
+ {applications.length === 0 && (
+
+ <div
+
+ className="text-center text-white mt-5"
+
+ >
+
+ <h5>
+
+ No applications yet
+
+ </h5>
+
+ <button
+
+ className="btn btn-light mt-2"
+
+ onClick={() => navigate("/internships")}
+
+ >
+
+ Browse Internships
+
+ </button>
+
+ </div>
+
+ )}
+
+ </div>
+
+ </div>
+
+ );
+
 }
 
 export default MyApplications;

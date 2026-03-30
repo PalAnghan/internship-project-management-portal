@@ -18,6 +18,9 @@ import Profile from "./pages/Profile";
 import HomePage from "./pages/HomePage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CompanyDashboard from "./pages/CompanyDashboard";
+import AdminInternships from "./pages/AdminInternships";
+import ExportData from "./pages/ExportData";
+import Search from "./pages/Search";
 
 function App() {
   return (
@@ -52,6 +55,12 @@ function App() {
         <Route path="/profile" element={<Profile />} />
 
         <Route path="/company" element={<CompanyDashboard/>}/>
+
+        <Route path="/admin-internships" element={<AdminInternships/>} />
+        
+        <Route path="/export" element={<ExportData/>} />
+
+        <Route path="/search" element={<Search/>}/>
 
       </Routes>
     </BrowserRouter>

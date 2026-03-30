@@ -4,70 +4,164 @@ const XLSX = require("xlsx");
 
 const Application = require("../models/Application");
 
-router.get("/:internshipId", async (req, res) => {
 
-  try {
+// ===============================
+// ALL STUDENTS EXCEL
+// ===============================
+router.get("/", async (req,res)=>{
 
-    const applications = await Application.find({
-      internshipId: req.params.internshipId
-    })
-    .populate("studentId")
-    .populate("internshipId");
+ try{
 
-
-
-    const data = applications.map(app => ({
-
-  StudentName: app.studentId?.name || app.studentId?.email || "No Name",
-
-  Email: app.studentId?.email || "No Email",
-
-  Internship: app.internshipId?.title || "No Internship",
-
-  enrollment: app.studentId?.enrollment || "No Enrollment",
-
-  Status: app.status || "Applied"
-
-}));
+  const applications =
+  await Application.find()
+  .populate("studentId")
+  .populate("internshipId");
 
 
+  const data = applications.map(app=>({
 
-    const worksheet = XLSX.utils.json_to_sheet(data);
+   StudentName:
+   app.studentId?.name || "N/A",
 
-    const workbook = XLSX.utils.book_new();
+   Email:
+   app.studentId?.email || "N/A",
 
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Students");
+   Enrollment:
+   app.studentId?.enrollment || "N/A",
 
+   Company:
+   app.internshipId?.company || "N/A",
 
+   Internship:
+   app.internshipId?.title || "N/A",
 
-    const fileName =
-      applications[0]?.internshipId?.title.replace(/\s/g, "_")
-      || "students";
+   Status:
+   app.status || "Applied"
 
-
-
-    const filePath = `${fileName}.xlsx`;
-
-
-
-    XLSX.writeFile(workbook, filePath);
-
-
-
-    res.download(filePath);
+  }));
 
 
+  const sheet =
+  XLSX.utils.json_to_sheet(data);
 
-  } catch (err) {
+  const book =
+  XLSX.utils.book_new();
 
-    console.log(err);
+  XLSX.utils.book_append_sheet(
+   book,
+   sheet,
+   "All Students"
+  );
 
-    res.status(500).send("Error generating excel");
 
-  }
+  const buffer =
+  XLSX.write(book,{
+   type:"buffer",
+   bookType:"xlsx"
+  });
+
+
+  res.setHeader(
+   "Content-Disposition",
+   "attachment; filename=All_Students.xlsx"
+  );
+
+  res.send(buffer);
+
+ }
+
+ catch(err){
+
+  console.log(err);
+
+  res.status(500).send("Excel error");
+
+ }
 
 });
 
+
+
+// ===============================
+// COMPANY WISE EXCEL
+// ===============================
+router.get("/company/:id", async (req,res)=>{
+
+ try{
+
+  const applications =
+  await Application.find({
+
+   internshipId:req.params.id
+
+  })
+
+  .populate("studentId")
+  .populate("internshipId");
+
+
+  const data =
+  applications.map(app=>({
+
+   StudentName:
+   app.studentId?.name,
+
+   Email:
+   app.studentId?.email,
+
+   Enrollment:
+   app.studentId?.enrollment,
+
+   Company:
+   app.internshipId?.company,
+
+   Internship:
+   app.internshipId?.title,
+
+   Status:
+   app.status
+
+  }));
+
+
+  const sheet =
+  XLSX.utils.json_to_sheet(data);
+
+  const book =
+  XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+   book,
+   sheet,
+   "Company Students"
+  );
+
+
+  const buffer =
+  XLSX.write(book,{
+   type:"buffer",
+   bookType:"xlsx"
+  });
+
+
+  res.setHeader(
+   "Content-Disposition",
+   `attachment; filename=company_${req.params.id}.xlsx`
+  );
+
+  res.send(buffer);
+
+ }
+
+ catch(err){
+
+  console.log(err);
+
+  res.status(500).send("Excel error");
+
+ }
+
+});
 
 
 module.exports = router;

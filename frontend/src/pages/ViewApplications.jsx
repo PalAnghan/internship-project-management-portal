@@ -129,15 +129,21 @@ function ViewApplications() {
 
               {/* EXCEL */}
               <div className="text-center mb-3">
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={() =>
-                    window.open(
-                      `http://localhost:5000/api/export/${internship._id}`
-                    )
-                  }
+               <button
+                className="btn btn-primary"
+                onClick={()=>{
+
+                window.open(
+
+                `http://localhost:5000/api/export/company/${internship._id}`
+
+                );
+
+                }}
                 >
-                  Download Excel
+
+                Download Company Excel
+
                 </button>
               </div>
               

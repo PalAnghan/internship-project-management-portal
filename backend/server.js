@@ -11,6 +11,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const internshipRoutes = require("./routes/internshipRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
+const resumeRoutes = require("./routes/resumeRoutes");
 
 const exportExcel = require("./routes/exportExcel");
 
@@ -34,6 +35,9 @@ app.use("/api/internships", internshipRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/export", exportExcel);
 app.use("/api/users", require("./routes/userRoutes"));
+
+app.use("/api/internships", require("./routes/internshipRoutes"));
+app.use("/api/resume",resumeRoutes);
 
 // Test API
 app.get("/api/test", (req, res) => {

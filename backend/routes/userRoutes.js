@@ -4,12 +4,14 @@ const router = express.Router();
 const { register, login, getUserById } = require("../controller/usercontroller");
 const upload = require("../middleware/resume");
 
+const { updateProfile } = require("../controller/usercontroller");
 
 const User = require("../models/User");
 
 router.post("/register", upload.single("resume"), register);
 router.post("/login", login);
 router.get("/:id", getUserById);
+router.put("/profile", updateProfile);
 
 router.post("/upload-resume", upload.single("resume"), async (req, res) => {
   try {
@@ -50,43 +52,51 @@ router.post("/upload-resume", upload.single("resume"), async (req, res) => {
   }
 });
 
-router.put("/profile", async (req,res)=>{
 
-try{
+exports.updateProfile = async (req,res)=>{
 
-const { name, skills, bio, github, linkedin } = req.body;
+ try{
 
-const userId = req.body._id || req.body.id;
+  console.log("incoming data:", req.body);
 
-const updatedUser =
-await User.findByIdAndUpdate(
+  const updatedUser =
+  await User.findByIdAndUpdate(
 
-userId,
+   req.body._id,
 
-{
-name,
-skills,
-bio,
-github,
-linkedin
-},
+   {
+    name:req.body.name,
+    bio:req.body.bio,
+    github:req.body.github,
+    linkedin:req.body.linkedin,
+    skills:req.body.skills,
 
-{ new:true }
+    department:req.body.department,  // IMPORTANT
+    enrollment:req.body.enrollment   // keep existing field
+   },
 
-);
+   { new:true }
 
-res.json(updatedUser);
+  );
 
-}
-catch(err){
+  console.log("updated user:", updatedUser);
 
-res.status(500).json({
-error: err.message
-});
+  res.json(updatedUser);
 
-}
+ }
+ catch(error){
 
-});
+  console.log(error);
+
+  res.status(500).json({
+
+   message:"profile update failed"
+
+  });
+
+ }
+
+};
 
 router.get("/", async (req,res)=>{
 
@@ -96,5 +106,41 @@ res.json(users);
 
 });
 
+router.get("/search/:text", async(req,res)=>{
+
+ const text = req.params.text;
+
+ const users = await User.find({
+
+  $or:[
+
+   {
+    name:{
+     $regex:text,
+     $options:"i"
+    }
+   },
+
+   {
+    email:{
+     $regex:text,
+     $options:"i"
+    }
+   },
+
+   {
+    enrollment:{
+     $regex:text,
+     $options:"i"
+    }
+   }
+
+  ]
+
+ });
+
+ res.json(users);
+
+});
 
 module.exports = router;

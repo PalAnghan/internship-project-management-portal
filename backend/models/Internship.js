@@ -56,7 +56,12 @@ companyAddress: {
  createdBy:{
   type:String,
   default:"admin"
- }
+ },
+ 
+ department:{
+ type:[String],
+ required:true
+}
 
 },{ timestamps:true });
 

@@ -1,157 +1,254 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function AllStudents() {
+function AllStudents(){
 
-  const [students, setStudents] = useState([]);
-  const [search, setSearch] = useState("");
+ const [students,setStudents] = useState([]);
+ const [search,setSearch] = useState("");
 
-  const navigate = useNavigate();
+ const navigate = useNavigate();
 
-  useEffect(() => {
+ useEffect(()=>{
 
-    axios.get("http://localhost:5000/api/admins/students")
-      .then(res => {
-        setStudents(res.data.students);
-      })
-      .catch(err => console.log(err));
+  fetch("http://localhost:5000/api/users")
 
-  }, []);
+  .then(res=>res.json())
 
-  // 🔍 Search filter
-  const filteredStudents = students.filter(s =>
-    s.name?.toLowerCase().includes(search.toLowerCase()) ||
-    s.email?.toLowerCase().includes(search.toLowerCase())
-  );
+  .then(data=>setStudents(data))
 
-  return (
+ },[]);
 
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(to right,#141e30,#243b55)",
-        paddingBottom: "40px"
-      }}
-    >
 
-      {/* Navbar */}
-      <nav className="navbar navbar-dark bg-dark px-4">
+ const filtered = students.filter(s=>
 
-        <h5 className="text-white">Admin Panel</h5>
+ s.name?.toLowerCase().includes(search.toLowerCase()) ||
 
-        <div>
-          <button
-            className="btn btn-outline-light me-2"
-            onClick={() => navigate("/")}
-          >
-            🏠 Home
-          </button>
+ s.email?.toLowerCase().includes(search.toLowerCase()) ||
 
-          <button
-            className="btn btn-outline-light"
-            onClick={() => navigate("/admin")}
-          >
-            Dashboard
-          </button>
-        </div>
+ s.enrollmentNumber?.toLowerCase().includes(search.toLowerCase())
 
-      </nav>
+ );
 
-      {/* Content */}
-      <div className="container mt-5">
 
-        <h2 className="text-center text-white mb-4">
-          All Students
-        </h2>
+ return(
 
-        {/* 🔍 Search */}
-        <input
-          type="text"
-          placeholder="Search by name or email..."
-          className="form-control mb-3"
-          onChange={(e) => setSearch(e.target.value)}
-        />
+ <div
 
-        <div className="card shadow p-4">
+ style={{
 
-          <table className="table table-bordered table-striped text-center">
+ minHeight:"100vh",
 
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Skills</th>
-                <th>Resume</th>
-              </tr>
-            </thead>
+ background:
+ "linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
 
-            <tbody>
+ paddingBottom:"40px"
 
-              {filteredStudents.length > 0 ? (
-                filteredStudents.map((s) => (
+ }}
 
-                  <tr key={s._id}>
+ >
 
-                    <td>{s.name}</td>
+ {/* NAVBAR */}
 
-                    <td>{s.email}</td>
+ <nav
 
-                    <td>
-                      {s.skills && s.skills.length > 0
-                        ? s.skills.join(", ")
-                        : "No Skills"}
-                    </td>
+ className="navbar px-4"
 
-                    <td>
-                      {s.resume ? (
-                        <div className="d-flex justify-content-center gap-2">
+ style={{
 
-                          {/* View */}
-                          <a
-                            className="btn btn-success btn-sm"
-                            href={`http://localhost:5000/uploads/${s.resume}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            👁 View
-                          </a>
+ background:"rgba(0,0,0,0.6)",
 
-                          {/* Download */}
-                          <a
-                            className="btn btn-primary btn-sm"
-                            href={`http://localhost:5000/uploads/${s.resume}`}
-                            download
-                          >
-                            📄 Download
-                          </a>
+ backdropFilter:"blur(10px)"
 
-                        </div>
-                      ) : (
-                        <span className="text-danger">No Resume</span>
-                      )}
-                    </td>
+ }}
 
-                  </tr>
+ >
 
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4">No students found</td>
-                </tr>
-              )}
+ <h5 className="text-white">
 
-            </tbody>
+ 🎓 All Students
 
-          </table>
+ </h5>
 
-        </div>
+ <button
 
-      </div>
+ className="btn btn-outline-light"
 
-    </div>
+ onClick={()=>navigate("/admin")}
 
-  );
+ >
+
+ Dashboard
+
+ </button>
+
+ </nav>
+
+
+
+ {/* PAGE */}
+
+ <div className="container mt-5">
+
+ <h3 className="text-white text-center mb-4">
+
+ Student Database
+
+ </h3>
+
+
+ {/* SEARCH */}
+
+ <input
+
+ className="form-control mb-4"
+
+ placeholder="search name, email, enrollment..."
+
+ value={search}
+
+ onChange={e=>setSearch(e.target.value)}
+
+ style={{
+
+ borderRadius:"12px",
+
+ padding:"12px",
+
+ boxShadow:"0 5px 20px rgba(0,0,0,0.2)"
+
+ }}
+
+ />
+
+
+ {/* TABLE */}
+
+ <div
+
+ style={{
+
+ background:"rgba(255,255,255,0.95)",
+
+ padding:"20px",
+
+ borderRadius:"18px",
+
+ boxShadow:"0 20px 50px rgba(0,0,0,0.25)"
+
+ }}
+
+ >
+
+ <table className="table">
+
+ <thead>
+
+ <tr>
+
+ <th>Name</th>
+
+ <th>Email</th>
+
+ <th>Enrollment</th>
+
+ <th>Department</th>
+
+ <th>Skills</th>
+
+ <th>Resume</th>
+
+ </tr>
+
+ </thead>
+
+
+
+ <tbody>
+
+ {filtered.map(s=>(
+
+ <tr key={s._id}>
+
+ <td>{s.name}</td>
+
+ <td>{s.email}</td>
+
+ <td>{s.enrollment || "-"}</td>
+
+ <td>{s.department || "-"}</td>
+
+ <td>
+
+ {s.skills?.join(", ") || "No Skills"}
+
+ </td>
+
+
+
+ <td>
+
+ {s.resume ? (
+
+ <>
+
+ <a
+
+ href={s.resume}
+
+ target="_blank"
+
+ className="btn btn-success btn-sm me-2"
+
+ >
+
+ View
+
+ </a>
+
+ <a
+
+ href={s.resume}
+
+ download
+
+ className="btn btn-primary btn-sm"
+
+ >
+
+ Download
+
+ </a>
+
+ </>
+
+ ) : (
+
+ <span className="text-danger">
+
+ No Resume
+
+ </span>
+
+ )}
+
+ </td>
+
+ </tr>
+
+ ))}
+
+ </tbody>
+
+ </table>
+
+ </div>
+
+ </div>
+
+ </div>
+
+ );
+
 }
 
 export default AllStudents;

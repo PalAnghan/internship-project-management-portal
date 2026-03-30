@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, role, Skills } = req.body;
+    const { name, email, password, role, Skills, department } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -15,13 +15,16 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = await User.create({
+
       name,
       email,
       password: hashedPassword,
       role,
       Skills,
+      department,   
       resume: req.file ? req.file.filename : ""
-    });
+
+      });
 
     res.status(201).json({
       message: "Student Registered Successfully",
@@ -105,5 +108,52 @@ exports.getUserById = async (req, res) => {
     });
 
   }
+
+};
+``
+
+exports.updateProfile = async (req,res)=>{
+
+ try{
+
+  const user =
+  await User.findByIdAndUpdate(
+
+   req.body._id,
+
+   {
+
+    name:req.body.name,
+    bio:req.body.bio,
+    github:req.body.github,
+    linkedin:req.body.linkedin,
+
+    skills:req.body.skills,
+    
+    enrollment: req.body.enrollment,
+
+    department:req.body.department   
+
+   },
+
+   {new:true}
+
+  );
+
+  res.json(user);
+
+ }
+
+ catch(err){
+
+  res.status(500).json({
+
+   message:"Profile update failed",
+
+   error:err.message
+
+  });
+
+ }
 
 };

@@ -1,565 +1,941 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React,{useEffect,useState} from "react";
+import {useNavigate} from "react-router-dom";
 
-function Internships() {
+function Internships(){
 
-  
-  const [appliedIds, setAppliedIds] = useState([]);
+const navigate = useNavigate();
 
-  const [internships,setInternships] = useState([]);
+const [internships,setInternships] = useState([]);
+const [appliedIds,setAppliedIds] = useState([]);
+const [saved,setSaved] = useState([]);
 
-  const user =
-  JSON.parse(localStorage.getItem("user"));
+const [search,setSearch] = useState("");
+const [skillFilter,setSkillFilter] = useState("");
+const [category,setCategory] = useState("");
 
- const studentSkills =
-(user?.skills || []).map(
-s => s.toLowerCase().trim()
-);
+const user =
+JSON.parse(localStorage.getItem("user"));
 
-  const sortedInternships =
-  [...internships].sort(
-  (a,b)=>
-  (b.matchScore || 0) -
-  (a.matchScore || 0)
-  );
+const studentSkills =
+(user?.skills||[])
+.map(s=>s.toLowerCase().trim());
 
 
 
-  const navigate = useNavigate();
+/* ================= FETCH ================= */
 
-  // ✅ LOAD DATA
-  useEffect(() => {
-    fetchInternships();
-    fetchApplied();
-  }, []);
+useEffect(()=>{
 
-  // ✅ FETCH INTERNSHIPS
- const fetchInternships = async () => {
+fetchInternships();
+fetchApplied();
 
-try {
+const savedData =
+JSON.parse(localStorage.getItem("savedInternships"))||[];
+
+setSaved(savedData);
+
+},[]);
+
+
+
+const fetchInternships = async ()=>{
+
+try{
 
 const res = await fetch(
-`http://localhost:5000/api/internships?studentId=${user._id}`
+
+`http://localhost:5000/api/internships?studentId=${user?._id}`
+
 );
 
 const data = await res.json();
 
 const now = new Date();
 
-const filtered = data.filter(item => {
 
-const end =
-new Date(item.applicationDeadline);
+const active =
+data.filter(item=>
 
-return end > now;
+new Date(item.applicationDeadline)>now
 
-});
+);
 
-setInternships(filtered);
 
-}
-catch(err){
+const withScore =
+active.map(item=>{
 
-console.error(err);
+const required =
+(item.requiredSkills||[])
+.map(s=>s.toLowerCase());
 
-}
-
-};
-
-  // ✅ FETCH APPLIED INTERNSHIPS
-  const fetchApplied = async () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    if (!user) return;
-
-    try {
-      const res = await fetch(
-        `http://localhost:5000/api/applications/student/${user._id}`
-      );
-
-      const data = await res.json();
-
-      const ids = data.map(app => app.internshipId._id);
-      setAppliedIds(ids);
-
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // ✅ APPLY FUNCTION (FIXED JSON ERROR + INSTANT UPDATE)
- const handleApply = async (id) => {
-
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  if (!user || !user._id) {
-    alert("Please login first");
-    return;
-  }
-
-  try {
-
-    const res = await fetch(
-      "http://localhost:5000/api/applications/apply",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          studentId: user._id,
-          internshipId: id
-        })
-      }
-    );
-
-    // ✅ READ RESPONSE ONLY ONCE
-    const text = await res.text();
-
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = { message: text };
-    }
-
-    if (!res.ok) {
-      alert(data.message || "Apply failed");
-      return;
-    }
-
-    // ✅ SUCCESS
-    alert(data.message || "Applied Successfully 🎉");
-
-    // ✅ INSTANT UPDATE
-    setAppliedIds(prev => [...prev, id]);
-
-    setInternships(prev =>
-      prev.map(item =>
-        item._id === id
-          ? { ...item, appliedCount: (item.appliedCount || 0) + 1 }
-          : item
-      )
-    );
-
-  } catch (err) {
-    console.error(err);
-    alert("Server error - check backend");
-  }
-};
-  // ✅ DEADLINE TIMER
-  const getRemainingTime = (deadline) => {
-
-    const now = new Date();
-    const end = new Date(deadline);
-    const diff = end - now;
-
-    if (diff <= 0) return "Closed";
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor(
-      (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-    );
-
-    
-
-    return `${days}d ${hours}h`;
-  };
-
-  return (
-
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(to right,#141e30,#243b55)",
-        paddingBottom: "40px"
-      }}
-    >
-
-      {/* NAVBAR */}
-      <nav className="navbar navbar-dark bg-dark px-4">
-        <h5 className="text-white">Student Portal</h5>
-
-        <button
-          className="btn btn-outline-light"
-          onClick={() => navigate("/student-dashboard")}
-        >
-           Home
-        </button>
-      </nav>
-
-      {/* CONTENT */}
-      <div className="container pt-4">
-
-        <h2 className="mb-4 text-white text-center">
-          Available Internships
-        </h2>
-
-        <div className="row">
-
-          {internships.length > 0 ? (
-
-            sortedInternships.map(item =>  {
-
-              const timeLeft = getRemainingTime(item.applicationDeadline);
-              
-              const isClosed = timeLeft === "Closed";
-
-
-              const alreadyApplied = appliedIds.includes(item._id);
-
-              const seatsLeft = item.maxApplicants
-                ? item.maxApplicants - (item.appliedCount || 0)
-                : null;
-
-              const isFull = seatsLeft !== null && seatsLeft <= 0;
-
-              return (
-
-<div key={item._id} className="col-md-4 mb-4">
-
-<div
-className="card shadow-lg border-0 h-100"
-style={{
-borderRadius: "14px",
-transition: "0.2s",
-background:"#ffffff"
-}}
->
-
-<div className="card-body d-flex flex-column">
-
-  <span
-className="badge bg-success mb-2"
->
-
-{item.matchScore}% Match
-
-</span>
-
-<div className="progress mb-2">
-
-<div
-
-className="progress-bar bg-success"
-
-style={{
-
-width:
-
-`${item.matchScore}%`
-
-}}
-
->
-
-{item.matchScore}%
-
-</div>
-
-</div>
-
-
-
-{/* TITLE */}
-
-<h5
-className="text-center mb-3"
-style={{
-fontWeight:"600",
-color:"#1e293b"
-}}
->
-
-{item.title}
-
-</h5>
-
-
-{/* COMPANY */}
-
-<p className="mb-1">
-
-<b> Company:</b><br/>
-
-<span style={{color:"#334155"}}>
-
-{item.companyName || "Not Provided"}
-
-</span>
-
-</p>
-
-
-{/* ADDRESS */}
-
-<p className="mb-1">
-
-<b> Location:</b><br/>
-
-<span style={{color:"#334155"}}>
-
-{item.companyAddress || "Not Provided"}
-
-</span>
-
-</p>
-
-
-
-{/* SKILLS */}
-
-<div className="mb-2">
-
-<b> Skills:</b>
-
-<div className="mt-1">
-
-{
-item.requiredSkills?.length
-? item.requiredSkills.map((skill,i)=>(
-
-<span
-key={i}
-className="badge bg-primary me-1 mb-1"
->
-
-{skill}
-
-</span>
-
-))
-
-: <span className="text-muted">Not Provided</span>
-}
-
-</div>
-
-</div>
-
-
-<p>
-
-<b>Applications:</b>
-
-{item.applications?.length || 0}
-
-</p>
-
-
-{/* DURATION */}
-
-<p className="mb-1">
-
-<b> Duration:</b>
-
-<span style={{color:"#334155"}}>
-
-{item.duration}
-
-</span>
-
-</p>
-
-
-{/* SEATS */}
-
-<p className="mb-1">
-
-<b>Seats Left:</b>
-
-<span style={{color:"#334155"}}>
-
-{
-
-seatsLeft !== null
-? seatsLeft
-: "No Limit"
-
-}
-
-</span>
-
-</p>
-
-
-{/* STATUS */}
-
-<p className="mb-1">
-
-<b> Status:</b>
-
-<span
-
-style={{
-
-color: isFull
-? "#ef4444"
-: "#22c55e",
-
-fontWeight:"600"
-
-}}
-
->
-
-{
-
-isFull
-? "Full"
-: "Open"
-
-}
-
-</span>
-
-</p>
-
-
-{/* DEADLINE */}
-
-<p className="mb-3">
-
-<b> Deadline:</b>
-
-<span
-
-style={{
-
-color: isClosed
-? "#ef4444"
-: "#22c55e",
-
-fontWeight:"600"
-
-}}
-
->
-
-{timeLeft}
-
-</span>
-
-</p>
-
-<p>
-
-<b>Matched:</b>{" "}
-
-{
-
-item.requiredSkills
-?.map(skill => skill.toLowerCase().trim())
-
-.filter(skill =>
+const matchCount =
+required.filter(skill=>
 
 studentSkills.includes(skill)
 
+).length;
+
+const matchScore =
+required.length>0
+? Math.round(
+(matchCount/required.length)*100
 )
+:0;
 
-.join(", ")
+return{
+...item,
+matchScore
+};
 
-|| "None"
+});
+
+setInternships(withScore);
 
 }
 
-</p>
-<p>
+catch(err){
 
-<b>Missing:</b>{" "}
+console.log(err);
+
+}
+
+};
+
+
+
+const fetchApplied = async ()=>{
+
+try{
+
+const res = await fetch(
+
+`http://localhost:5000/api/applications/student/${user._id}`
+
+);
+
+const data = await res.json();
+
+setAppliedIds(
+
+data.map(app=>
+
+app.internshipId?._id
+
+)
+
+);
+
+}
+
+catch(err){
+
+console.log(err);
+
+}
+
+};
+
+
+
+/* ================= APPLY ================= */
+
+const handleApply = async(id)=>{
+
+try{
+
+const res = await fetch(
+
+"http://localhost:5000/api/applications/apply",
 
 {
 
-item.requiredSkills
-?.map(skill => skill.toLowerCase().trim())
+method:"POST",
 
-.filter(skill =>
+headers:{
 
-!studentSkills.includes(skill)
+"Content-Type":"application/json"
+
+},
+
+body: JSON.stringify({
+
+studentId:user._id,
+internshipId:id
+
+})
+
+}
+
+);
+
+if(res.ok){
+
+alert("Applied 🎉");
+
+setAppliedIds(prev=>[...prev,id]);
+
+}
+
+}
+
+catch(err){
+
+console.log(err);
+
+}
+
+};
+
+
+
+/* ================= SAVE ================= */
+
+const toggleSave = id =>{
+
+let updated;
+
+if(saved.includes(id)){
+
+updated =
+saved.filter(x=>x!==id);
+
+}
+
+else{
+
+updated =
+[...saved,id];
+
+}
+
+setSaved(updated);
+
+localStorage.setItem(
+
+"savedInternships",
+
+JSON.stringify(updated)
+
+);
+
+};
+
+
+
+/* ================= CATEGORY ================= */
+
+const getCategory = skills =>{
+
+const s =
+skills.join(" ").toLowerCase();
+
+if(s.includes("react")
+|| s.includes("html")
+|| s.includes("css"))
+
+return "Web Development";
+
+if(s.includes("python")
+|| s.includes("ai")
+|| s.includes("ml"))
+
+return "AI / ML";
+
+if(s.includes("data"))
+
+return "Data Science";
+
+if(s.includes("android"))
+
+return "App Development";
+
+if(s.includes("marketing"))
+
+return "Marketing";
+
+return "Other";
+
+};
+
+
+
+/* ================= FILTER ================= */
+
+const filtered =
+internships
+
+.filter(item=>{
+
+if(!item.department) return false;
+
+const dept =
+user?.department?.toLowerCase();
+
+if(Array.isArray(item.department)){
+
+return item.department.some(d=>
+
+d.toLowerCase()===dept
+
+);
+
+}
+
+return item.department
+.toLowerCase()===dept;
+
+})
+
+.filter(item=>
+
+item.title.toLowerCase()
+.includes(search.toLowerCase())
+
+||
+
+item.companyName.toLowerCase()
+.includes(search.toLowerCase())
 
 )
 
-.join(", ")
+.filter(item=>
 
-|| "None"
+skillFilter===""
 
-}
+||
 
-</p>
+item.requiredSkills
+.join(" ")
+.toLowerCase()
+.includes(skillFilter.toLowerCase())
+
+)
+
+.filter(item=>
+
+category===""
+
+||
+
+getCategory(
+item.requiredSkills
+)===category
+
+);
 
 
-{/* BUTTON */}
 
-<button
+/* ================= SORT ================= */
 
-onClick={() =>
-handleApply(item._id)
-}
+const sorted =
+[...filtered]
 
-disabled={
-isClosed ||
-alreadyApplied ||
-isFull
-}
+.sort((a,b)=>
 
-className={
+(b.matchScore||0)
+-(a.matchScore||0)
 
-isClosed ||
-alreadyApplied ||
-isFull
+);
 
-? "btn btn-secondary w-100"
 
-: "btn btn-primary w-100"
 
-}
+const recommended =
+sorted.filter(i=>
+
+i.matchScore>=70
+
+);
+
+
+const trending =
+sorted.filter(i=>
+
+(i.appliedCount||0)>=2
+
+);
+
+
+
+/* ================= TIME ================= */
+
+const getRemainingTime = deadline =>{
+
+const now = new Date();
+
+const end = new Date(deadline);
+
+const diff = end-now;
+
+if(diff<=0) return "Closed";
+
+const d =
+Math.floor(diff/(1000*60*60*24));
+
+const h =
+Math.floor(
+
+(diff%(1000*60*60*24))
+
+/(1000*60*60)
+
+);
+
+return `${d}d ${h}h`;
+
+};
+
+
+
+/* ================= CARD ================= */
+
+const Card = ({ item }) => {
+
+ const applied =
+ appliedIds.includes(item._id);
+
+ const savedItem =
+ saved.includes(item._id);
+
+ const seatsPercent =
+ item.totalSeats
+ ? (item.seats / item.totalSeats) * 100
+ : 60;
+
+ return (
+
+ <div className="col-lg-4 col-md-6 mb-4">
+
+ <div
+
+ className="card h-100 border-0 shadow-lg"
+
+ style={{
+
+ borderRadius:"18px",
+
+ background:
+ "linear-gradient(145deg,#ffffff,#f4f8ff)",
+
+ transition:"0.35s",
+
+ cursor:"pointer"
+
+ }}
+
+ onMouseEnter={e=>{
+
+ e.currentTarget.style.transform="translateY(-8px)";
+
+ e.currentTarget.style.boxShadow=
+ "0 20px 40px rgba(0,0,0,0.12)";
+
+ }}
+
+ onMouseLeave={e=>{
+
+ e.currentTarget.style.transform="translateY(0px)";
+
+ e.currentTarget.style.boxShadow=
+ "0 8px 18px rgba(0,0,0,0.08)";
+
+ }}
+
+ >
+
+ {/* match bar */}
+
+ <div
+
+ style={{
+
+ height:"7px",
+
+ borderTopLeftRadius:"18px",
+
+ borderTopRightRadius:"18px",
+
+ background:
+ "linear-gradient(90deg,#00c853,#64dd17)",
+
+ width:`${item.matchScore || 50}%`
+
+ }}
+
+ />
+
+ <div className="card-body d-flex flex-column">
+
+ {/* title + match */}
+
+ <div className="d-flex justify-content-between align-items-start mb-1">
+
+ <h5 className="fw-bold mb-1">
+
+ {item.title}
+
+ </h5>
+
+ <span className="badge bg-dark">
+
+ {item.matchScore || 50}% match
+
+ </span>
+
+ </div>
+
+ {/* company */}
+
+ <p className="text-muted mb-2">
+
+  {item.companyName}
+
+ </p>
+
+ {/* badges */}
+
+ <div className="mb-2 d-flex flex-wrap gap-2">
+
+ <span className="badge bg-light text-dark border">
+
+  {item.location || "Remote"}
+
+ </span>
+
+ <span className="badge bg-light text-dark border">
+
+  {item.duration}
+
+ </span>
+
+ </div>
+
+ {/* deadline */}
+
+ <p className="small text-muted mb-2">
+
+ ⏱ {getRemainingTime(item.applicationDeadline)}
+
+ </p>
+
+ {/* skills */}
+
+ <div className="mb-3">
+
+ {item.requiredSkills?.map((skill,i)=>(
+
+ <span
+
+ key={i}
+
+ className="badge me-1 mb-1"
+
+ style={{
+
+ background:"#e3f2fd",
+
+ color:"#0d47a1",
+
+ fontWeight:"500",
+
+ borderRadius:"8px",
+
+ padding:"6px 10px"
+
+ }}
+
+ >
+
+ {skill}
+
+ </span>
+
+ ))}
+
+ </div>
+
+ {/* seats */}
+
+ <div className="mb-3">
+
+ <small className="text-muted">
+
+ 🎯 Seats left: {item.seats}
+
+ </small>
+
+ <div className="progress mt-1">
+
+ <div
+
+ className="progress-bar"
+
+ style={{
+
+ width:`${seatsPercent}%`,
+
+ background:
+ "linear-gradient(90deg,#00bcd4,#2196f3)"
+
+ }}
+
+ />
+
+ </div>
+
+ </div>
+
+ {/* buttons */}
+
+ <div className="mt-auto">
+
+ <button
+
+ className="btn w-100 mb-2"
+
+ style={{
+
+ background:
+ applied
+ ? "#9ec5fe"
+ : "linear-gradient(90deg,#2979ff,#00b0ff)",
+
+ color:"white",
+
+ borderRadius:"10px",
+
+ border:"none",
+
+ fontWeight:"600",
+
+ transition:"0.3s"
+
+ }}
+
+ disabled={applied}
+
+ onClick={()=>handleApply(item._id)}
+
+ >
+
+ {applied ? "Applied ✔" : "Apply Now"}
+
+ </button>
+
+ <button
+
+ className="btn w-100"
+
+ style={{
+
+ borderRadius:"10px",
+
+ fontWeight:"600",
+
+ border:
+ savedItem
+ ? "2px solid #e91e63"
+ : "2px solid #ccc",
+
+ color:
+ savedItem
+ ? "#e91e63"
+ : "#444",
+
+ background:"#fff"
+
+ }}
+
+ onClick={()=>toggleSave(item._id)}
+
+ >
+
+ {savedItem ? "Saved ❤" : "Save ♡"}
+
+ </button>
+
+ </div>
+
+ </div>
+
+ </div>
+
+ </div>
+
+ );
+
+};
+
+
+/* ================= UI ================= */
+
+return (
+
+<div
 
 style={{
-borderRadius:"8px",
-fontWeight:"500"
+
+minHeight:"100vh",
+
+background:
+"linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
+
+paddingBottom:"60px"
+
 }}
 
 >
 
-{
+{/* NAVBAR */}
 
-isClosed
-? "Closed"
+<nav
 
-: isFull  
-? "Full"
+className="navbar px-4"
 
-: alreadyApplied
-? "Already Applied"
+style={{
 
-: "Apply Now"
+background:"rgba(0,0,0,0.35)",
 
-}
+backdropFilter:"blur(10px)",
+
+borderBottom:"1px solid rgba(255,255,255,0.1)"
+
+}}
+
+>
+
+<h4 className="text-white fw-bold">
+
+🚀 Internships Portal
+
+</h4>
+
+<button
+
+className="btn btn-outline-light"
+
+onClick={()=>navigate("/student-dashboard")}
+
+>
+
+Home
 
 </button>
 
+</nav>
+
+
+<div className="container py-4">
+
+
+{/* SEARCH BOX */}
+
+<div
+
+className="card border-0 shadow-lg mb-4"
+
+style={{
+
+borderRadius:"16px",
+
+background:"rgba(255,255,255,0.95)"
+
+}}
+
+>
+
+<div className="card-body">
+
+<div className="row g-2">
+
+<div className="col-md-4">
+
+<input
+
+type="text"
+
+placeholder="🔍 Search internship"
+
+className="form-control"
+
+value={search}
+
+onChange={(e)=>setSearch(e.target.value)}
+
+/>
+
 </div>
+
+
+<div className="col-md-4">
+
+<input
+
+type="text"
+
+placeholder="💡 Filter skill"
+
+className="form-control"
+
+value={skillFilter}
+
+onChange={(e)=>setSkillFilter(e.target.value)}
+
+/>
+
+</div>
+
+
+<div className="col-md-4">
+
+<select
+
+className="form-control"
+
+value={category}
+
+onChange={(e)=>setCategory(e.target.value)}
+
+>
+
+<option>
+
+All Categories
+
+</option>
+
+<option>
+
+Web Development
+
+</option>
+
+<option>
+
+AI / ML
+
+</option>
+
+<option>
+
+App Development
+
+</option>
+
+<option>
+
+Data Science
+
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+{/* AI recommended */}
+
+<h4
+
+className="text-white mb-3"
+
+style={{
+
+fontWeight:"700",
+
+letterSpacing:"0.5px"
+
+}}
+
+>
+
+🤖 AI Recommended
+
+</h4>
+
+<div className="row">
+
+{recommended.slice(0,1).map(item=>(
+
+<Card key={item._id} item={item} />
+
+))}
+
+</div>
+
+
+
+{/* trending */}
+
+<h4
+
+className="text-white mt-4 mb-3"
+
+style={{
+
+fontWeight:"700"
+
+}}
+
+>
+
+🔥 Trending Internships
+
+</h4>
+
+<div className="row">
+
+{trending.map(item=>(
+
+<Card key={item._id} item={item} />
+
+))}
+
+</div>
+
+
+
+{/* all */}
+
+<h4
+
+className="text-white mt-4 mb-3"
+
+style={{
+
+fontWeight:"700"
+
+}}
+
+>
+
+📚 All Internships
+
+</h4>
+
+<div className="row">
+
+{filtered.map(item=>(
+
+<Card key={item._id} item={item} />
+
+))}
+
+</div>
+
 
 </div>
 
 </div>
 
 );
-})
-) : (
 
-<p className="text-white text-center">
-No internships available
-</p>
-
-)}
-
-</div>
-</div>
-
-</div>
-
-);
 }
 
 export default Internships;

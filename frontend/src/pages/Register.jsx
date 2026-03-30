@@ -8,6 +8,7 @@ function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [department,setDepartment] = useState("");
 
   const handleRegister = async () => {
 
@@ -16,7 +17,7 @@ function Register() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password, department  }),
     });
 
     const data = await response.json();
@@ -151,6 +152,25 @@ function Register() {
       >
         Register
       </button>
+
+      <select
+        value={department}
+        onChange={(e)=>setDepartment(e.target.value)}
+        >
+
+        <option value="">Select Department</option>
+
+        <option value="BCA">BCA</option>
+
+        <option value="B.Tech">B.Tech</option>
+
+        <option value="BBA">BBA</option>
+
+        <option value="Pharmacy">Pharmacy</option>
+
+        <option value="Robotics">Robotics</option>
+
+        </select>
 
       <br /><br />
 

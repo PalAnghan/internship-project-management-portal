@@ -262,4 +262,23 @@ res.json(result);
 
 });
 
+router.get("/", async (req, res) => {
+
+ try {
+
+  const internships = await Internship.find().sort({ createdAt: -1 });
+
+  res.json(internships);
+
+ }
+
+ catch (err) {
+
+  console.log(err);
+  res.status(500).send("Server error");
+
+ }
+
+});
+
 module.exports = router;
