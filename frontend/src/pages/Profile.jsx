@@ -111,8 +111,7 @@ style={{
 
 minHeight:"100vh",
 
-background:
-"linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
+ background: "linear-gradient(120deg, #0f172a, #1e293b, #020617)",
 
 paddingBottom:"50px"
 

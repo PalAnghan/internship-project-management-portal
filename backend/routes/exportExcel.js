@@ -30,7 +30,7 @@ router.get("/", async (req,res)=>{
    app.studentId?.enrollment || "N/A",
 
    Company:
-   app.internshipId?.company || "N/A",
+   app.internshipId?.companyName || "N/A",
 
    Internship:
    app.internshipId?.title || "N/A",
@@ -113,7 +113,7 @@ router.get("/company/:id", async (req,res)=>{
    app.studentId?.enrollment,
 
    Company:
-   app.internshipId?.company,
+   app.internshipId?.companyName,
 
    Internship:
    app.internshipId?.title,

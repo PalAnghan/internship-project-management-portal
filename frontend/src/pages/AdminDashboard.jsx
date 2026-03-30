@@ -1,124 +1,59 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 function AdminDashboard() {
 
  const navigate = useNavigate();
 
- const [stats, setStats] = useState({
-
-  total:0,
-  approved:0,
-  rejected:0,
-  pending:0
-
- });
-
-
  const handleLogout = () => {
-
   localStorage.removeItem("user");
-
   navigate("/admin-login");
-
  };
 
+ return (
 
- return(
-
- <div
-
- style={{
-
+ <div style={{
  minHeight:"100vh",
-
- background:
- "linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
-
+ background:"linear-gradient(120deg,#0f172a,#1e293b,#020617)",
  paddingBottom:"50px"
-
- }}
-
- >
+ }}>
 
  {/* NAVBAR */}
 
- <nav
-
- className="navbar px-4"
-
- style={{
-
+ <nav style={{
+ display:"flex",
+ justifyContent:"space-between",
+ alignItems:"center",
+ padding:"15px 25px",
  background:"rgba(0,0,0,0.6)",
-
  backdropFilter:"blur(10px)",
+ boxShadow:"0 4px 25px rgba(0,0,0,0.4)"
+ }}>
 
- boxShadow:
- "0 4px 25px rgba(0,0,0,0.4)"
-
- }}
-
- >
-
- <h5 className="text-white fw-bold">
-
- 🛠 Admin Panel
-
+ <h5 style={{color:"white",fontWeight:"600"}}>
+ Admin Panel
  </h5>
-
 
  <div>
 
- <button
-
- className="btn btn-outline-light me-2"
-
- onClick={()=>navigate("/add-internship")}
-
- >
-
- ➕ Add Internship
-
+ <button className="btn btn-outline-light me-2"
+ onClick={()=>navigate("/add-internship")}>
+ Add Internship
  </button>
 
-
- <button
-
- className="btn btn-outline-light me-2"
-
- onClick={()=>navigate("/view-applications")}
-
- >
-
- 📄 Applications
-
+ <button className="btn btn-outline-light me-2"
+ onClick={()=>navigate("/view-applications")}>
+ Applications
  </button>
 
-
- <button
-
- className="btn btn-outline-info me-2"
-
- onClick={()=>navigate("/all-students")}
-
- >
-
- 🎓 Students
-
+ <button className="btn btn-outline-info me-2"
+ onClick={()=>navigate("/all-students")}>
+ Students
  </button>
 
-
- <button
-
- className="btn btn-danger"
-
- onClick={handleLogout}
-
- >
-
+ <button className="btn btn-danger"
+ onClick={handleLogout}>
  Logout
-
  </button>
 
  </div>
@@ -126,492 +61,119 @@ function AdminDashboard() {
  </nav>
 
 
-
  {/* TITLE */}
 
  <div className="container mt-5">
 
- <h2
-
- className="text-white text-center fw-bold mb-5"
-
- >
-
+ <h2 className="text-white text-center fw-bold mb-5">
  Admin Dashboard
-
  </h2>
 
 
-
- {/* ACTION CARDS */}
+ {/* CARDS */}
 
  <div className="row g-4 justify-content-center">
 
 
+ {/* CARD COMPONENT */}
+ {[
+ {
+ title:"Add Internship",
+ desc:"Create new opportunity",
+ btn:"Open",
+ route:"/add-internship",
+ color:"linear-gradient(135deg,#6366f1,#8b5cf6)"
+ },
+ {
+ title:"Applications",
+ desc:"Approve or reject",
+ btn:"Open",
+ route:"/view-applications",
+ color:"linear-gradient(135deg,#22c55e,#4ade80)"
+ },
+ {
+ title:"Students",
+ desc:"View registered users",
+ btn:"View",
+ route:"/all-students",
+ color:"linear-gradient(135deg,#f97316,#fb7185)"
+ },
+ {
+ title:"Manage Internships",
+ desc:"Edit or delete",
+ btn:"Manage",
+ route:"/admin-internships",
+ color:"linear-gradient(135deg,#f59e0b,#eab308)"
+ },
+ {
+ title:"Export Data",
+ desc:"Download reports",
+ btn:"Download",
+ action:"export",
+ color:"linear-gradient(135deg,#0ea5e9,#2563eb)"
+ },
+ {
+ title:"Search Data",
+ desc:"Find students or apps",
+ btn:"Search",
+ route:"/search",
+ color:"linear-gradient(135deg,#a855f7,#d946ef)"
+ }
+ ].map((card,i)=>(
 
- {/* ADD INTERNSHIP */}
-
- <div className="col-md-4">
+ <div className="col-md-4" key={i}>
 
  <div
-
- className="p-4 text-center"
-
  style={{
-
- borderRadius:"18px",
-
- background:
- "linear-gradient(135deg,#667eea,#764ba2)",
-
+ borderRadius:"20px",
+ padding:"25px",
+ background:card.color,
  color:"white",
-
- boxShadow:
- "0 20px 60px rgba(0,0,0,0.4)",
-
+ boxShadow:"0 20px 60px rgba(0,0,0,0.4)",
  transition:"0.3s",
-
  cursor:"pointer"
-
  }}
-
  onMouseEnter={e=>{
-
- e.currentTarget.style.transform="translateY(-8px)"
-
+ e.currentTarget.style.transform="translateY(-10px)";
  }}
-
  onMouseLeave={e=>{
-
- e.currentTarget.style.transform="translateY(0)"
-
+ e.currentTarget.style.transform="translateY(0)";
  }}
-
  >
 
- <div style={{fontSize:"40px"}}>
-
- ➕
-
- </div>
-
- <h5 className="mt-3">
-
- Add Internship
-
+ <h5 style={{fontWeight:"600"}}>
+ {card.title}
  </h5>
 
- <p>
-
- create new opportunity
-
+ <p style={{opacity:"0.9",fontSize:"14px"}}>
+ {card.desc}
  </p>
 
  <button
-
- className="btn btn-light w-100"
-
- onClick={()=>navigate("/add-internship")}
-
- >
-
- Open
-
- </button>
-
- </div>
-
- </div>
-
-
-
- {/* APPLICATIONS */}
-
- <div className="col-md-4">
-
- <div
-
- className="p-4 text-center"
-
+ className="btn btn-light w-100 mt-3"
  style={{
-
- borderRadius:"18px",
-
- background:
- "linear-gradient(135deg,#43e97b,#38f9d7)",
-
- color:"white",
-
- boxShadow:
- "0 20px 60px rgba(0,0,0,0.4)",
-
- transition:"0.3s",
-
- cursor:"pointer"
-
+ borderRadius:"10px",
+ fontWeight:"500"
  }}
-
- onMouseEnter={e=>{
-
- e.currentTarget.style.transform="translateY(-8px)"
-
- }}
-
- onMouseLeave={e=>{
-
- e.currentTarget.style.transform="translateY(0)"
-
- }}
-
- >
-
- <div style={{fontSize:"40px"}}>
-
- 📄
-
- </div>
-
- <h5 className="mt-3">
-
- Applications
-
- </h5>
-
- <p>
-
- approve or reject
-
- </p>
-
- <button
-
- className="btn btn-light w-100"
-
- onClick={()=>navigate("/view-applications")}
-
- >
-
- Open
-
- </button>
-
- </div>
-
- </div>
-
-
-
- {/* STUDENTS */}
-
- <div className="col-md-4">
-
- <div
-
- className="p-4 text-center"
-
- style={{
-
- borderRadius:"18px",
-
- background:
- "linear-gradient(135deg,#ff9966,#ff5e62)",
-
- color:"white",
-
- boxShadow:
- "0 20px 60px rgba(0,0,0,0.4)",
-
- transition:"0.3s",
-
- cursor:"pointer"
-
- }}
-
- onMouseEnter={e=>{
-
- e.currentTarget.style.transform="translateY(-8px)"
-
- }}
-
- onMouseLeave={e=>{
-
- e.currentTarget.style.transform="translateY(0)"
-
- }}
-
- >
-
- <div style={{fontSize:"40px"}}>
-
- 🎓
-
- </div>
-
- <h5 className="mt-3">
-
- Students
-
- </h5>
-
- <p>
-
- view registered users
-
- </p>
-
- <button
-
- className="btn btn-light w-100"
-
- onClick={()=>navigate("/all-students")}
-
- >
-
- View
-
- </button>
-
- </div>
-
- </div>
-
-
-
- {/* INTERNSHIPS */}
-
- <div className="col-md-4">
-
- <div
-
- className="p-4 text-center"
-
- style={{
-
- borderRadius:"18px",
-
- background:
- "linear-gradient(135deg,#f7971e,#ffd200)",
-
- color:"white",
-
- boxShadow:
- "0 20px 60px rgba(0,0,0,0.4)",
-
- transition:"0.3s",
-
- cursor:"pointer"
-
- }}
-
- onMouseEnter={e=>{
-
- e.currentTarget.style.transform="translateY(-8px)"
-
- }}
-
- onMouseLeave={e=>{
-
- e.currentTarget.style.transform="translateY(0)"
-
- }}
-
- >
-
- <div style={{fontSize:"40px"}}>
-
- 💼
-
- </div>
-
- <h5 className="mt-3">
-
- Manage Internships
-
- </h5>
-
- <p>
-
- edit or delete internships
-
- </p>
-
- <button
-
- className="btn btn-light w-100"
-
- onClick={()=>navigate("/admin-internships")}
-
- >
-
- Manage
-
- </button>
-
- </div>
-
- </div>
-
-
-
- {/* EXPORT */}
-
- <div className="col-md-4">
-
- <div
-
- className="p-4 text-center"
-
- style={{
-
- borderRadius:"18px",
-
- background:
- "linear-gradient(135deg,#00c6ff,#0072ff)",
-
- color:"white",
-
- boxShadow:
- "0 20px 60px rgba(0,0,0,0.4)",
-
- transition:"0.3s",
-
- cursor:"pointer"
-
- }}
-
- onMouseEnter={e=>{
-
- e.currentTarget.style.transform="translateY(-8px)"
-
- }}
-
- onMouseLeave={e=>{
-
- e.currentTarget.style.transform="translateY(0)"
-
- }}
-
- >
-
- <div style={{fontSize:"40px"}}>
-
- 📊
-
- </div>
-
- <h5 className="mt-3">
-
- Export Data
-
- </h5>
-
- <p>
-
- download excel report
-
- </p>
-
- <button
-
- className="btn btn-light w-100"
-
- onClick={()=>
-
- window.open(
-
- "http://localhost:5000/api/export"
-
- )
-
+ onClick={()=>{
+
+ if(card.action==="export"){
+ window.open("http://localhost:5000/api/export");
+ }
+ else{
+ navigate(card.route);
  }
 
+ }}
  >
-
- Download
-
+ {card.btn}
  </button>
 
  </div>
 
  </div>
 
-
-
- {/* SEARCH */}
-
- <div className="col-md-4">
-
- <div
-
- className="p-4 text-center"
-
- style={{
-
- borderRadius:"18px",
-
- background:
- "linear-gradient(135deg,#7f00ff,#e100ff)",
-
- color:"white",
-
- boxShadow:
- "0 20px 60px rgba(0,0,0,0.4)",
-
- transition:"0.3s",
-
- cursor:"pointer"
-
- }}
-
- onMouseEnter={e=>{
-
- e.currentTarget.style.transform="translateY(-8px)"
-
- }}
-
- onMouseLeave={e=>{
-
- e.currentTarget.style.transform="translateY(0)"
-
- }}
-
- >
-
- <div style={{fontSize:"40px"}}>
-
- 🔍
-
- </div>
-
- <h5 className="mt-3">
-
- Search Data
-
- </h5>
-
- <p>
-
- find students or apps
-
- </p>
-
- <button
-
- className="btn btn-light w-100"
-
- onClick={()=>navigate("/search")}
-
- >
-
- Search
-
- </button>
-
- </div>
-
- </div>
-
-
+ ))}
 
  </div>
 

@@ -27,7 +27,7 @@ setInternships(filtered);
 
 return(
 
-<div style={{padding:"20px"}}>
+<div style={{padding:"20px", background: "linear-gradient(120deg, #0f172a, #1e293b, #020617)",}}>
 
 <h2>Company Dashboard</h2>
 

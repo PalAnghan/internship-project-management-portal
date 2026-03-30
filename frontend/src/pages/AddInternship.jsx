@@ -5,9 +5,6 @@ function AddInternship(){
 
 const navigate = useNavigate();
 
-
-/* ================= STATE ================= */
-
 const [internship,setInternship] = useState({
 
 title:"",
@@ -23,8 +20,7 @@ companyAddress:""
 
 const [department,setDepartment] = useState([]);
 
-
-/* ================= DEPARTMENT SELECT ================= */
+/* ================= DEPARTMENT ================= */
 
 const handleDepartmentChange = (e)=>{
 
@@ -38,17 +34,11 @@ setDepartment(prev => [...prev,value]);
 
 else{
 
-setDepartment(
-
-prev => prev.filter(dep => dep !== value)
-
-);
+setDepartment(prev => prev.filter(dep => dep !== value));
 
 }
 
 };
-
-
 
 /* ================= SUBMIT ================= */
 
@@ -64,20 +54,14 @@ const res = await fetch(
 
 method:"POST",
 
-headers:{
-
-"Content-Type":"application/json"
-
-},
+headers:{"Content-Type":"application/json"},
 
 body: JSON.stringify({
 
 title: internship.title,
-
 description: internship.description,
 
 requiredSkills:
-
 internship.requiredSkills
 .split(",")
 .map(skill => skill.trim())
@@ -107,8 +91,7 @@ department: department
 
 if(res.ok){
 
-alert("Internship added successfully 🎉");
-
+alert("Internship added successfully");
 navigate("/admin");
 
 }
@@ -124,354 +107,171 @@ alert("Error adding internship");
 catch(err){
 
 console.log(err);
-
 alert("Server error");
 
 }
 
 };
 
-
-
 /* ================= UI ================= */
 
 return(
 
 <div style={{
-
 minHeight:"100vh",
-
-background:
-
-"linear-gradient(135deg,#141e30,#243b55)",
-
+background:"linear-gradient(120deg,#0f172a,#1e293b,#020617)",
 paddingBottom:"50px"
-
 }}>
-
-
 
 {/* NAVBAR */}
 
-<nav
+<nav style={{
+display:"flex",
+justifyContent:"space-between",
+padding:"15px 25px",
+background:"rgba(0,0,0,0.6)",
+backdropFilter:"blur(10px)"
+}}>
 
-className="navbar navbar-dark bg-dark px-4"
-
->
-
-<h5 className="text-white">
-
-Admin Panel
-
-</h5>
-
+<h5 style={{color:"white"}}>Admin Panel</h5>
 
 <button
-
 className="btn btn-outline-light"
-
 onClick={()=>navigate("/admin")}
-
 >
-
-🏠 Home
-
+Home
 </button>
 
 </nav>
 
 
-
 <div className="container mt-5">
 
-
-<div
-
-className="card shadow-lg border-0"
-
-style={{
-
-maxWidth:"650px",
-
+<div style={{
+maxWidth:"700px",
 margin:"auto",
+borderRadius:"20px",
+background:"rgba(255,255,255,0.95)",
+padding:"30px",
+boxShadow:"0 25px 70px rgba(0,0,0,0.4)"
+}}>
 
-borderRadius:"18px",
-
-background:"#ffffff"
-
-}}
-
->
-
-
-<div className="card-body">
-
-
-<h3
-
-className="text-center mb-4 fw-bold"
-
->
-
+<h3 className="text-center fw-bold mb-4">
 Add Internship
-
 </h3>
 
 
+{/* GRID FORM */}
 
-{/* COMPANY */}
+<div className="row">
 
+<div className="col-md-6">
 <input
-
 className="form-control mb-3"
-
 placeholder="Company Name"
-
-onChange={(e)=>
-
-setInternship({
-
-...internship,
-
-companyName:e.target.value
-
-})
-
-}
-
+onChange={(e)=>setInternship({...internship,companyName:e.target.value})}
 />
+</div>
 
-
-
+<div className="col-md-6">
 <input
-
 className="form-control mb-3"
-
 placeholder="Company Address"
-
-onChange={(e)=>
-
-setInternship({
-
-...internship,
-
-companyAddress:e.target.value
-
-})
-
-}
-
+onChange={(e)=>setInternship({...internship,companyAddress:e.target.value})}
 />
+</div>
 
-
-
-{/* TITLE */}
-
+<div className="col-md-6">
 <input
-
 className="form-control mb-3"
-
 placeholder="Internship Title"
-
-onChange={(e)=>
-
-setInternship({
-
-...internship,
-
-title:e.target.value
-
-})
-
-}
-
+onChange={(e)=>setInternship({...internship,title:e.target.value})}
 />
+</div>
 
+<div className="col-md-6">
+<input
+className="form-control mb-3"
+placeholder="Duration (e.g. 3 months)"
+onChange={(e)=>setInternship({...internship,duration:e.target.value})}
+/>
+</div>
+
+</div>
 
 
 {/* DESCRIPTION */}
 
 <textarea
-
 className="form-control mb-3"
-
 placeholder="Description"
-
 rows="3"
-
-onChange={(e)=>
-
-setInternship({
-
-...internship,
-
-description:e.target.value
-
-})
-
-}
-
+onChange={(e)=>setInternship({...internship,description:e.target.value})}
 />
-
 
 
 {/* SKILLS */}
 
 <input
-
 className="form-control mb-3"
-
 placeholder="Skills (comma separated)"
-
-onChange={(e)=>
-
-setInternship({
-
-...internship,
-
-requiredSkills:e.target.value
-
-})
-
-}
-
+onChange={(e)=>setInternship({...internship,requiredSkills:e.target.value})}
 />
 
 
+{/* DEADLINE + MAX */}
 
-{/* DURATION */}
+<div className="row">
 
+<div className="col-md-6">
+<label className="fw-semibold">Application Deadline</label>
 <input
-
-className="form-control mb-3"
-
-placeholder="Duration (eg: 3 months)"
-
-onChange={(e)=>
-
-setInternship({
-
-...internship,
-
-duration:e.target.value
-
-})
-
-}
-
-/>
-
-
-
-{/* DEADLINE */}
-
-<label className="fw-bold">
-
-Application Deadline
-
-</label>
-
-<input
-
 type="datetime-local"
-
 className="form-control mb-3"
-
-onChange={(e)=>
-
-setInternship({
-
-...internship,
-
-applicationDeadline:e.target.value
-
-})
-
-}
-
+onChange={(e)=>setInternship({...internship,applicationDeadline:e.target.value})}
 />
+</div>
 
-
-
-{/* MAX STUDENTS */}
-
+<div className="col-md-6">
+<label className="fw-semibold">Max Students</label>
 <input
-
 type="number"
-
 className="form-control mb-3"
-
-placeholder="Max students allowed"
-
-onChange={(e)=>
-
-setInternship({
-
-...internship,
-
-maxApplicants:e.target.value
-
-})
-
-}
-
+onChange={(e)=>setInternship({...internship,maxApplicants:e.target.value})}
 />
+</div>
 
+</div>
 
 
 {/* DEPARTMENT */}
 
-<h5 className="mt-3">
-
-Select Department
-
-</h5>
-
+<h5 className="mt-3 mb-2">Select Department</h5>
 
 <div className="row">
 
 {["BCA","B.Tech","Diploma","BBA","Pharmacy","Robotics"].map(dep=>(
 
-<div
+<div className="col-md-4 mb-2" key={dep}>
 
-className="col-md-4 mb-2"
-
-key={dep}
-
->
-
-<label
-
-className="form-check-label"
-
-style={{
-
-background:"#f1f5f9",
-
-padding:"8px",
-
-borderRadius:"8px",
-
-width:"100%",
-
+<label style={{
+display:"block",
+padding:"10px",
+borderRadius:"10px",
+border:"1px solid #ddd",
 cursor:"pointer",
-
-border:"1px solid #ddd"
-
-}}
-
->
+background:
+department.includes(dep)
+? "#e0f2fe"
+: "#f8fafc",
+fontWeight:"500"
+}}>
 
 <input
-
 type="checkbox"
-
 value={dep}
-
 className="form-check-input me-2"
-
 onChange={handleDepartmentChange}
-
 />
 
 {dep}
@@ -485,52 +285,31 @@ onChange={handleDepartmentChange}
 </div>
 
 
+{/* SELECTED */}
 
-{/* SHOW SELECTED */}
-
-<div className="mt-2">
-
-<strong>
-
-Selected:
-
-</strong>
-
-{" "}
-
-{department.join(", ") || "None"}
-
-</div>
+<p className="mt-2 text-muted">
+Selected: {department.join(", ") || "None"}
+</p>
 
 
-
-{/* SUBMIT */}
+{/* BUTTON */}
 
 <button
-
-className="btn btn-primary w-100 mt-4"
-
+className="btn w-100 mt-3"
 style={{
-
+background:"linear-gradient(90deg,#3b82f6,#2563eb)",
+color:"white",
 padding:"12px",
-
-fontSize:"16px",
-
-borderRadius:"10px"
-
+borderRadius:"12px",
+fontWeight:"600",
+boxShadow:"0 10px 30px rgba(59,130,246,0.4)"
 }}
-
 onClick={handleSubmit}
-
 >
 
 Add Internship
 
 </button>
-
-
-
-</div>
 
 </div>
 
@@ -541,6 +320,5 @@ Add Internship
 );
 
 }
-
 
 export default AddInternship;

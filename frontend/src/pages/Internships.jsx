@@ -559,7 +559,7 @@ const Card = ({ item }) => {
 
  <small className="text-muted">
 
- 🎯 Seats left: {item.seats}
+  Seats left: {item.seats}
 
  </small>
 
@@ -705,7 +705,7 @@ borderBottom:"1px solid rgba(255,255,255,0.1)"
 
 <h4 className="text-white fw-bold">
 
-🚀 Internships Portal
+ Internships Portal
 
 </h4>
 
@@ -855,7 +855,7 @@ letterSpacing:"0.5px"
 
 >
 
-🤖 AI Recommended
+ AI Recommended
 
 </h4>
 
@@ -885,7 +885,7 @@ fontWeight:"700"
 
 >
 
-🔥 Trending Internships
+ Trending Internships
 
 </h4>
 
@@ -915,7 +915,7 @@ fontWeight:"700"
 
 >
 
-📚 All Internships
+ All Internships
 
 </h4>
 

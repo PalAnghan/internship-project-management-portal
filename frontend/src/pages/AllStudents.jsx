@@ -11,9 +11,7 @@ function AllStudents(){
  useEffect(()=>{
 
   fetch("http://localhost:5000/api/users")
-
   .then(res=>res.json())
-
   .then(data=>setStudents(data))
 
  },[]);
@@ -22,211 +20,232 @@ function AllStudents(){
  const filtered = students.filter(s=>
 
  s.name?.toLowerCase().includes(search.toLowerCase()) ||
-
  s.email?.toLowerCase().includes(search.toLowerCase()) ||
-
- s.enrollmentNumber?.toLowerCase().includes(search.toLowerCase())
+ s.enrollment?.toLowerCase().includes(search.toLowerCase())
 
  );
 
+ // 🔥 STATS
+ const totalStudents = students.length;
+
+ const skilledStudents =
+ students.filter(s=>s.skills?.length>0).length;
+
+ const resumeStudents =
+ students.filter(s=>s.resume).length;
 
  return(
 
- <div
-
- style={{
-
+ <div style={{
  minHeight:"100vh",
-
- background:
- "linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
-
+ background:"linear-gradient(120deg,#0f172a,#1e293b,#020617)",
  paddingBottom:"40px"
-
- }}
-
- >
+ }}>
 
  {/* NAVBAR */}
 
- <nav
+ <nav style={{
+ display:"flex",
+ justifyContent:"space-between",
+ padding:"15px 25px",
+ background:"rgba(0,0,0,0.6)"
+ }}>
 
- className="navbar px-4"
-
- style={{
-
- background:"rgba(0,0,0,0.6)",
-
- backdropFilter:"blur(10px)"
-
- }}
-
- >
-
- <h5 className="text-white">
-
- 🎓 All Students
-
- </h5>
+ <h5 style={{color:"white"}}>🎓 Student Dashboard</h5>
 
  <button
-
  className="btn btn-outline-light"
-
  onClick={()=>navigate("/admin")}
-
  >
-
- Dashboard
-
+ Home
  </button>
 
  </nav>
 
 
+ {/* 🔥 TOP STATS */}
 
- {/* PAGE */}
+ <div className="container mt-4">
 
- <div className="container mt-5">
+ <div className="row text-center g-3">
 
- <h3 className="text-white text-center mb-4">
+ <div className="col-md-4">
+ <div style={cardStat("#3b82f6")}>
+ <h6>Total Students</h6>
+ <h3>{totalStudents}</h3>
+ </div>
+ </div>
 
- Student Database
+ <div className="col-md-4">
+ <div style={cardStat("#22c55e")}>
+ <h6>Skilled Students</h6>
+ <h3>{skilledStudents}</h3>
+ </div>
+ </div>
 
- </h3>
+ <div className="col-md-4">
+ <div style={cardStat("#f59e0b")}>
+ <h6>Resume Uploaded</h6>
+ <h3>{resumeStudents}</h3>
+ </div>
+ </div>
+
+ </div>
+
+ </div>
 
 
  {/* SEARCH */}
 
+ <div style={{textAlign:"center", marginTop:"30px"}}>
+
  <input
-
- className="form-control mb-4"
-
- placeholder="search name, email, enrollment..."
-
+ placeholder="🔍 Search..."
  value={search}
-
- onChange={e=>setSearch(e.target.value)}
-
+ onChange={(e)=>setSearch(e.target.value)}
  style={{
-
- borderRadius:"12px",
-
- padding:"12px",
-
- boxShadow:"0 5px 20px rgba(0,0,0,0.2)"
-
+  padding:"14px",
+  width:"320px",
+  borderRadius:"12px",
+  border:"none",
+  outline:"none"
  }}
-
  />
 
+ </div>
 
- {/* TABLE */}
 
- <div
+ <div className="container mt-5">
 
- style={{
-
- background:"rgba(255,255,255,0.95)",
-
- padding:"20px",
-
+ <div style={{
+ background:"white",
  borderRadius:"18px",
+ padding:"20px"
+ }}>
 
- boxShadow:"0 20px 50px rgba(0,0,0,0.25)"
+ <table className="table align-middle">
 
- }}
-
- >
-
- <table className="table">
-
- <thead>
+ <thead style={{
+ background:"#0f172a",
+ color:"white"
+ }}>
 
  <tr>
-
  <th>Name</th>
-
  <th>Email</th>
-
  <th>Enrollment</th>
-
  <th>Department</th>
-
  <th>Skills</th>
-
  <th>Resume</th>
-
  </tr>
 
  </thead>
-
-
 
  <tbody>
 
  {filtered.map(s=>(
 
- <tr key={s._id}>
+ <tr
+ key={s._id}
 
- <td>{s.name}</td>
+ style={{
 
- <td>{s.email}</td>
+ // 🔥 highlight top skilled
+ background:
+ s.skills?.length >= 3
+ ? "#ecfdf5"
+ : "white",
 
- <td>{s.enrollment || "-"}</td>
+ borderLeft:
+ s.skills?.length >= 3
+ ? "5px solid #22c55e"
+ : ""
 
- <td>{s.department || "-"}</td>
+ }}
 
- <td>
+ >
 
- {s.skills?.join(", ") || "No Skills"}
+ <td className="fw-bold">
+
+ 👤 {s.name}
+
+ {/* 🏆 badge */}
+ {s.skills?.length >= 3 && (
+ <span style={{
+ marginLeft:"8px",
+ background:"#22c55e",
+ color:"white",
+ padding:"2px 6px",
+ borderRadius:"6px",
+ fontSize:"10px"
+ }}>
+ TOP
+ </span>
+ )}
 
  </td>
 
+ <td>{s.email}</td>
 
+ <td>
+ <span className="badge bg-info">
+ {s.enrollment || "-"}
+ </span>
+ </td>
+
+ <td>
+ <span className="badge bg-secondary">
+ {s.department || "-"}
+ </span>
+ </td>
+
+ <td>
+
+ {s.skills?.length > 0 ? (
+
+ <span style={{fontSize:"13px"}}>
+ {s.skills.join(", ")}
+ </span>
+
+ ) : (
+
+ <span className="text-muted">
+ No Skills
+ </span>
+
+ )}
+
+ </td>
 
  <td>
 
  {s.resume ? (
 
- <>
+ <div className="d-flex gap-2">
 
  <a
-
  href={s.resume}
-
  target="_blank"
-
- className="btn btn-success btn-sm me-2"
-
+ rel="noreferrer"
+ className="btn btn-success btn-sm"
  >
-
  View
-
  </a>
 
  <a
-
  href={s.resume}
-
  download
-
  className="btn btn-primary btn-sm"
-
  >
-
  Download
-
  </a>
 
- </>
+ </div>
 
  ) : (
 
  <span className="text-danger">
-
  No Resume
-
  </span>
 
  )}
@@ -250,5 +269,23 @@ function AllStudents(){
  );
 
 }
+
+
+// 🔥 STAT CARD STYLE
+
+const cardStat = (color)=>({
+
+ background:`linear-gradient(135deg,${color},#1e293b)`,
+
+ color:"white",
+
+ padding:"20px",
+
+ borderRadius:"14px",
+
+ boxShadow:"0 10px 30px rgba(0,0,0,0.3)"
+
+});
+
 
 export default AllStudents;

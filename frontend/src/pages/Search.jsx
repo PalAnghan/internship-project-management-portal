@@ -4,208 +4,216 @@ import { useNavigate } from "react-router-dom";
 function Search(){
 
  const [text,setText] = useState("");
-
  const [results,setResults] = useState([]);
+ const [loading,setLoading] = useState(false);
 
  const navigate = useNavigate();
 
+ const handleSearch = async ()=>{
 
- const handleSearch = ()=>{
+  if(!text) return;
 
- if(!text) return;
+  setLoading(true);
 
- fetch(
+  try{
 
- `http://localhost:5000/api/users/search/${text}`
+   const res = await fetch(
+   `http://localhost:5000/api/users/search/${text}`
+   );
 
- )
+   const data = await res.json();
 
- .then(res=>res.json())
+   setResults(data);
 
- .then(data=>setResults(data))
+  }catch(err){
 
- .catch(err=>console.log(err));
+   console.log(err);
 
+  }
+
+  setLoading(false);
  };
-
 
  return(
 
- <div
-
- style={{
-
+ <div style={{
  minHeight:"100vh",
-
- background:
-
- "linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
-
+ background:"linear-gradient(120deg,#0f172a,#1e293b,#020617)",
  padding:"40px"
-
- }}
-
- >
+ }}>
 
  {/* NAVBAR */}
 
- <nav
-
- className="navbar px-3 mb-4"
-
- style={{
-
+ <nav style={{
+ display:"flex",
+ justifyContent:"space-between",
+ padding:"15px 25px",
  background:"rgba(0,0,0,0.6)",
-
  borderRadius:"10px"
+ }}>
 
- }}
-
- >
-
- <h5 className="text-white">
-
- 🔍 Search Data
-
- </h5>
+ <h5 style={{color:"white"}}>🔍 Search Data</h5>
 
  <button
-
  className="btn btn-outline-light"
-
  onClick={()=>navigate("/admin")}
-
  >
-
- Dashboard
-
+ Home
  </button>
 
  </nav>
 
 
-
  {/* CARD */}
 
- <div
-
- style={{
-
- maxWidth:"750px",
-
- margin:"auto",
-
- background:"white",
-
+ <div style={{
+ maxWidth:"800px",
+ margin:"50px auto",
+ background:"rgba(255,255,255,0.95)",
  padding:"30px",
+ borderRadius:"20px",
+ boxShadow:"0 20px 60px rgba(0,0,0,0.4)"
+ }}>
 
- borderRadius:"18px",
-
- boxShadow:
-
- "0 20px 60px rgba(0,0,0,0.3)"
-
- }}
-
- >
-
- <h4 className="mb-3">
-
- Search students
-
- </h4>
+ <h3 className="text-center mb-4 fw-bold">
+ Search Students
+ </h3>
 
 
+ {/* INPUT */}
+
+ <div className="d-flex gap-2 mb-3">
 
  <input
-
- className="form-control mb-3"
-
- placeholder="name, email, enrollment"
-
+ className="form-control"
+ placeholder="name, email, enrollment..."
  value={text}
-
  onChange={e=>setText(e.target.value)}
-
+ style={{
+  padding:"12px",
+  borderRadius:"10px"
+ }}
  />
 
-
-
  <button
-
- className="btn btn-primary w-100 mb-4"
-
+ className="btn btn-primary px-4"
  onClick={handleSearch}
-
  >
-
  Search
-
  </button>
 
+ </div>
 
 
- {results.length===0 && (
+ {/* LOADING */}
 
- <p className="text-muted">
-
- no result
-
+ {loading && (
+ <p className="text-center text-muted">
+ Searching...
  </p>
-
  )}
 
 
+ {/* NO RESULT */}
+
+ {!loading && results.length===0 && text && (
+ <p className="text-center text-muted">
+ No results found
+ </p>
+ )}
+
+
+ {/* RESULTS */}
+
+ <div className="row g-3">
 
  {results.map(user=>(
 
- <div
+ <div className="col-md-6" key={user._id}>
 
- key={user._id}
+ <div style={{
 
- className="card p-3 mb-2"
+  borderRadius:"16px",
+  padding:"20px",
+  background:"white",
+  boxShadow:"0 10px 30px rgba(0,0,0,0.2)",
+  transition:"0.3s"
 
+ }}
+
+ onMouseEnter={e=>{
+  e.currentTarget.style.transform="translateY(-5px)"
+ }}
+ onMouseLeave={e=>{
+  e.currentTarget.style.transform="translateY(0)"
+ }}
  >
 
- <h6>
-
- {user.name}
-
+ <h6 className="fw-bold">
+ 👤 {user.name}
  </h6>
 
-
-
- <p>
-
+ <p className="text-muted mb-1">
  {user.email}
-
  </p>
 
 
+ {/* BADGES */}
 
- <p>
+ <div className="d-flex gap-2 flex-wrap mt-2">
 
- Dept:
+ <span className="badge bg-info">
+ 🎓 {user.enrollment || "-"}
+ </span>
 
- {user.department || "-"}
+ <span className="badge bg-secondary">
+ 🏫 {user.department || "-"}
+ </span>
 
- </p>
+ {user.skills?.length > 0 && (
+ <span className="badge bg-success">
+ ⚡ {user.skills.length} skills
+ </span>
+ )}
+
+ </div>
 
 
+ {/* RESUME */}
 
- <p>
+ <div className="mt-3">
 
- Enrollment:
+ {user.resume ? (
 
- {user.enrollmentNumber || "-"}
+ <a
+ href={user.resume}
+ target="_blank"
+ rel="noreferrer"
+ className="btn btn-dark btn-sm w-100"
+ >
+ View Resume
+ </a>
 
- </p>
+ ) : (
+
+ <button
+ className="btn btn-secondary btn-sm w-100"
+ disabled
+ >
+ No Resume
+ </button>
+
+ )}
+
+ </div>
+
+ </div>
 
  </div>
 
  ))}
 
-
+ </div>
 
  </div>
 

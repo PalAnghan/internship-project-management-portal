@@ -3,177 +3,206 @@ import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
 
-  const navigate = useNavigate();
+ const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+ const [email, setEmail] = useState("");
+ const [password, setPassword] = useState("");
+ const [showPassword, setShowPassword] = useState(false);
+ const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
+ const handleLogin = async () => {
+
+  setLoading(true);
 
   try {
 
-    const res = await fetch("http://localhost:5000/api/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
+   const res = await fetch("http://localhost:5000/api/users/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+   });
 
-    const data = await res.json();
+   const data = await res.json();
 
-    if (res.ok) {
+   if (res.ok) {
 
-      // ✅ SAVE USER IN LOCAL STORAGE
-      localStorage.setItem("user", JSON.stringify(data.user));
+    localStorage.setItem("user", JSON.stringify(data.user));
+    navigate("/student-dashboard");
 
-      alert("Login successful");
-
-      navigate("/student-dashboard");
-
-    } else {
-      alert(data.message || "Login failed");
-    }
+   } else {
+    alert(data.message || "Login failed");
+   }
 
   } catch (error) {
-    console.log(error);
-    alert("Server error");
+   console.log(error);
+   alert("Server error");
   }
 
+  setLoading(false);
+ };
 
+ return (
 
-  };  
+ <div style={{
+ minHeight:"100vh",
+ background:"linear-gradient(120deg,#0f172a,#1e293b,#020617)",
+ display:"flex",
+ justifyContent:"center",
+ alignItems:"center",
+ fontFamily:"Poppins, sans-serif"
+ }}>
 
-  return (
-    // <div style={{ padding: "20px" }}>
-    //   <h2>Login</h2>
+ {/* ANIMATION */}
+ <style>
+ {`
+ @keyframes fadeIn {
+  from {
+   opacity:0;
+   transform:translateY(30px);
+  }
+  to {
+   opacity:1;
+   transform:translateY(0);
+  }
+ }
+ `}
+ </style>
 
-    //   <input
-    //     type="email"
-    //     placeholder="Enter email"
-    //     value={email}
-    //     onChange={(e) => setEmail(e.target.value)}
-    //   /><br /><br />
+ {/* CARD */}
+ <div style={{
+ width:"360px",
+ padding:"35px",
+ borderRadius:"20px",
+ background:"rgba(255,255,255,0.08)",
+ backdropFilter:"blur(15px)",
+ border:"1px solid rgba(255,255,255,0.1)",
+ boxShadow:"0 25px 60px rgba(0,0,0,0.5)",
+ animation:"fadeIn 0.6s ease"
+ }}>
 
-    //   <input
-    //     type="password"
-    //     placeholder="Enter password"
-    //     value={password}
-    //     onChange={(e) => setPassword(e.target.value)}
-    //   /><br /><br />
+ {/* TITLE */}
+ <h2 style={{
+ textAlign:"center",
+ color:"white",
+ marginBottom:"25px",
+ fontWeight:"600"
+ }}>
+ Student Login
+ </h2>
 
-    //   <button onClick={handleLogin}>Login</button>
+ {/* EMAIL */}
+ <input
+ type="email"
+ placeholder="Email address"
+ value={email}
+ onChange={(e)=>setEmail(e.target.value)}
+ style={inputStyle}
+ />
 
-    //   <br /><br />
+ {/* PASSWORD WITH TOGGLE */}
+ <div style={{ position:"relative", marginBottom:"15px" }}>
 
-    //   <Link to="/register">Go to Register</Link>
+ <input
+ type={showPassword ? "text" : "password"}
+ placeholder="Password"
+ value={password}
+ onChange={(e)=>setPassword(e.target.value)}
+ style={inputStyle}
+ />
 
-    // </div>
-    <div style={{
-    minHeight: "100vh",
-    background: "linear-gradient(120deg, #0f172a, #1e293b, #020617)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    fontFamily: "Poppins, sans-serif"
-  }}>
+ <button
+ onClick={()=>setShowPassword(!showPassword)}
+ style={{
+ position:"absolute",
+ right:"10px",
+ top:"50%",
+ transform:"translateY(-50%)",
+ background:"transparent",
+ border:"none",
+ color:"#000000ff",
+ cursor:"pointer",
+ fontSize:"12px"
+ }}
+ >
+ {showPassword ? "Hide" : "Show"}
+ </button>
 
-    {/* ADD THIS CARD CONTAINER */}
-    <div style={{
-      background: "rgba(255,255,255,0.08)",
-      backdropFilter: "blur(10px)",
-      borderRadius: "20px",
-      padding: "40px",
-      width: "350px",
-      color: "white",
-      border: "1px solid rgba(255,255,255,0.1)",
-      boxShadow: "0 8px 32px rgba(0,0,0,0.3)"
-    }}>
+ </div>
 
-      <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
-        Student Login
-      </h2>
+ {/* BUTTON */}
+ <button
+ onClick={handleLogin}
+ style={{
+ width:"100%",
+ padding:"12px",
+ borderRadius:"12px",
+ border:"none",
+ marginTop:"10px",
+ background:"linear-gradient(90deg,#3b82f6,#06b6d4)",
+ color:"white",
+ fontWeight:"600",
+ cursor:"pointer",
+ transition:"0.2s",
+ boxShadow:"0 10px 30px rgba(59,130,246,0.4)"
+ }}
+ onMouseDown={e=>{
+  e.currentTarget.style.transform="scale(0.96)";
+ }}
+ onMouseUp={e=>{
+  e.currentTarget.style.transform="scale(1)";
+ }}
+ >
+ {loading ? "Please wait..." : "Login"}
+ </button>
 
-      <input
-        type="email"
-        placeholder="Enter email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "10px",
-          marginBottom: "15px",
-          borderRadius: "10px",
-          border: "none",
-          outline: "none"
-        }}
-      />
+ {/* LINKS */}
+ <div style={{marginTop:"15px", textAlign:"center"}}>
 
-      <input
-        type="password"
-        placeholder="Enter password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "10px",
-          marginBottom: "20px",
-          borderRadius: "10px",
-          border: "none",
-          outline: "none"
-        }}
-      />
+ <Link
+ to="/register"
+ style={{
+ color:"#38bdf8",
+ textDecoration:"none",
+ fontSize:"14px"
+ }}
+ >
+ Create account
+ </Link>
 
-      <button
-        onClick={handleLogin}
-        style={{
-          width: "100%",
-          padding: "12px",
-          borderRadius: "30px",
-          border: "none",
-          background: "linear-gradient(90deg, #3b82f6, #06b6d4)",
-          color: "white",
-          fontWeight: "600",
-          boxShadow: "0 0 15px rgba(59,130,246,0.5)",
-          cursor: "pointer"
-        }}
-      >
-        Login
-      </button>
+ </div>
 
-      <br /><br />
+ <div style={{marginTop:"15px", textAlign:"center"}}>
 
-      <Link
-        to="/register"
-        style={{
-          color: "#38bdf8",
-          textDecoration: "none"
-        }}
-      >
-        Go to Register
-      </Link>
-      <br />
+ <Link
+ to="/"
+ style={{
+ color:"#94a3b8",
+ textDecoration:"none",
+ fontSize:"13px"
+ }}
+ >
+ Back to home
+ </Link>
 
-      <Link
-        to="/"
-        style={{
-          color: "#94a3b8",
-          textDecoration: "none",
-          display: "block",
-          marginTop: "10px"
-        }}
-      >
-        ← Back to Home
-      </Link>
+ </div>
 
-    </div>
-  </div>
-  
-    
-  );
+ </div>
+
+ </div>
+ );
 }
+
+/* INPUT STYLE */
+
+const inputStyle = {
+ width:"100%",
+ padding:"12px",
+ marginBottom:"15px",
+ borderRadius:"12px",
+ border:"1px solid rgba(255,255,255,0.1)",
+ background:"rgba(255,255,255,0.1)",
+ color:"white",
+ outline:"none"
+};
 
 export default Login;

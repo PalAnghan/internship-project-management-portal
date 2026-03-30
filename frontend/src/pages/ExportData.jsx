@@ -10,7 +10,6 @@ function ExportData(){
  const [search,setSearch] = useState("");
  const [results,setResults] = useState([]);
 
-
  // load companies
  useEffect(()=>{
 
@@ -21,8 +20,6 @@ function ExportData(){
    const data = res.data.reverse();
 
    setInternships(data);
-
-   // show all companies by default
    setResults(data);
 
   })
@@ -32,7 +29,6 @@ function ExportData(){
  },[]);
 
 
-
  // search click
  const handleSearch = ()=>{
 
@@ -40,9 +36,7 @@ function ExportData(){
 
    setResults(internships);
 
-  }
-
-  else{
+  } else {
 
    const filtered =
    internships.filter(item=>
@@ -60,8 +54,7 @@ function ExportData(){
  };
 
 
-
- // search typing (live search)
+ // live search
  const handleTyping = (value)=>{
 
   setSearch(value);
@@ -70,9 +63,7 @@ function ExportData(){
 
    setResults(internships);
 
-  }
-
-  else{
+  } else {
 
    const filtered =
    internships.filter(item=>
@@ -90,17 +81,12 @@ function ExportData(){
  };
 
 
-
  // excel download
  const downloadAllExcel = ()=>{
 
-  window.open(
-   "http://localhost:5000/api/export"
-  );
+  window.open("http://localhost:5000/api/export");
 
  };
-
-
 
  const downloadCompanyExcel = (id)=>{
 
@@ -111,56 +97,71 @@ function ExportData(){
  };
 
 
-
  return(
 
  <div style={{
-  minHeight:"100vh",
-  background:"linear-gradient(135deg,#0f172a,#1e293b)",
+    minHeight:"100vh",
+    background:"linear-gradient(120deg, #0f172a, #1e293b, #020617)",
   padding:"40px"
  }}>
 
-
-
  <div className="container">
 
-
-
+ {/* HEADER */}
 
  <h2 style={{
   color:"white",
   textAlign:"center",
-  fontWeight:"600"
+  fontWeight:"700",
+  letterSpacing:"1px"
  }}>
 
- Export Student Data
+ 📊 Export Dashboard
 
  </h2>
 
-
-
  <p style={{
-  color:"#cbd5e1",
+  color:"#94a3b8",
   textAlign:"center",
-  marginBottom:"30px"
+  marginBottom:"40px"
  }}>
 
- Download students data in Excel format
+ Download student data with advanced controls
 
  </p>
 
 
+ {/* MAIN CARD */}
 
+ <div style={{
+  ...mainCard,
+  background:"linear-gradient(135deg,#ffffff,#f1f5f9)"
+ }}>
 
- {/* ALL STUDENTS */}
+ <h5 style={{fontWeight:"700"}}>
 
- <div style={mainCard}>
+ 📁 All Students Data
 
- <h5>📊 All Students Data</h5>
+ </h5>
+
+ <p style={{color:"#555"}}>
+
+ Download complete student dataset
+
+ </p>
 
  <button
- className="btn btn-dark mt-2 px-4"
+ className="btn w-100 mt-2"
  onClick={downloadAllExcel}
+ style={{
+  background:"linear-gradient(90deg,#6366f1,#3b82f6)",
+  color:"white",
+  border:"none",
+  padding:"10px",
+  borderRadius:"10px",
+  fontWeight:"600",
+  boxShadow:"0 8px 20px rgba(59,130,246,0.4)"
+ }}
  >
 
  Download Excel
@@ -170,32 +171,40 @@ function ExportData(){
  </div>
 
 
-
-
- {/* SEARCH */}
+ {/* SEARCH BAR */}
 
  <div style={{
   textAlign:"center",
-  marginTop:"40px"
+  marginTop:"50px"
  }}>
 
  <input
  type="text"
- placeholder="Search company..."
+ placeholder="🔍 Search company..."
  value={search}
  onChange={(e)=>handleTyping(e.target.value)}
  style={{
-  padding:"12px",
-  width:"260px",
-  borderRadius:"8px",
-  border:"1px solid #ddd",
+  padding:"14px",
+  width:"280px",
+  borderRadius:"12px",
+  border:"none",
+  outline:"none",
+  background:"#f1f5f9",
+  boxShadow:"0 6px 20px rgba(0,0,0,0.2)",
   marginRight:"10px"
  }}
  />
 
  <button
- className="btn btn-primary"
+ className="btn"
  onClick={handleSearch}
+ style={{
+  background:"linear-gradient(90deg,#22c55e,#4ade80)",
+  color:"white",
+  borderRadius:"10px",
+  padding:"10px 20px",
+  fontWeight:"600"
+ }}
  >
 
  Search
@@ -205,28 +214,28 @@ function ExportData(){
  </div>
 
 
-
-
- {/* COMPANY LIST */}
+ {/* TITLE */}
 
  <h4 style={{
   color:"white",
-  marginTop:"35px",
-  textAlign:"center"
+  marginTop:"50px",
+  textAlign:"center",
+  fontWeight:"600"
  }}>
 
- Company Wise Export
+  Company Wise Export
 
  </h4>
 
 
+ {/* CARDS */}
 
- <div className="row g-4 mt-2">
+ <div className="row g-4 mt-3">
 
  {results.length===0 ? (
 
  <p style={{
-  color:"lightgray",
+  color:"#cbd5f5",
   textAlign:"center"
  }}>
 
@@ -238,29 +247,35 @@ function ExportData(){
 
  results.map(internship=>(
 
- <div
- className="col-md-4"
- key={internship._id}
- >
+ <div className="col-md-4" key={internship._id}>
 
- <div style={companyCard}>
+ <div style={companyCardUltra}>
 
- <h5 style={{fontWeight:"600"}}>
+ <div style={{fontSize:"30px"}}>🏢</div>
+
+ <h5 style={{fontWeight:"700"}}>
  {internship.companyName}
  </h5>
 
  <p style={{
-  color:"#555",
+  color:"#64748b",
   fontSize:"14px"
  }}>
  {internship.title}
  </p>
 
  <button
- className="btn btn-primary w-100 mt-2"
- onClick={()=>
- downloadCompanyExcel(internship._id)
- }
+ className="btn w-100 mt-2"
+ onClick={()=>downloadCompanyExcel(internship._id)}
+ style={{
+  background:"linear-gradient(90deg,#f59e0b,#f97316)",
+  color:"white",
+  border:"none",
+  borderRadius:"10px",
+  padding:"10px",
+  fontWeight:"600",
+  boxShadow:"0 8px 20px rgba(249,115,22,0.4)"
+ }}
  >
 
  Download Excel
@@ -278,25 +293,30 @@ function ExportData(){
  </div>
 
 
-
+ {/* BACK BUTTON */}
 
  <div style={{
   textAlign:"center",
-  marginTop:"40px"
+  marginTop:"50px"
  }}>
 
  <button
- className="btn btn-light px-4"
+ className="btn px-4"
  onClick={()=>navigate("/admin")}
+ style={{
+  background:"rgba(255,255,255,0.1)",
+  color:"white",
+  borderRadius:"10px",
+  backdropFilter:"blur(8px)",
+  border:"1px solid rgba(255,255,255,0.2)"
+ }}
  >
 
- Back
+  Back to Dashboard
 
  </button>
 
  </div>
-
-
 
  </div>
 
@@ -307,30 +327,29 @@ function ExportData(){
 }
 
 
+// CARDS
 
 const mainCard={
 
- background:"white",
  padding:"25px",
- borderRadius:"14px",
+ borderRadius:"18px",
  textAlign:"center",
- maxWidth:"500px",
+ maxWidth:"520px",
  margin:"auto",
- boxShadow:"0 10px 25px rgba(0,0,0,0.25)"
+ boxShadow:"0 20px 60px rgba(0,0,0,0.4)"
 
 };
 
+const companyCardUltra={
 
-
-const companyCard={
-
- background:"white",
- padding:"20px",
- borderRadius:"12px",
+ background:"rgba(255,255,255,0.95)",
+ padding:"22px",
+ borderRadius:"16px",
  textAlign:"center",
- boxShadow:"0 8px 20px rgba(0,0,0,0.2)"
+ boxShadow:"0 15px 40px rgba(0,0,0,0.3)",
+ transition:"0.3s",
+ cursor:"pointer"
 
 };
-
 
 export default ExportData;

@@ -64,8 +64,7 @@ const UploadResume = () => {
 
  minHeight:"100vh",
 
- background:
- "linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
+ background: "linear-gradient(120deg, #0f172a, #1e293b, #020617)",
 
  display:"flex",
 
@@ -127,7 +126,7 @@ const UploadResume = () => {
 
  >
 
- ← Back
+  Back
 
  </button>
 
@@ -148,7 +147,7 @@ const UploadResume = () => {
 
  >
 
- 📄 Upload Resume
+  Upload Resume
 
  </h3>
 
