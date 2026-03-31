@@ -246,28 +246,24 @@ return "Other";
 
 /* ================= FILTER ================= */
 
-const filtered =
-internships
+// const filtered =
+// internships
 
-.filter(item=>{
+const filtered = sorted.filter(item=>{
 
-if(!item.department) return false;
+ if(!item.department) return true;
 
-const dept =
-user?.department?.toLowerCase();
+ const dept = user?.department?.toLowerCase();
 
-if(Array.isArray(item.department)){
+ if(Array.isArray(item.department)){
 
-return item.department.some(d=>
+  return item.department.some(d=>
+   d.toLowerCase()===dept
+  );
 
-d.toLowerCase()===dept
+ }
 
-);
-
-}
-
-return item.department
-.toLowerCase()===dept;
+ return item.department.toLowerCase()===dept;
 
 })
 
