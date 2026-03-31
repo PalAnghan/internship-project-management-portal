@@ -13,6 +13,14 @@ useState(user.department || "");
 
 const [image, setImage] = useState(null);
 
+const [form, setForm] = useState({
+  name: user.name || "",
+  email: user.email || "",
+  phone: user.phone || "",
+  department: user.department || "",
+  skills: user.skills || ""
+});
+
 const handleImageUpload = async () => {
 
   if(!image){
