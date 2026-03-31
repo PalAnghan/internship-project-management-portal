@@ -14,7 +14,7 @@ function MyApplications() {
 
   fetch(
 
-   `http://localhost:5000/api/applications/student/${user._id}`
+   `https://internship-backend-yn3q.onrender.com/api/applications/student/${user._id}`
 
   )
 
@@ -236,7 +236,7 @@ function MyApplications() {
 
  fetch(
 
- `http://localhost:5000/api/applications/${app._id}`,
+ `https://internship-backend-yn3q.onrender.com/api/applications/${app._id}`,
 
  {
 

@@ -18,7 +18,7 @@ function Search(){
   try{
 
    const res = await fetch(
-   `http://localhost:5000/api/users/search/${text}`
+   `https://internship-backend-yn3q.onrender.com/api/users/search/${text}`
    );
 
    const data = await res.json();
@@ -186,7 +186,7 @@ function Search(){
  {user.resume ? (
 
  <a
-href={`http://localhost:5000/uploads/${user.resume}`}
+href={`https://internship-backend-yn3q.onrender.com/uploads/${user.resume}`}
  target="_blank"
  rel="noreferrer"
  className="btn btn-dark btn-sm w-100"

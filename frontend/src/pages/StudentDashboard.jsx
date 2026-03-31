@@ -21,7 +21,7 @@ function StudentDashboard() {
    return;
   }
 
-  fetch(`http://localhost:5000/api/applications/student-stats/${user._id}`)
+  fetch(`https://internship-backend-yn3q.onrender.com/api/applications/student-stats/${user._id}`)
    .then(res => res.json())
    .then(data => setStats(data))
    .catch(err => console.log(err));

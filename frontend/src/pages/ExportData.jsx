@@ -13,7 +13,7 @@ function ExportData(){
  // load companies
  useEffect(()=>{
 
-  axios.get("http://localhost:5000/api/internships")
+  axios.get("https://internship-backend-yn3q.onrender.com/api/internships")
 
   .then(res=>{
 
@@ -84,14 +84,14 @@ function ExportData(){
  // excel download
  const downloadAllExcel = ()=>{
 
-  window.open("http://localhost:5000/api/export");
+  window.open("https://internship-backend-yn3q.onrender.com/api/export");
 
  };
 
  const downloadCompanyExcel = (id)=>{
 
   window.open(
-   `http://localhost:5000/api/export/company/${id}`
+   `https://internship-backend-yn3q.onrender.com/api/export/company/${id}`
   );
 
  };

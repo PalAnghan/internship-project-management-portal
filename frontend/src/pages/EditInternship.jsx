@@ -21,7 +21,7 @@ useEffect(()=>{
 
 axios.get(
 
-`http://localhost:5000/api/internships/${id}`
+`https://internship-backend-yn3q.onrender.com/api/internships/${id}`
 
 )
 
@@ -59,7 +59,7 @@ try{
 
 await axios.put(
 
-`http://localhost:5000/api/internships/${id}`,
+`https://internship-backend-yn3q.onrender.com/api/internships/${id}`,
 
 {
 

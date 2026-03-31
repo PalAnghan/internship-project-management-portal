@@ -48,7 +48,7 @@ try{
 
 const res = await fetch(
 
-"http://localhost:5000/api/internships",
+"https://internship-backend-yn3q.onrender.com/api/internships",
 
 {
 

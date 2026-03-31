@@ -9,7 +9,7 @@ JSON.parse(localStorage.getItem("user"));
 
 useEffect(()=>{
 
-fetch("http://localhost:5000/api/internships")
+fetch("https://internship-backend-yn3q.onrender.com/api/internships")
 .then(res=>res.json())
 .then(data=>{
 
@@ -54,7 +54,7 @@ onClick={()=>
 
 window.open(
 
-`http://localhost:5000/api/export/${item._id}`
+`https://internship-backend-yn3q.onrender.com/api/export/${item._id}`
 
 )
 

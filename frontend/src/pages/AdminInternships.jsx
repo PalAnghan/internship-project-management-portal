@@ -14,7 +14,7 @@ function AdminInternships() {
  const fetchInternships = async()=>{
   try{
    const res = await axios.get(
-   "http://localhost:5000/api/internships"
+   "https://internship-backend-yn3q.onrender.com/api/internships"
    );
    setInternships(res.data || []);
   }
@@ -28,7 +28,7 @@ function AdminInternships() {
 
   try{
    await axios.delete(
-   `http://localhost:5000/api/internships/${id}`
+   `https://internship-backend-yn3q.onrender.com/api/internships/${id}`
    );
    fetchInternships();
   }

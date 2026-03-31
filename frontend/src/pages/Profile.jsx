@@ -22,7 +22,7 @@ const uploadImage = async()=>{
 
  const res = await fetch(
 
- "http://localhost:5000/api/users/upload-profile",
+ "https://internship-backend-yn3q.onrender.com/api/users/upload-profile",
 
  {
 
@@ -87,7 +87,7 @@ formData.append("userId", userData._id);
 try{
 
 const res = await fetch(
-"http://localhost:5000/api/users/upload-image",
+"https://internship-backend-yn3q.onrender.com/api/users/upload-image",
 {
 method:"POST",
 body: formData
@@ -149,7 +149,7 @@ console.log("sending",updatedUser);
 
 const res = await fetch(
 
-"http://localhost:5000/api/users/profile",
+"https://internship-backend-yn3q.onrender.com/api/users/profile",
 
 {
 
@@ -284,7 +284,7 @@ marginBottom:"25px"
 {user.profileImage ? (
 
 <img
-src={`http://localhost:5000/${user.profileImage}`}
+src={`https://internship-backend-yn3q.onrender.com/${user.profileImage}`}
 style={{
 width:"130px",
 height:"130px",

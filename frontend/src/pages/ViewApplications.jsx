@@ -15,13 +15,13 @@ function ViewApplications() {
  }, []);
 
  const loadApplications = async () => {
-  const res = await fetch("http://localhost:5000/api/applications");
+  const res = await fetch("https://internship-backend-yn3q.onrender.com/api/applications");
   const data = await res.json();
   setApplications(data);
  };
 
  const loadInternships = async () => {
-  const res = await fetch("http://localhost:5000/api/internships");
+  const res = await fetch("https://internship-backend-yn3q.onrender.com/api/internships");
   const data = await res.json();
   setInternships(data);
  };
@@ -31,7 +31,7 @@ function ViewApplications() {
   if(!window.confirm(`Change status to ${status}?`)) return;
 
   await fetch(
-   `http://localhost:5000/api/applications/status/${id}`,
+   `https://internship-backend-yn3q.onrender.com/api/applications/status/${id}`,
    {
     method:"PUT",
     headers:{"Content-Type":"application/json"},
@@ -47,7 +47,7 @@ function ViewApplications() {
   if(!window.confirm("Delete internship?")) return;
 
   await fetch(
-   `http://localhost:5000/api/internships/${id}`,
+   `https://internship-backend-yn3q.onrender.com/api/internships/${id}`,
    { method:"DELETE" }
   );
 
@@ -161,7 +161,7 @@ function ViewApplications() {
  <button
  className="btn btn-primary btn-sm"
  onClick={()=>window.open(
- `http://localhost:5000/api/export/company/${internship._id}`
+ `https://internship-backend-yn3q.onrender.com/api/export/company/${internship._id}`
  )}
  >
  Excel
@@ -288,7 +288,7 @@ function ViewApplications() {
  {app.studentId?.resume ? (
 
  <a
- href={`http://localhost:5000/uploads/${app.studentId.resume}`}
+ href={`https://internship-backend-yn3q.onrender.com/uploads/${app.studentId.resume}`}
  target="_blank"
  rel="noreferrer"
  >

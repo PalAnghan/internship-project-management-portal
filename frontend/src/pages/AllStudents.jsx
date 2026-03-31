@@ -10,7 +10,7 @@ function AllStudents(){
 
  useEffect(()=>{
 
-  fetch("http://localhost:5000/api/users")
+  fetch("https://internship-backend-yn3q.onrender.com/api/users")
   .then(res=>res.json())
   .then(data=>setStudents(data))
 

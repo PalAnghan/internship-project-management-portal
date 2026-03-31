@@ -17,7 +17,7 @@ function AdminRegister() {
 
   try{
 
-   const res = await fetch("http://localhost:5000/api/admins/register", {
+   const res = await fetch("https://internship-backend-yn3q.onrender.com/api/admins/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

@@ -44,7 +44,7 @@ try{
 
 const res = await fetch(
 
-`http://localhost:5000/api/internships?studentId=${user?._id}`
+`https://internship-backend-yn3q.onrender.com/api/internships?studentId=${user?._id}`
 
 );
 
@@ -109,7 +109,7 @@ try{
 
 const res = await fetch(
 
-`http://localhost:5000/api/applications/student/${user._id}`
+`https://internship-backend-yn3q.onrender.com/api/applications/student/${user._id}`
 
 );
 
@@ -145,7 +145,7 @@ try{
 
 const res = await fetch(
 
-"http://localhost:5000/api/applications/apply",
+"https://internship-backend-yn3q.onrender.com/api/applications/apply",
 
 {
 
