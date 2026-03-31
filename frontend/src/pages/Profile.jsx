@@ -11,107 +11,49 @@ JSON.parse(localStorage.getItem("user"));
 const [department,setDepartment] =
 useState(user.department || "");
 
-
-const uploadImage = async()=>{
-
- const formData = new FormData();
-
- formData.append("image",image);
-
- formData.append("userId",user._id);
-
- const res = await fetch(
-
- "https://internship-backend-yn3q.onrender.com/api/users/upload-profile",
-
- {
-
-  method:"POST",
-
-  body: formData
-
- }
-
- );
-
- const data = await res.json();
-
- localStorage.setItem(
-
- "user",
-
- JSON.stringify(data)
-
- );
-
- alert("Profile photo updated");
-
-};
-
-const [form,setForm] = useState({
-
- name:user?.name || "",
-
- skills:user?.skills
- ? user.skills.join(", ")
- : "",
-
- bio:user?.bio || "",
-
- github:user?.github || "",
-
- linkedin:user?.linkedin || "",
-
- enrollment:
-user?.enrollment || ""
-
-});
-
-
 const [image, setImage] = useState(null);
 
 const handleImageUpload = async () => {
 
-if(!image){
-alert("Please select image");
-return;
-}
+  if(!image){
+    alert("Please select image");
+    return;
+  }
 
-const userData = JSON.parse(localStorage.getItem("user"));
+  const userData = JSON.parse(localStorage.getItem("user"));
 
-const formData = new FormData();
+  const formData = new FormData();
+  formData.append("image", image);
+  formData.append("userId", userData._id);
 
-formData.append("image", image);
-formData.append("userId", userData._id);
+  try{
 
-try{
+    const res = await fetch(
+      "https://internship-backend-yn3q.onrender.com/api/users/upload-image",
+      {
+        method: "POST",
+        body: formData
+      }
+    );
 
-const res = await fetch(
-"https://internship-backend-yn3q.onrender.com/api/users/upload-image",
-{
-method:"POST",
-body: formData
-}
-);
+    const data = await res.json();
 
-const data = await res.json();
+    localStorage.setItem("user", JSON.stringify(data));
 
-localStorage.setItem("user", JSON.stringify(data));
+    alert("Image uploaded");
 
-alert("Image uploaded");
+    window.location.reload();
 
-window.location.reload();
+  }catch(err){
 
-}
-catch(err){
+    console.log(err);
+    alert("Upload error");
 
-console.log(err);
-
-alert("Upload error");
-
-}
+  }
 
 };
+
+
 
 
 const handleUpdate = async () => {

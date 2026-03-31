@@ -10,6 +10,8 @@ require("../controller/usercontroller");
 
 const User = require("../models/User");
 
+
+
 const multer = require("multer");
 
 router.post("/register", upload.single("resume"), register);
@@ -168,42 +170,31 @@ const uploadProfile = multer({ storage });
 router.post(
 "/upload-profile",
 uploadProfile.single("image"),
-async (req,res)=>{
+async (req, res) => {
 
- try{
+  try {
 
-  const userId = req.body.userId;
+    const userId = req.body.userId;
 
-  // correct path format
-  const imagePath =
-  "uploads/profile/" + req.file.filename;
+    const imagePath = `uploads/profile/${req.file.filename}`;
 
-  const updatedUser =
-  await User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { profileImage: imagePath },
+      { new: true }
+    );
 
-   userId,
+    res.json(user);
 
-   {
-    profileImage: imagePath
-   },
+  } catch (err) {
 
-   { new:true }
+    res.status(500).json({
+      message: "Upload failed",
+      error: err.message
+    });
 
-  );
+  }
 
-  res.json(updatedUser);
-
- }
-
- catch(err){
-
-  console.log(err);
-
-  res.status(500).json({
-   message:"Upload error"
-  });
-
- }
-
-});
+}
+);
 module.exports = router;
