@@ -34,7 +34,7 @@ const handleImageUpload = async () => {
 
 formData.append("profileImage", image);
 
-  formData.append("userId", userData._id);
+ formData.append("userId", userData.user._id);
 
   try{
 
