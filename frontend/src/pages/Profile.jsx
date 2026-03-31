@@ -100,7 +100,7 @@ const handleUpdate = async () => {
  console.log("sending", updatedUser);
 
  const res = await fetch(
- "https://internship-backend-yn3q.onrender.com/api/users/update-profile",
+"https://internship-backend-yn3q.onrender.com/api/users/update-user",
  {
   method:"PUT",
   headers:{

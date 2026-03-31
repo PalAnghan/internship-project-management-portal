@@ -11,12 +11,16 @@ require("../controller/usercontroller");
 const User = require("../models/User");
 
 
+const { updateProfile } = require("../controller/usercontroller");
+
 
 
 router.post("/register", upload.single("resume"), register);
 router.post("/login", login);
 router.get("/:id", getUserById);
 router.put("/profile", updateProfile);
+
+router.put("/update-user", updateProfile);
 
 router.post("/upload-image", upload.single("image"), uploadImage);
 
@@ -171,7 +175,7 @@ const uploadProfile = multer({ storage });
 
 router.post(
 "/upload-profile",
-uploadProfile.single("profileImage"),
+uploadProfile.single("image"),
 async (req,res)=>{
 
  try{
