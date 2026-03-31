@@ -339,13 +339,14 @@ const sorted =
 
 
 
-const recommended =
-sorted.filter(i=>
+// const recommended =
+// sorted.filter(i=>
 
-i.matchScore>=70
+// i.matchScore>=70
 
-);
+// );
 
+const recommended = sorted;
 
 const trending =
 sorted.filter(i=>
