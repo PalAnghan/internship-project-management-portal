@@ -65,7 +65,7 @@ const withScore =
 active.map(item=>{
 
 const required =
-(item.requiredSkills||[])
+(item.skills||[])
 .map(s=>s.toLowerCase());
 
 const matchCount =
@@ -304,7 +304,7 @@ skillFilter===""
 
 ||
 
-item.requiredSkills
+item.skills
 .join(" ")
 .toLowerCase()
 .includes(skillFilter.toLowerCase())
@@ -317,9 +317,7 @@ category===""
 
 ||
 
-getCategory(
-item.requiredSkills
-)===category
+getCategory(item.skills)===category
 
 );
 
@@ -346,7 +344,7 @@ const sorted =
 
 // );
 
-const recommended = sorted;
+const recommended = sorted; 
 
 const trending =
 sorted.filter(i=>
@@ -522,7 +520,7 @@ const Card = ({ item }) => {
 
  <div className="mb-3">
 
- {item.requiredSkills?.map((skill,i)=>(
+ {item.skills?.map((skill,i)=>(
 
  <span
 
