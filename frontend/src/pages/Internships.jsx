@@ -44,7 +44,7 @@ try{
 
 const res = await fetch(
 
-`https://internship-backend-yn3q.onrender.com/api/internships?studentId=${user?._id}`
+"https://internship-backend-yn3q.onrender.com/api/internships"
 
 );
 
