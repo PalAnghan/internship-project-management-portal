@@ -167,10 +167,7 @@ const storage = multer.diskStorage({
 
 const uploadProfile = multer({ storage });
 
-router.post(
-"/upload-profile",
-uploadProfile.single("image"),
-async (req, res) => {
+router.post("/upload-profile", uploadProfile.single("image"), async (req, res) => {
 
   try {
 
