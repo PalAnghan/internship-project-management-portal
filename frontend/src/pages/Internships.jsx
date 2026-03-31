@@ -249,72 +249,69 @@ return "Other";
 // const filtered =
 // internships
 
-const filtered = sorted.filter(item=>{
-
- if(!item.department) return true;
-
- const dept = user?.department?.toLowerCase();
-
- if(Array.isArray(item.department)){
-
-  return item.department.some(d=>
-   d.toLowerCase()===dept
-  );
-
- }
-
- return item.department.toLowerCase()===dept;
-
-})
-
+const filtered =
+internships
+.filter(item=> true)
 .filter(item=>
 
-item.title.toLowerCase()
-.includes(search.toLowerCase())
+ item.title.toLowerCase()
+ .includes(search.toLowerCase())
 
-||
+ ||
 
-item.companyName.toLowerCase()
-.includes(search.toLowerCase())
+ item.companyName.toLowerCase()
+ .includes(search.toLowerCase())
 
 )
-
 .filter(item=>
 
-skillFilter===""
+ skillFilter===""
 
-||
+ ||
 
-item.skills
-.join(" ")
-.toLowerCase()
-.includes(skillFilter.toLowerCase())
+ item.skills.join(" ")
+ .toLowerCase()
+ .includes(skillFilter.toLowerCase())
 
 )
-
 .filter(item=>
 
-category===""
+ category===""
 
-||
+ ||
 
-getCategory(item.skills)===category
+ getCategory(item.skills)===category
 
 );
 
+
+const sorted =
+[...filtered].sort((a,b)=>
+
+ (b.matchScore||0)
+ -(a.matchScore||0)
+
+);
+
+const recommended = sorted;
+
+const trending =
+sorted.filter(i=>
+ (i.appliedCount||0)>=0
+);
 
 
 /* ================= SORT ================= */
 
-const sorted =
-[...filtered]
+// const sorted =
+// [...filtered]
 
-.sort((a,b)=>
+// .sort((a,b)=>
 
-(b.matchScore||0)
--(a.matchScore||0)
+// (b.matchScore||0)
+// -(a.matchScore||0)
 
-);
+// );
 
 
 
@@ -325,14 +322,14 @@ const sorted =
 
 // );
 
-const recommended = sorted; 
+// const recommended = sorted; 
 
-const trending =
-sorted.filter(i=>
+// const trending =
+// sorted.filter(i=>
 
-(i.appliedCount||0)>=2
+// (i.appliedCount||0)>=2
 
-);
+// );
 
 
 
