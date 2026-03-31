@@ -31,13 +31,15 @@ const handleImageUpload = async () => {
   const userData = JSON.parse(localStorage.getItem("user"));
 
   const formData = new FormData();
-  formData.append("image", image);
+
+formData.append("profileImage", image);
+
   formData.append("userId", userData._id);
 
   try{
 
     const res = await fetch(
-      "https://internship-backend-yn3q.onrender.com/api/users/upload-image",
+      "https://internship-backend-yn3q.onrender.com/api/users/upload-profile",
       {
         method: "POST",
         body: formData

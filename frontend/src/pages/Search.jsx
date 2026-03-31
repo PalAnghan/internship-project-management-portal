@@ -150,7 +150,7 @@ function Search(){
  >
 
  <h6 className="fw-bold">
- 👤 {user.name}
+  {user.name}
  </h6>
 
  <p className="text-muted mb-1">
@@ -163,16 +163,16 @@ function Search(){
  <div className="d-flex gap-2 flex-wrap mt-2">
 
  <span className="badge bg-info">
- 🎓 {user.enrollment || "-"}
+  {user.enrollment || "-"}
  </span>
 
  <span className="badge bg-secondary">
- 🏫 {user.department || "-"}
+  {user.department || "-"}
  </span>
 
  {user.skills?.length > 0 && (
  <span className="badge bg-success">
- ⚡ {user.skills.length} skills
+  {user.skills.length} skills
  </span>
  )}
 

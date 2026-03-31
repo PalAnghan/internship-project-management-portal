@@ -25,7 +25,7 @@ function AllStudents(){
 
  );
 
- // 🔥 STATS
+ // STATS
  const totalStudents = students.length;
 
  const skilledStudents =
@@ -63,7 +63,7 @@ function AllStudents(){
  </nav>
 
 
- {/* 🔥 TOP STATS */}
+ {/*  TOP STATS */}
 
  <div className="container mt-4">
 
@@ -150,7 +150,7 @@ function AllStudents(){
 
  style={{
 
- // 🔥 highlight top skilled
+ //  highlight top skilled
  background:
  s.skills?.length >= 3
  ? "#ecfdf5"
@@ -167,9 +167,9 @@ function AllStudents(){
 
  <td className="fw-bold">
 
- 👤 {s.name}
+  {s.name}
 
- {/* 🏆 badge */}
+ {/*  badge */}
  {s.skills?.length >= 3 && (
  <span style={{
  marginLeft:"8px",
@@ -271,7 +271,7 @@ function AllStudents(){
 }
 
 
-// 🔥 STAT CARD STYLE
+//  STAT CARD STYLE
 
 const cardStat = (color)=>({
 

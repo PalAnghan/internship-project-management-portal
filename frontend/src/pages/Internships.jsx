@@ -170,7 +170,7 @@ internshipId:id
 
 if(res.ok){
 
-alert("Applied 🎉");
+alert("Applied successfully!");
 
 setAppliedIds(prev=>[...prev,id]);
 
@@ -513,7 +513,7 @@ const Card = ({ item }) => {
 
  <p className="small text-muted mb-2">
 
- ⏱ {getRemainingTime(item.applicationDeadline)}
+  {getRemainingTime(item.applicationDeadline)}
 
  </p>
 
@@ -753,7 +753,7 @@ background:"rgba(255,255,255,0.95)"
 
 type="text"
 
-placeholder="🔍 Search internship"
+placeholder=" Search internship"
 
 className="form-control"
 
@@ -772,7 +772,7 @@ onChange={(e)=>setSearch(e.target.value)}
 
 type="text"
 
-placeholder="💡 Filter skill"
+placeholder=" Filter skill"
 
 className="form-control"
 

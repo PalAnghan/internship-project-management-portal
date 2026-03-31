@@ -116,7 +116,7 @@ function ExportData(){
   letterSpacing:"1px"
  }}>
 
- 📊 Export Dashboard
+  Export Dashboard
 
  </h2>
 
@@ -140,7 +140,7 @@ function ExportData(){
 
  <h5 style={{fontWeight:"700"}}>
 
- 📁 All Students Data
+  All Students Data
 
  </h5>
 

@@ -298,7 +298,7 @@ function MyApplications() {
 
  >
 
- 🎉 Congratulations! Selected
+  Congratulations! Selected
 
  </div>
 
