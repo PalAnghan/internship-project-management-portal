@@ -40,6 +40,10 @@ const userSchema = new mongoose.Schema({
 enrollment:{
   type:String
  },
+ 
+ profileImage:{
+ type:String
+},
 
 
 });

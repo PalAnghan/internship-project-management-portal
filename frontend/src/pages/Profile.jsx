@@ -11,6 +11,43 @@ JSON.parse(localStorage.getItem("user"));
 const [department,setDepartment] =
 useState(user.department || "");
 
+
+const uploadImage = async()=>{
+
+ const formData = new FormData();
+
+ formData.append("image",image);
+
+ formData.append("userId",user._id);
+
+ const res = await fetch(
+
+ "http://localhost:5000/api/users/upload-profile",
+
+ {
+
+  method:"POST",
+
+  body: formData
+
+ }
+
+ );
+
+ const data = await res.json();
+
+ localStorage.setItem(
+
+ "user",
+
+ JSON.stringify(data)
+
+ );
+
+ alert("Profile photo updated");
+
+};
+
 const [form,setForm] = useState({
 
  name:user?.name || "",
@@ -29,6 +66,52 @@ const [form,setForm] = useState({
 user?.enrollment || ""
 
 });
+
+
+const [image, setImage] = useState(null);
+
+const handleImageUpload = async () => {
+
+if(!image){
+alert("Please select image");
+return;
+}
+
+const userData = JSON.parse(localStorage.getItem("user"));
+
+const formData = new FormData();
+
+formData.append("image", image);
+formData.append("userId", userData._id);
+
+try{
+
+const res = await fetch(
+"http://localhost:5000/api/users/upload-image",
+{
+method:"POST",
+body: formData
+}
+);
+
+const data = await res.json();
+
+localStorage.setItem("user", JSON.stringify(data));
+
+alert("Image uploaded");
+
+window.location.reload();
+
+}
+catch(err){
+
+console.log(err);
+
+alert("Upload error");
+
+}
+
+};
 
 
 const handleUpdate = async () => {
@@ -171,62 +254,127 @@ backdropFilter:"blur(10px)",
 boxShadow:
 "0 20px 60px rgba(0,0,0,0.25)",
 
-padding:"30px"
+padding:"30px",
+
+transition:"0.3s"
+}}
+onMouseEnter={e=>{
+e.currentTarget.style.transform="translateY(-5px)"
+}}
+onMouseLeave={e=>{
+e.currentTarget.style.transform="translateY(0)"
+
 
 }}
 
+
 >
+
+
 
 {/* AVATAR */}
 
-<div className="text-center mb-3">
+{/* PROFILE HEADER */}
+
+<div style={{
+textAlign:"center",
+marginBottom:"25px"
+}}>
+
+{user.profileImage ? (
+
+<img
+src={`http://localhost:5000/${user.profileImage}`}
+style={{
+width:"130px",
+height:"130px",
+borderRadius:"50%",
+objectFit:"cover",
+display:"block",
+margin:"0 auto",
+border:"4px solid white",
+boxShadow:"0 8px 20px rgba(0,0,0,0.2)"
+}}
+/>
+
+) : (
 
 <div
-
 style={{
-
-width:"85px",
-
-height:"85px",
-
+width:"130px",
+height:"130px",
 borderRadius:"50%",
-
-margin:"auto",
-
+margin:"0 auto",
 display:"flex",
-
-justifyContent:"center",
-
 alignItems:"center",
-
-fontSize:"30px",
-
+justifyContent:"center",
+fontSize:"42px",
+fontWeight:"bold",
 color:"white",
-
-background:
-"linear-gradient(90deg,#2979ff,#00b0ff)"
-
+background:"linear-gradient(135deg,#6366f1,#06b6d4)",
+boxShadow:"0 8px 20px rgba(0,0,0,0.2)"
 }}
-
 >
 
-👤
+{user.name?.charAt(0).toUpperCase()}
 
 </div>
 
-<h4 className="mt-2 fw-bold">
+)}
+
+<h3 style={{
+marginTop:"15px",
+fontWeight:"600",
+letterSpacing:"0.5px",
+borderRadius:"12px"
+}}>
+{user.name}
+</h3>
+
+<p style={{
+color:"#64748b",
+fontSize:"14px"
+}}>
 
 Student Profile
-
-</h4>
-
-<p className="text-muted">
-
-Improve AI internship matching
 
 </p>
 
 </div>
+
+
+
+
+{/* IMAGE UPLOAD */}
+
+<div style={{marginBottom:"20px"}}>
+
+<input
+type="file"
+className="form-control"
+onChange={(e)=>setImage(e.target.files[0])}
+/>
+
+<button
+className="btn w-100 mt-2"
+onClick={handleImageUpload}
+style={{
+background:"linear-gradient(90deg,#3b82f6,#06b6d4)",
+border:"none",
+padding:"10px",
+fontWeight:"600",
+borderRadius:"12px",
+boxShadow:"0 4px 15px rgba(59,130,246,0.3)"
+}}
+>
+
+Upload Photo
+
+</button>
+
+</div>
+
+
 
 
 
@@ -283,6 +431,7 @@ enrollment:e.target.value
 })
 }
 />
+
 
 
 
@@ -512,25 +661,12 @@ className="btn w-100"
 onClick={handleUpdate}
 
 style={{
-
-padding:"12px",
-
-borderRadius:"12px",
-
-fontWeight:"600",
-
-color:"white",
-
+background:"linear-gradient(90deg,#6366f1,#8b5cf6)",
 border:"none",
-
-background:
-"linear-gradient(90deg,#2979ff,#00b0ff)",
-
-boxShadow:
-"0 8px 25px rgba(0,176,255,0.45)",
-
-transition:"0.3s"
-
+padding:"12px",
+fontWeight:"600",
+borderRadius:"12px",
+boxShadow:"0 4px 15px rgba(99,102,241,0.3)"
 }}
 
 >

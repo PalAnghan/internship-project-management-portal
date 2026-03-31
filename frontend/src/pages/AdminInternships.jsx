@@ -168,6 +168,13 @@ function AdminInternships() {
  Delete Internship
  </button>
 
+ <button
+className="btn btn-primary mt-2"
+onClick={()=>navigate(`/edit-internship/${internship._id}`)}
+>
+Edit
+</button>
+
  </div>
 
  </div>

@@ -281,4 +281,64 @@ router.get("/", async (req, res) => {
 
 });
 
+
+// UPDATE INTERNSHIP (Admin)
+router.put("/:id", async (req,res)=>{
+
+ try{
+
+  const updated = await Internship.findByIdAndUpdate(
+   req.params.id,
+   req.body,
+   { new:true }
+  );
+
+  res.json(updated);
+
+ }
+
+ catch(err){
+
+  res.status(500).json({
+   message:"update error"
+  });
+
+ }
+
+});
+
+// GET SINGLE INTERNSHIP (for edit page)
+
+router.get("/:id", async (req,res)=>{
+
+ try{
+
+  const internship =
+  await Internship.findById(req.params.id);
+
+  if(!internship){
+
+   return res.status(404).json({
+    message:"Internship not found"
+   });
+
+  }
+
+  res.json(internship);
+
+ }
+
+ catch(err){
+
+  console.log(err);
+
+  res.status(500).json({
+   message:"Server error"
+  });
+
+ }
+
+});
+
+
 module.exports = router;

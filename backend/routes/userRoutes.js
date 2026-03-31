@@ -1,17 +1,23 @@
 const express = require("express");
 const router = express.Router();
 
-const { register, login, getUserById } = require("../controller/usercontroller");
+
 const upload = require("../middleware/resume");
 
-const { updateProfile } = require("../controller/usercontroller");
+const { register, login, getUserById, updateProfile, uploadImage } =
+require("../controller/usercontroller");
+
 
 const User = require("../models/User");
+
+const multer = require("multer");
 
 router.post("/register", upload.single("resume"), register);
 router.post("/login", login);
 router.get("/:id", getUserById);
 router.put("/profile", updateProfile);
+
+router.post("/upload-image", upload.single("image"), uploadImage);
 
 router.post("/upload-resume", upload.single("resume"), async (req, res) => {
   try {
@@ -143,4 +149,61 @@ router.get("/search/:text", async(req,res)=>{
 
 });
 
+
+
+const storage = multer.diskStorage({
+
+ destination:(req,file,cb)=>{
+  cb(null,"uploads/profile");
+ },
+
+ filename:(req,file,cb)=>{
+  cb(null, Date.now()+"-"+file.originalname);
+ }
+
+});
+
+const uploadProfile = multer({ storage });
+
+router.post(
+"/upload-profile",
+uploadProfile.single("image"),
+async (req,res)=>{
+
+ try{
+
+  const userId = req.body.userId;
+
+  // correct path format
+  const imagePath =
+  "uploads/profile/" + req.file.filename;
+
+  const updatedUser =
+  await User.findByIdAndUpdate(
+
+   userId,
+
+   {
+    profileImage: imagePath
+   },
+
+   { new:true }
+
+  );
+
+  res.json(updatedUser);
+
+ }
+
+ catch(err){
+
+  console.log(err);
+
+  res.status(500).json({
+   message:"Upload error"
+  });
+
+ }
+
+});
 module.exports = router;

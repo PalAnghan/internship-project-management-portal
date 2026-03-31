@@ -157,3 +157,26 @@ exports.updateProfile = async (req,res)=>{
  }
 
 };
+
+exports.uploadImage = async(req,res)=>{
+
+try{
+
+const user = await User.findById(req.body.userId);
+
+user.profileImage = req.file.filename;
+
+await user.save();
+
+res.json(user);
+
+}
+catch(err){
+
+console.log(err);
+
+res.status(500).json({message:"error upload"});
+
+}
+
+};

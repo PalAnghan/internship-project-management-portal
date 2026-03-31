@@ -186,7 +186,7 @@ function Search(){
  {user.resume ? (
 
  <a
- href={user.resume}
+href={`http://localhost:5000/uploads/${user.resume}`}
  target="_blank"
  rel="noreferrer"
  className="btn btn-dark btn-sm w-100"

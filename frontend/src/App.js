@@ -21,6 +21,7 @@ import CompanyDashboard from "./pages/CompanyDashboard";
 import AdminInternships from "./pages/AdminInternships";
 import ExportData from "./pages/ExportData";
 import Search from "./pages/Search";
+import EditInternship from "./pages/EditInternship";
 
 function App() {
   return (
@@ -61,6 +62,8 @@ function App() {
         <Route path="/export" element={<ExportData/>} />
 
         <Route path="/search" element={<Search/>}/>
+        
+        <Route path="/edit-internship/:id" element={<EditInternship />}/>
 
       </Routes>
     </BrowserRouter>

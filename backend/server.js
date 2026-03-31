@@ -22,11 +22,14 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 
+app.use("/uploads", express.static("uploads"));
+
 // Connect DB
 ConnectDB();
 
 // Static uploads folder (FOR RESUME DOWNLOAD)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 
 // Routes
 app.use("/api/users", userRoutes);
@@ -38,6 +41,8 @@ app.use("/api/users", require("./routes/userRoutes"));
 
 app.use("/api/internships", require("./routes/internshipRoutes"));
 app.use("/api/resume",resumeRoutes);
+
+
 
 // Test API
 app.get("/api/test", (req, res) => {
