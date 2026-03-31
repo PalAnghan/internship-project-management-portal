@@ -46,12 +46,13 @@ const handleImageUpload = async () => {
 
     const data = await res.json();
 
-    localStorage.setItem("user", JSON.stringify(data));
+// save updated user with new image
+localStorage.setItem("user", JSON.stringify(data));
 
-    alert("Image uploaded");
+alert("Image uploaded");
 
-    window.location.reload();
-
+// reload page
+window.location.reload();
   }catch(err){
 
     console.log(err);
@@ -234,7 +235,13 @@ marginBottom:"25px"
 {user.profileImage ? (
 
 <img
-src={`https://internship-backend-yn3q.onrender.com/${user.profileImage}`}
+src={
+  user.profileImage
+    ? `https://internship-backend-yn3q.onrender.com/${user.profileImage}`
+    : "https://ui-avatars.com/api/?name=" + user.name
+}
+alt="profile"
+
 style={{
 width:"130px",
 height:"130px",
