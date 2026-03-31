@@ -153,17 +153,20 @@ router.get("/search/:text", async(req,res)=>{
 
 
 
+const multer = require("multer");
+
 const storage = multer.diskStorage({
 
- destination:(req,file,cb)=>{
-  cb(null,"uploads/profile");
- },
+  destination:(req,file,cb)=>{
+    cb(null,"uploads/profile");
+  },
 
- filename:(req,file,cb)=>{
-  cb(null, Date.now()+"-"+file.originalname);
- }
+  filename:(req,file,cb)=>{
+    cb(null, Date.now()+"-"+file.originalname);
+  }
 
 });
+
 
 const uploadProfile = multer({ storage });
 
