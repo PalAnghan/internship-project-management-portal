@@ -69,76 +69,54 @@ window.location.reload();
 
 const handleUpdate = async () => {
 
-const userData =
-JSON.parse(localStorage.getItem("user"));
+ const userData =
+ JSON.parse(localStorage.getItem("user"));
 
-const skillsArray =
- (user?.skills || [])
- .map(s =>
-   Array.isArray(s)
-     ? s
-     : s.split(",")
- )
- .flat()
- .map(s => s.toLowerCase().trim());
+ const skillsArray =
+ typeof form.skills === "string" && form.skills.length > 0
+  ? form.skills.split(",").map(s => s.trim().toLowerCase())
+  : [];
 
-const updatedUser = {
+ const updatedUser = {
 
-_id: userData._id,
+  _id: userData._id,
 
-name: form.name,
+  name: form.name,
 
-bio: form.bio,
+  bio: form.bio,
 
-github: form.github,
+  github: form.github,
 
-linkedin: form.linkedin,
+  linkedin: form.linkedin,
 
-skills: skillsArray,
+  skills: skillsArray,
 
-department: department,
+  department: form.department,
 
-enrollment:form.enrollment
+  enrollment: form.enrollment
 
-};
+ };
 
-console.log("sending",updatedUser);
+ console.log("sending", updatedUser);
 
+ const res = await fetch(
+ "https://internship-backend-yn3q.onrender.com/api/users/update-profile",
+ {
+  method:"PUT",
+  headers:{
+   "Content-Type":"application/json"
+  },
+  body: JSON.stringify(updatedUser)
+ });
 
-const res = await fetch(
+ const data = await res.json();
 
-"https://internship-backend-yn3q.onrender.com/api/users/profile",
+ console.log("response", data);
 
-{
+ localStorage.setItem("user",
+ JSON.stringify(data));
 
-method:"PUT",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body: JSON.stringify(updatedUser)
-
-}
-
-);
-
-const data = await res.json();
-
-console.log("response",data);
-
-
-localStorage.setItem(
-
-"user",
-
-JSON.stringify(data)
-
-);
-
-alert("Profile updated successfully");
+ alert("Profile updated");
 
 };
 

@@ -47,7 +47,7 @@ const res = await fetch(
 "https://internship-backend-yn3q.onrender.com/api/internships"
 
 );
-
+    
 const data = await res.json();
 
 const now = new Date();
