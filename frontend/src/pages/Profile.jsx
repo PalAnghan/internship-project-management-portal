@@ -73,9 +73,14 @@ const userData =
 JSON.parse(localStorage.getItem("user"));
 
 const skillsArray =
-form.skills
-.split(",")
-.map(s => s.trim().toLowerCase());
+ (user?.skills || [])
+ .map(s =>
+   Array.isArray(s)
+     ? s
+     : s.split(",")
+ )
+ .flat()
+ .map(s => s.toLowerCase().trim());
 
 const updatedUser = {
 
