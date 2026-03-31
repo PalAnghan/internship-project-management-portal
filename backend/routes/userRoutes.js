@@ -11,7 +11,6 @@ require("../controller/usercontroller");
 const User = require("../models/User");
 
 
-const { updateProfile } = require("../controller/usercontroller");
 
 
 
