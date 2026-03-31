@@ -153,7 +153,6 @@ router.get("/search/:text", async(req,res)=>{
 
 
 
-const multer = require("multer");
 
 const storage = multer.diskStorage({
 
