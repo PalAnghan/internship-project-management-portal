@@ -38,69 +38,54 @@ setSaved(savedData);
 
 
 
-const fetchInternships = async ()=>{
+const fetchInternships = async () => {
 
-try{
+ try{
 
-const res = await fetch(
+  const res = await fetch(
+  "https://internship-backend-yn3q.onrender.com/api/internships"
+  );
 
-"https://internship-backend-yn3q.onrender.com/api/internships"
+  const data = await res.json();
 
-);
-    
-const data = await res.json();
+  const active = data;   // show all internships
 
-const now = new Date();
+  const withScore =
+   active.map(item=>{
 
+    const required =
+     (item.skills||[])
+     .map(s=>s.toLowerCase());
 
-const active =
-data.filter(item=>
+    const matchCount =
+     required.filter(skill=>
+      studentSkills.includes(skill)
+     ).length;
 
-new Date(item.applicationDeadline)>now
+    const matchScore =
+     required.length>0
+      ? Math.round(
+        (matchCount/required.length)*100
+       )
+      : 0;
 
-);
+    return{
+     ...item,
+     matchScore
+    };
 
+   });
 
-const withScore =
-active.map(item=>{
+  setInternships(withScore);
 
-const required =
-(item.skills||[])
-.map(s=>s.toLowerCase());
+ }
+ catch(err){
 
-const matchCount =
-required.filter(skill=>
+  console.log(err);
 
-studentSkills.includes(skill)
-
-).length;
-
-const matchScore =
-required.length>0
-? Math.round(
-(matchCount/required.length)*100
-)
-:0;
-
-return{
-...item,
-matchScore
-};
-
-});
-
-setInternships(withScore);
-
-}
-
-catch(err){
-
-console.log(err);
-
-}
+ }
 
 };
-
 
 
 const fetchApplied = async ()=>{
