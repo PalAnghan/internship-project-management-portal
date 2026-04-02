@@ -5,7 +5,6 @@ const ExcelJS = require("exceljs");
 const Application = require("../models/Application");
 const Internship = require("../models/Internship");
 
-
 /* ================= EXPORT ALL ================= */
 
 router.get("/", async (req,res)=>{
@@ -37,16 +36,10 @@ router.get("/", async (req,res)=>{
    },
 
    {
-    header:"Skills",
-    key:"skills",
-    width:35
+    header:"Department",
+    key:"department",
+    width:25
    },
-
-   {
-    header:"ResumeLink",
-    key:"resume",
-    width:45
-   }
 
   ];
 
@@ -60,13 +53,9 @@ router.get("/", async (req,res)=>{
     email:
     app.studentId?.email || "",
 
-    skills:
-    app.detectedSkills?.join(", ") || "",
+    department:
+    app.internshipId?.department?.join(", ") || "",
 
-    resume:
-    app.studentId?.resume
-    ? `https://internship-backend-yn3q.onrender.com/uploads/${app.studentId.resume}`
-    : ""
 
    });
 
@@ -113,9 +102,6 @@ router.get("/company/:id", async (req,res)=>{
   .populate("studentId")
   .populate("internshipId");
 
-  const internship =
-  await Internship.findById(req.params.id);
-
   const workbook =
   new ExcelJS.Workbook();
 
@@ -137,16 +123,10 @@ router.get("/company/:id", async (req,res)=>{
    },
 
    {
-    header:"Skills",
-    key:"skills",
-    width:35
+    header:"Department",
+    key:"department",
+    width:25
    },
-
-   {
-    header:"ResumeLink",
-    key:"resume",
-    width:45
-   }
 
   ];
 
@@ -160,13 +140,8 @@ router.get("/company/:id", async (req,res)=>{
     email:
     app.studentId?.email || "",
 
-    skills:
-    app.detectedSkills?.join(", ") || "",
-
-    resume:
-    app.studentId?.resume
-    ? `https://internship-backend-yn3q.onrender.com/uploads/${app.studentId.resume}`
-    : ""
+    department:
+    app.internshipId?.department?.join(", ") || "",
 
    });
 
@@ -192,12 +167,11 @@ router.get("/company/:id", async (req,res)=>{
   console.log(err);
 
   res.status(500).json({
-   message:"Company export error"``
+   message:"Company export error"
   });
 
  }
 
 });
-
 
 module.exports = router;
