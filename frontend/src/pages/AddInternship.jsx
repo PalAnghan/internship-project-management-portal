@@ -171,13 +171,13 @@ setInternship({...internship,companyWebsite:e.target.value})
 }
 />
 
-<textarea
+{/* <textarea
 placeholder="Company Description"
 className="form-control"
 onChange={(e)=>
 setInternship({...internship,companyDescription:e.target.value})
 }
-/>
+/> */}
 
 
 
