@@ -5,22 +5,7 @@ function AddInternship(){
 
 const navigate = useNavigate();
 
-// const [form,setForm] = useState({
 
-// companyWebsite:"",
-// companyDescription:"",
-// industryType:"",
-
-// stipend:"",
-// internshipType:"",
-// experience:"",
-// perks:"",
-// selectionProcess:"",
-
-// logo:null,
-// pdf:null
-
-// });
 
 const [internship,setInternship] = useState({
 
@@ -182,7 +167,7 @@ type="text"
 placeholder="Company Website (optional)"
 className="form-control"
 onChange={(e)=>
-setForm({...form,companyWebsite:e.target.value})
+setInternship({...internship,companyWebsite:e.target.value})
 }
 />
 
@@ -190,7 +175,7 @@ setForm({...form,companyWebsite:e.target.value})
 placeholder="Company Description"
 className="form-control"
 onChange={(e)=>
-setForm({...form,companyDescription:e.target.value})
+setInternship({...internship,companyDescription:e.target.value})
 }
 />
 
@@ -237,7 +222,7 @@ onChange={(e)=>setInternship({...internship,duration:e.target.value})}
 <select
 className="form-control"
 onChange={(e)=>
-setForm({...form,internshipType:e.target.value})
+setInternship({...internship,internshipType:e.target.value})
 }
 >
 <option value="">Internship Type</option>
@@ -254,7 +239,7 @@ setForm({...form,internshipType:e.target.value})
 type="file"
 accept=".pdf"
 onChange={(e)=>
-setForm({...form,pdf:e.target.files[0]})
+setInternship({...internship,pdf:e.target.files[0]})
 }
 />
 
