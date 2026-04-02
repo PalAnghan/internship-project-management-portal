@@ -37,7 +37,7 @@ router.get("/", async (req,res)=>{
    },
 
    {
-    header:"Enrollment No",
+    header:"enrollment",
     key:"enrollment",
     width:20
    },
@@ -66,7 +66,7 @@ router.get("/", async (req,res)=>{
     app.studentId?.email || "",
 
     enrollment:
-    app.studentId?.enrollmentNumber || "",
+app.studentId?.enrollment || "",
 
     internship:
     app.internshipId?.title || "",
@@ -143,7 +143,7 @@ router.get("/company/:id", async (req,res)=>{
    },
 
    {
-    header:"Enrollment No",
+    header:"enrollment",
     key:"enrollment",
     width:20
    },
@@ -174,7 +174,7 @@ router.get("/company/:id", async (req,res)=>{
     app.studentId?.email || "",
 
     enrollment:
-    app.studentId?.enrollmentNumber || "",
+    app.studentId?.enrollment || "",
 
     internship:
     internship?.title || "",
