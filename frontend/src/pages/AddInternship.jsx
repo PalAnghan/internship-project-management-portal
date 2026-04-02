@@ -58,24 +58,14 @@ setDepartment(prev => prev.filter(dep => dep !== value));
 };
 
 /* ================= SUBMIT ================= */
-
 const handleSubmit = async () => {
 
  try{
 
  const formData = new FormData();
 
- // basic internship fields
  formData.append("title", internship.title);
  formData.append("description", internship.description);
-
-internship.requiredSkills
-.split(",")
-.map(skill=>skill.trim())
-.forEach(skill=>{
- formData.append("requiredSkills[]", skill);
-});
-
  formData.append("duration", internship.duration);
  formData.append("applicationDeadline", internship.applicationDeadline);
  formData.append("maxApplicants", internship.maxApplicants);
@@ -83,19 +73,23 @@ internship.requiredSkills
  formData.append("companyName", internship.companyName);
  formData.append("companyAddress", internship.companyAddress);
 
- // NEW COMPANY DETAILS (FROM form STATE)
+ internship.requiredSkills
+ .split(",")
+ .map(s=>s.trim())
+ .forEach(skill=>{
+  formData.append("requiredSkills[]", skill);
+ });
+
  formData.append("companyWebsite", form.companyWebsite);
  formData.append("companyDescription", form.companyDescription);
  formData.append("industryType", form.industryType);
 
- // NEW INTERNSHIP DETAILS
  formData.append("stipend", form.stipend);
  formData.append("internshipType", form.internshipType);
  formData.append("experience", form.experience);
  formData.append("perks", form.perks);
  formData.append("selectionProcess", form.selectionProcess);
 
- // FILES
  if(form.logo){
   formData.append("logo", form.logo);
  }
@@ -104,21 +98,18 @@ internship.requiredSkills
   formData.append("pdf", form.pdf);
  }
 
- // department array
  department.forEach(dep=>{
   formData.append("department", dep);
  });
 
- const res = await fetch(
-
- "https://internship-backend-yn3q.onrender.com/api/internships",
-
- {
+const res = await fetch(
+"https://internship-backend-yn3q.onrender.com/api/internships",
+{
  method:"POST",
  body: formData
- }
-
- );
+}
+);  
+ 
 
  if(res.ok){
 
@@ -134,7 +125,6 @@ internship.requiredSkills
  }
 
  }
-
  catch(err){
 
  console.log(err);
@@ -144,7 +134,6 @@ internship.requiredSkills
  }
 
 };
-
 /* ================= UI ================= */
 
 return(

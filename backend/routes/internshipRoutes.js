@@ -77,105 +77,89 @@ router.get("/", async (req,res)=>{
 /* ================= CREATE INTERNSHIP (ADMIN) ================= */
 
 router.post(
-
 "/",
-
 upload.fields([
  { name:"logo", maxCount:1 },
  { name:"pdf", maxCount:1 }
 ]),
 
-async (req, res) => {
+async (req,res)=>{
 
- try {
+ try{
 
- const {
- title,
- description,
- requiredskills,
- duration,
- applicationDeadline,
- maxApplicants,
- companyName,
- companyAddress,
+ const internship = new Internship({
 
- companyWebsite,
- companyDescription,
- industryType,
+ title: req.body.title,
 
- stipend,
- internshipType,
- experience,
- perks,
- selectionProcess
+ description: req.body.description,
 
- } = req.body;
-
-
-
- const internship = await Internship.create({
-
- title,
- description,
  requiredSkills:
- req.body["requiredSkills[]"]
- || req.body.requiredSkills
- || [],
- duration,
- applicationDeadline,
- maxApplicants,
- companyName,
- companyAddress,
+ Array.isArray(req.body["requiredSkills[]"])
+  ? req.body["requiredSkills[]"]
+  : req.body["requiredSkills[]"]
+   ? [req.body["requiredSkills[]"]]
+   : [],
 
- department: Array.isArray(req.body.department)
- ? req.body.department
- : [req.body.department],  // ADD THIS LINE
+ duration: req.body.duration,
 
- companyWebsite,
- companyDescription,
- industryType,
+ applicationDeadline: req.body.applicationDeadline,
 
- stipend,
- internshipType,
- experience,
- perks,
- selectionProcess,
+ maxApplicants: req.body.maxApplicants,
+
+ companyName: req.body.companyName,
+
+ companyAddress: req.body.companyAddress,
+
+ department:
+ Array.isArray(req.body.department)
+  ? req.body.department
+  : req.body.department
+   ? [req.body.department]
+   : [],
+
+ companyWebsite: req.body.companyWebsite || "",
+
+ companyDescription: req.body.companyDescription || "",
+
+ industryType: req.body.industryType || "",
+
+ stipend: req.body.stipend || "",
+
+ internshipType: req.body.internshipType || "",
+
+ experience: req.body.experience || "",
+
+ perks: req.body.perks || "",
+
+ selectionProcess: req.body.selectionProcess || "",
 
  logo:
- req.files?.logo
- ? req.files.logo[0].filename
- : "",
+ req.files?.logo?.[0]?.filename || "",
 
  pdf:
- req.files?.pdf
- ? req.files.pdf[0].filename
- : ""
+ req.files?.pdf?.[0]?.filename || ""
 
-});
+ });
 
-
+ await internship.save();
 
  res.status(201).json({
-
- message: "Internship created successfully",
- internship
-
+ message:"Internship created"
  });
 
  }
 
- catch (error) {
+ catch(err){
+
+ console.log("POST ERROR:",err);
 
  res.status(500).json({
-
- error: error.message
-
+ error:err.message
  });
 
  }
 
 });
-
 
 
 /* ================= GET INTERNSHIPS BY COMPANY ================= */

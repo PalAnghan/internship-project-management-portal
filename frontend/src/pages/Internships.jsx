@@ -20,8 +20,6 @@ const studentSkills =
 (user?.skills||[])
 .map(s=>s.toLowerCase().trim());
 
-
-
 /* ================= FETCH ================= */
 
 useEffect(()=>{
@@ -36,82 +34,66 @@ setSaved(savedData);
 
 },[]);
 
-
-
 const fetchInternships = async () => {
 
  try{
 
-  const res = await fetch(
-  "https://internship-backend-yn3q.onrender.com/api/internships"
-  );
+ const res = await fetch(
+ "https://internship-backend-yn3q.onrender.com/api/internships"
+ );
 
-  const data = await res.json();
+ const data = await res.json();
 
-  const active = data;   // show all internships
+ const withScore =
+ data.map(item=>{
 
-  const withScore =
-   active.map(item=>{
+ const required =
+ (item.requiredSkills||[])
+ .map(s=>s.toLowerCase());
 
-    const required =
-     (item.skills||[])
-     .map(s=>s.toLowerCase());
+ const matchCount =
+ required.filter(skill=>
+ studentSkills.includes(skill)
+ ).length;
 
-    const matchCount =
-     required.filter(skill=>
-      studentSkills.includes(skill)
-     ).length;
+ const matchScore =
+ required.length>0
+ ? Math.round((matchCount/required.length)*100)
+ : 0;
 
-    const matchScore =
-     required.length>0
-      ? Math.round(
-        (matchCount/required.length)*100
-       )
-      : 0;
+ return{
+ ...item,
+ matchScore
+ };
 
-    return{
-     ...item,
-     matchScore
-    };
+ });
 
-   });
-
-  setInternships(withScore);
+ setInternships(withScore);
 
  }
  catch(err){
 
-  console.log(err);
+ console.log(err);
 
  }
 
 };
-
 
 const fetchApplied = async ()=>{
 
 try{
 
 const res = await fetch(
-
 `https://internship-backend-yn3q.onrender.com/api/applications/student/${user._id}`
-
 );
 
 const data = await res.json();
 
 setAppliedIds(
-
-data.map(app=>
-
-app.internshipId?._id
-
-)
-
+data.map(app=> app.internshipId?._id )
 );
 
 }
-
 catch(err){
 
 console.log(err);
@@ -119,8 +101,6 @@ console.log(err);
 }
 
 };
-
-
 
 /* ================= APPLY ================= */
 
@@ -137,9 +117,7 @@ const res = await fetch(
 method:"POST",
 
 headers:{
-
 "Content-Type":"application/json"
-
 },
 
 body: JSON.stringify({
@@ -171,8 +149,6 @@ console.log(err);
 
 };
 
-
-
 /* ================= SAVE ================= */
 
 const toggleSave = id =>{
@@ -196,151 +172,91 @@ updated =
 setSaved(updated);
 
 localStorage.setItem(
-
 "savedInternships",
-
 JSON.stringify(updated)
-
 );
 
 };
-
-
 
 /* ================= CATEGORY ================= */
 
 const getCategory = skills =>{
 
 const s =
-skills.join(" ").toLowerCase();
+(skills||[])
+.join(" ")
+.toLowerCase();
 
-if(s.includes("react")
-|| s.includes("html")
-|| s.includes("css"))
-
+if(s.includes("react")||s.includes("html")||s.includes("css"))
 return "Web Development";
 
-if(s.includes("python")
-|| s.includes("ai")
-|| s.includes("ml"))
-
+if(s.includes("python")||s.includes("ai")||s.includes("ml"))
 return "AI / ML";
 
 if(s.includes("data"))
-
 return "Data Science";
 
 if(s.includes("android"))
-
 return "App Development";
-
-if(s.includes("marketing"))
-
-return "Marketing";
 
 return "Other";
 
 };
 
-
-
 /* ================= FILTER ================= */
-
-// const filtered =
-// internships
 
 const filtered =
 internships
-.filter(item=> true)
+
 .filter(item=>
 
- item.title.toLowerCase()
+ item.title?.toLowerCase()
  .includes(search.toLowerCase())
 
  ||
 
- item.companyName.toLowerCase()
+ item.companyName?.toLowerCase()
  .includes(search.toLowerCase())
 
 )
+
 .filter(item=>
 
  skillFilter===""
 
  ||
 
- item.skills.join(" ")
+ (item.requiredSkills||[])
+ .join(" ")
  .toLowerCase()
  .includes(skillFilter.toLowerCase())
 
 )
+
 .filter(item=>
 
  category===""
 
  ||
 
- getCategory(item.skills)===category
+ getCategory(item.requiredSkills)===category
 
 );
-
 
 const sorted =
 [...filtered].sort((a,b)=>
-
- (b.matchScore||0)
- -(a.matchScore||0)
-
+(b.matchScore||0)-(a.matchScore||0)
 );
 
 const recommended = sorted;
-
-const trending =
-sorted.filter(i=>
- (i.appliedCount||0)>=0
-);
-
-
-/* ================= SORT ================= */
-
-// const sorted =
-// [...filtered]
-
-// .sort((a,b)=>
-
-// (b.matchScore||0)
-// -(a.matchScore||0)
-
-// );
-
-
-
-// const recommended =
-// sorted.filter(i=>
-
-// i.matchScore>=70
-
-// );
-
-// const recommended = sorted; 
-
-// const trending =
-// sorted.filter(i=>
-
-// (i.appliedCount||0)>=2
-
-// );
-
-
+const trending = sorted;
 
 /* ================= TIME ================= */
 
 const getRemainingTime = deadline =>{
 
 const now = new Date();
-
 const end = new Date(deadline);
-
 const diff = end-now;
 
 if(diff<=0) return "Closed";
@@ -349,339 +265,212 @@ const d =
 Math.floor(diff/(1000*60*60*24));
 
 const h =
-Math.floor(
-
-(diff%(1000*60*60*24))
-
-/(1000*60*60)
-
-);
+Math.floor((diff%(1000*60*60*24))/(1000*60*60));
 
 return `${d}d ${h}h`;
 
 };
 
-
-
 /* ================= CARD ================= */
 
 const Card = ({ item }) => {
 
-  
+const applied =
+appliedIds.includes(item._id);
 
- const applied =
- appliedIds.includes(item._id);
+const savedItem =
+saved.includes(item._id);
 
- const savedItem =
- saved.includes(item._id);
+return (
 
- const seatsPercent =
- item.totalSeats
- ? (item.seats / item.totalSeats) * 100
- : 60;
+<div className="col-lg-4 col-md-6 mb-4">
 
- return (
+<div
 
- <div className="col-lg-4 col-md-6 mb-4">
+className="card h-100 border-0 shadow-lg"
 
-  <p>
-Stipend: {item.stipend}
+style={{
+borderRadius:"18px",
+padding:"18px",
+background:"linear-gradient(145deg,#ffffff,#f8fbff)",
+transition:"0.3s"
+}}
+
+>
+
+{/* MATCH BAR */}
+
+<div
+
+style={{
+height:"6px",
+borderRadius:"10px",
+background:"linear-gradient(90deg,#00c853,#64dd17)",
+width:`${item.matchScore || 50}%`,
+marginBottom:"12px"
+}}
+
+/>
+
+{/* TITLE */}
+
+<h5 className="fw-bold mb-1">
+{item.title}
+</h5>
+
+<p className="text-muted mb-2">
+{item.companyName}
 </p>
 
-<p>
-Type: {item.internshipType}
-</p>
+{/* DETAILS */}
 
-<p>
-Experience: {item.experience}
-</p>
+<div className="small mb-2">
 
-<p>
-Perks: {item.perks}
-</p>
+<div className="mb-1">
+ {item.stipend || "Not specified"}
+</div>
 
-<p>
-Selection: {item.selectionProcess}
-</p>
+<div className="mb-1">
+ {item.internshipType || "Remote"}
+</div>
+
+<div className="mb-1">
+ {item.experience || "Fresher"}
+</div>
+
+<div className="mb-1">
+ {item.perks || "Certificate"}
+</div>
+
+<div className="mb-1">
+{item.selectionProcess || "Interview"}
+</div>
+
+</div>
+
+{/* LINKS */}
+
+<div className="mb-2">
+
+{item.companyWebsite && (
 
 <a
 href={item.companyWebsite}
 target="_blank"
+rel="noreferrer"
+className="me-3 small text-primary fw-semibold"
 >
 
-Company Website
+Website
 
 </a>
+
+)}
+
+{item.pdf && (
 
 <a
-href={`https://internship-backend-url/uploads/${item.pdf}`}
+href={`https://internship-backend-yn3q.onrender.com/uploads/${item.pdf}`}
 target="_blank"
+rel="noreferrer"
+className="small text-success fw-semibold"
 >
 
-Download Company PDF
+Company PDF
 
 </a>
 
- <div
+)}
 
- className="card h-100 border-0 shadow-lg"
+</div>
 
- style={{
+{/* SKILLS */}
 
- borderRadius:"18px",
+<div className="mb-2">
 
- background:
- "linear-gradient(145deg,#ffffff,#f4f8ff)",
+{(item.requiredSkills||[]).map((skill,i)=>(
 
- transition:"0.35s",
+<span
+key={i}
+className="badge me-1 mb-1"
+style={{
+background:"#e3f2fd",
+color:"#0d47a1",
+padding:"6px 10px",
+borderRadius:"8px"
+}}
+>
 
- cursor:"pointer"
+{skill}
 
- }}
+</span>
 
- onMouseEnter={e=>{
+))}
 
- e.currentTarget.style.transform="translateY(-8px)";
+</div>
 
- e.currentTarget.style.boxShadow=
- "0 20px 40px rgba(0,0,0,0.12)";
+<p className="text-muted small mb-3">
+⏳ {getRemainingTime(item.applicationDeadline)}
+</p>
 
- }}
+{/* BUTTONS */}
 
- onMouseLeave={e=>{
+<button
 
- e.currentTarget.style.transform="translateY(0px)";
+className="btn w-100 mb-2"
 
- e.currentTarget.style.boxShadow=
- "0 8px 18px rgba(0,0,0,0.08)";
+style={{
+background:
+applied
+? "#9ec5fe"
+: "linear-gradient(90deg,#2979ff,#00b0ff)",
+color:"white",
+borderRadius:"10px",
+fontWeight:"600"
+}}
 
- }}
+disabled={applied}
 
- >
+onClick={()=>handleApply(item._id)}
 
- {/* match bar */}
+>
 
- <div
+{applied ? "Applied ✔" : "Apply Now"}
 
- style={{
+</button>
 
- height:"7px",
+<button
 
- borderTopLeftRadius:"18px",
+className="btn w-100"
 
- borderTopRightRadius:"18px",
+style={{
+borderRadius:"10px",
+border:
+savedItem
+? "2px solid #e91e63"
+: "2px solid #ccc",
+color:
+savedItem
+? "#e91e63"
+: "#444",
+background:"#fff"
+}}
 
- background:
- "linear-gradient(90deg,#00c853,#64dd17)",
+onClick={()=>toggleSave(item._id)}
 
- width:`${item.matchScore || 50}%`
+>
 
- }}
+{savedItem ? "Saved ❤" : "Save ♡"}
 
- />
+</button>
 
- <div className="card-body d-flex flex-column">
+</div>
 
- {/* title + match */}
+</div>
 
- <div className="d-flex justify-content-between align-items-start mb-1">
-
- <h5 className="fw-bold mb-1">
-
- {item.title}
-
- </h5>
-
- <span className="badge bg-dark">
-
- {item.matchScore || 50}% match
-
- </span>
-
- </div>
-
- {/* company */}
-
- <p className="text-muted mb-2">
-
-  {item.companyName}
-
- </p>
-
- {/* badges */}
-
- <div className="mb-2 d-flex flex-wrap gap-2">
-
- <span className="badge bg-light text-dark border">
-
-  {item.location || "Remote"}
-
- </span>
-
- <span className="badge bg-light text-dark border">
-
-  {item.duration}
-
- </span>
-
- </div>
-
- {/* deadline */}
-
- <p className="small text-muted mb-2">
-
-  {getRemainingTime(item.applicationDeadline)}
-
- </p>
-
- {/* skills */}
-
- <div className="mb-3">
-
- {item.skills?.map((skill,i)=>(
-
- <span
-
- key={i}
-
- className="badge me-1 mb-1"
-
- style={{
-
- background:"#e3f2fd",
-
- color:"#0d47a1",
-
- fontWeight:"500",
-
- borderRadius:"8px",
-
- padding:"6px 10px"
-
- }}
-
- >
-
- {skill}
-
- </span>
-
- ))}
-
- </div>
-
- {/* seats */}
-
- <div className="mb-3">
-
- <small className="text-muted">
-
-  Seats left: {item.seats}
-
- </small>
-
- <div className="progress mt-1">
-
- <div
-
- className="progress-bar"
-
- style={{
-
- width:`${seatsPercent}%`,
-
- background:
- "linear-gradient(90deg,#00bcd4,#2196f3)"
-
- }}
-
- />
-
- </div>
-
- </div>
-
- {/* buttons */}
-
- <div className="mt-auto">
-
- <button
-
- className="btn w-100 mb-2"
-
- style={{
-
- background:
- applied
- ? "#9ec5fe"
- : "linear-gradient(90deg,#2979ff,#00b0ff)",
-
- color:"white",
-
- borderRadius:"10px",
-
- border:"none",
-
- fontWeight:"600",
-
- transition:"0.3s"
-
- }}
-
- disabled={applied}
-
- onClick={()=>handleApply(item._id)}
-
- >
-
- {applied ? "Applied ✔" : "Apply Now"}
-
- </button>
-
- <button
-
- className="btn w-100"
-
- style={{
-
- borderRadius:"10px",
-
- fontWeight:"600",
-
- border:
- savedItem
- ? "2px solid #e91e63"
- : "2px solid #ccc",
-
- color:
- savedItem
- ? "#e91e63"
- : "#444",
-
- background:"#fff"
-
- }}
-
- onClick={()=>toggleSave(item._id)}
-
- >
-
- {savedItem ? "Saved ❤" : "Save ♡"}
-
- </button>
-
- </div>
-
- </div>
-
- </div>
-
- </div>
-
- );
+);
 
 };
-
 
 /* ================= UI ================= */
 
@@ -693,8 +482,7 @@ style={{
 
 minHeight:"100vh",
 
-background:
-"linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
+background:"linear-gradient(135deg,#0f2027,#203a43,#2c5364)",
 
 paddingBottom:"60px"
 
@@ -712,18 +500,14 @@ style={{
 
 background:"rgba(0,0,0,0.35)",
 
-backdropFilter:"blur(10px)",
-
-borderBottom:"1px solid rgba(255,255,255,0.1)"
+backdropFilter:"blur(10px)"
 
 }}
 
 >
 
 <h4 className="text-white fw-bold">
-
- Internships Portal
-
+Internships Portal
 </h4>
 
 <button
@@ -740,27 +524,20 @@ Home
 
 </nav>
 
-
 <div className="container py-4">
 
-
-{/* SEARCH BOX */}
+{/* SEARCH */}
 
 <div
 
-className="card border-0 shadow-lg mb-4"
+className="card shadow-lg border-0 mb-4"
 
 style={{
-
 borderRadius:"16px",
-
-background:"rgba(255,255,255,0.95)"
-
+padding:"15px"
 }}
 
 >
-
-<div className="card-body">
 
 <div className="row g-2">
 
@@ -770,7 +547,7 @@ background:"rgba(255,255,255,0.95)"
 
 type="text"
 
-placeholder=" Search internship"
+placeholder="Search internship"
 
 className="form-control"
 
@@ -782,14 +559,13 @@ onChange={(e)=>setSearch(e.target.value)}
 
 </div>
 
-
 <div className="col-md-4">
 
 <input
 
 type="text"
 
-placeholder=" Filter skill"
+placeholder="Filter skill"
 
 className="form-control"
 
@@ -800,7 +576,6 @@ onChange={(e)=>setSkillFilter(e.target.value)}
 />
 
 </div>
-
 
 <div className="col-md-4">
 
@@ -814,34 +589,24 @@ onChange={(e)=>setCategory(e.target.value)}
 
 >
 
-<option>
-
+<option value="">
 All Categories
-
 </option>
 
 <option>
-
 Web Development
-
 </option>
 
 <option>
-
 AI / ML
-
 </option>
 
 <option>
-
 App Development
-
 </option>
 
 <option>
-
 Data Science
-
 </option>
 
 </select>
@@ -852,28 +617,10 @@ Data Science
 
 </div>
 
-</div>
+{/* SECTIONS */}
 
-
-
-{/* AI recommended */}
-
-<h4
-
-className="text-white mb-3"
-
-style={{
-
-fontWeight:"700",
-
-letterSpacing:"0.5px"
-
-}}
-
->
-
- AI Recommended
-
+<h4 className="text-white mb-3">
+Recommended
 </h4>
 
 <div className="row">
@@ -886,24 +633,8 @@ letterSpacing:"0.5px"
 
 </div>
 
-
-
-{/* trending */}
-
-<h4
-
-className="text-white mt-4 mb-3"
-
-style={{
-
-fontWeight:"700"
-
-}}
-
->
-
- Trending Internships
-
+<h4 className="text-white mt-4 mb-3">
+Trending
 </h4>
 
 <div className="row">
@@ -916,24 +647,8 @@ fontWeight:"700"
 
 </div>
 
-
-
-{/* all */}
-
-<h4
-
-className="text-white mt-4 mb-3"
-
-style={{
-
-fontWeight:"700"
-
-}}
-
->
-
- All Internships
-
+<h4 className="text-white mt-4 mb-3">
+All Internships
 </h4>
 
 <div className="row">
@@ -945,7 +660,6 @@ fontWeight:"700"
 ))}
 
 </div>
-
 
 </div>
 
