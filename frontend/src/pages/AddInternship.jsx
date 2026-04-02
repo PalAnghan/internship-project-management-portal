@@ -194,24 +194,6 @@ setForm({...form,companyDescription:e.target.value})
 }
 />
 
-<select
-className="form-control"
-onChange={(e)=>
-setForm({...form,industryType:e.target.value})
-}
->
-<option value="">Industry Type</option>
-<option>IT</option>
-<option>Finance</option>
-<option>Healthcare</option>
-<option>Marketing</option>
-<option>Education</option>
-<option>Startup</option>
-</select>
-
-
-
-
 
 
 {/* GRID FORM */}
@@ -264,55 +246,7 @@ setForm({...form,internshipType:e.target.value})
 <option>Hybrid</option>
 </select>
 
-<input
-type="text"
-placeholder="Stipend (₹5000/month)"
-className="form-control"
-onChange={(e)=>
-setForm({...form,stipend:e.target.value})
-}
-/>
 
-<select
-className="form-control"
-onChange={(e)=>
-setForm({...form,experience:e.target.value})
-}
->
-<option value="">Required Experience</option>
-<option>Fresher</option>
-<option>0-1 years</option>
-<option>Basic knowledge required</option>
-</select>
-
-<input
-type="text"
-placeholder="Perks (certificate, job offer)"
-className="form-control"
-onChange={(e)=>
-setForm({...form,perks:e.target.value})
-}
-/>
-
-<input
-type="text"
-placeholder="Selection Process (HR interview)"
-className="form-control"
-onChange={(e)=>
-setForm({...form,selectionProcess:e.target.value})
-}
-/>
-
-
-<label>Company Logo</label>
-
-<input
-type="file"
-accept="image/*"
-onChange={(e)=>
-setForm({...form,logo:e.target.files[0]})
-}
-/>
 
 <label>Company PDF</label>
 
