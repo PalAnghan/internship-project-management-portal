@@ -8,6 +8,8 @@ const router = express.Router();
 
 const multer = require("multer");
 
+/* ================= MULTER ================= */
+
 const storage = multer.diskStorage({
 
  destination:"uploads/",
@@ -20,8 +22,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-
-
 /* ================= GET INTERNSHIPS WITH MATCH SCORE ================= */
 
 router.get("/", async (req,res)=>{
@@ -30,14 +30,15 @@ router.get("/", async (req,res)=>{
 
  const studentId = req.query.studentId;
 
- const student =
- await User.findById(studentId);
+ let student = null;
 
- const internships =
- await Internship.find();
+ if(studentId){
+  student = await User.findById(studentId);
+ }
 
- const result =
- internships.map(internship => {
+ const internships = await Internship.find();
+
+ const result = internships.map(internship => {
 
  const matchScore =
  matchSkills(
@@ -72,12 +73,11 @@ router.get("/", async (req,res)=>{
 
 });
 
-
-
 /* ================= CREATE INTERNSHIP (ADMIN) ================= */
 
 router.post(
 "/",
+
 upload.fields([
  { name:"logo", maxCount:1 },
  { name:"pdf", maxCount:1 }
@@ -87,35 +87,38 @@ async (req,res)=>{
 
  try{
 
+ console.log("BODY:",req.body);
+ console.log("FILES:",req.files);
+
  const internship = new Internship({
 
- title: req.body.title,
+ title: req.body.title || "",
 
- description: req.body.description,
+ description: req.body.description || "",
 
  requiredSkills:
- Array.isArray(req.body["requiredSkills[]"])
-  ? req.body["requiredSkills[]"]
-  : req.body["requiredSkills[]"]
-   ? [req.body["requiredSkills[]"]]
-   : [],
+ req.body.requiredSkills
+ ? JSON.parse(req.body.requiredSkills)
+ : [],
 
- duration: req.body.duration,
+ duration: req.body.duration || "",
 
- applicationDeadline: req.body.applicationDeadline,
+ applicationDeadline: req.body.applicationDeadline || "",
 
- maxApplicants: req.body.maxApplicants,
+ maxApplicants: req.body.maxApplicants || "",
 
- companyName: req.body.companyName,
+ companyName: req.body.companyName || "",
 
- companyAddress: req.body.companyAddress,
+ companyAddress: req.body.companyAddress || "",
 
  department:
- Array.isArray(req.body.department)
+ req.body.department
+ ? Array.isArray(req.body.department)
   ? req.body.department
-  : req.body.department
-   ? [req.body.department]
-   : [],
+  : [req.body.department]
+ : [],
+
+ /* ===== NEW REAL WORLD FIELDS ===== */
 
  companyWebsite: req.body.companyWebsite || "",
 
@@ -133,6 +136,8 @@ async (req,res)=>{
 
  selectionProcess: req.body.selectionProcess || "",
 
+ /* ===== FILES ===== */
+
  logo:
  req.files?.logo?.[0]?.filename || "",
 
@@ -144,29 +149,32 @@ async (req,res)=>{
  await internship.save();
 
  res.status(201).json({
- message:"Internship created"
+
+ message:"Internship created successfully"
+
  });
 
  }
 
  catch(err){
 
- console.log("POST ERROR:",err);
+ console.log("CREATE ERROR:",err);
 
  res.status(500).json({
- error:err.message
+
+ error: err.message
+
  });
 
  }
 
 });
 
-
 /* ================= GET INTERNSHIPS BY COMPANY ================= */
 
-router.get("/company/:companyId", async (req, res) => {
+router.get("/company/:companyId", async (req,res)=>{
 
- try {
+ try{
 
  const internships = await Internship.find({
 
@@ -178,7 +186,7 @@ router.get("/company/:companyId", async (req, res) => {
 
  }
 
- catch (err) {
+ catch(err){
 
  res.status(500).json({
 
@@ -190,77 +198,66 @@ router.get("/company/:companyId", async (req, res) => {
 
 });
 
-
-
 /* ================= APPLY INTERNSHIP ================= */
 
-router.post("/apply", async (req, res) => {
+router.post("/apply", async (req,res)=>{
 
- try {
+ try{
 
  const { studentId, internshipId } = req.body;
 
- if (!studentId || !internshipId) {
+ if(!studentId || !internshipId){
 
  return res.status(400).json({
 
- message: "Missing studentId or internshipId"
+ message:"Missing studentId or internshipId"
 
  });
 
  }
 
-
-
- const alreadyApplied = await Application.findOne({
+ const alreadyApplied =
+ await Application.findOne({
 
  studentId,
  internshipId
 
  });
 
-
-
- if (alreadyApplied) {
+ if(alreadyApplied){
 
  return res.status(400).json({
 
- message: "Already applied"
+ message:"Already applied"
 
  });
 
  }
 
-
-
- const total = await Application.countDocuments({
+ const total =
+ await Application.countDocuments({
 
  internshipId
 
  });
 
+ const internship =
+ await Internship.findById(internshipId);
 
-
- const internship = await Internship.findById(internshipId);
-
-
-
- if (
+ if(
 
  internship.maxApplicants &&
  total >= internship.maxApplicants
 
- ) {
+ ){
 
  return res.status(400).json({
 
- message: "Internship Full"
+ message:"Internship Full"
 
  });
 
  }
-
-
 
  await Application.create({
 
@@ -269,21 +266,19 @@ router.post("/apply", async (req, res) => {
 
  });
 
-
-
  res.status(201).json({
 
- message: "Applied successfully"
+ message:"Applied successfully"
 
  });
 
  }
 
- catch (err) {
+ catch(err){
 
  res.status(500).json({
 
- message: "Server error"
+ message:"Server error"
 
  });
 
@@ -291,17 +286,13 @@ router.post("/apply", async (req, res) => {
 
 });
 
+/* ================= DELETE ================= */
 
+router.delete("/:id", async (req,res)=>{
 
-/* ================= DELETE INTERNSHIP ================= */
-
-router.delete("/:id", async (req, res) => {
-
- try {
+ try{
 
  await Internship.findByIdAndDelete(req.params.id);
-
-
 
  await Application.deleteMany({
 
@@ -309,17 +300,15 @@ router.delete("/:id", async (req, res) => {
 
  });
 
-
-
  res.json({
 
- message: "Internship deleted"
+ message:"Internship deleted"
 
  });
 
  }
 
- catch (err) {
+ catch(err){
 
  res.status(500).json({
 
@@ -331,25 +320,20 @@ router.delete("/:id", async (req, res) => {
 
 });
 
-
-
-/* ================= UPDATE INTERNSHIP ================= */
+/* ================= UPDATE ================= */
 
 router.put("/:id", async (req,res)=>{
 
  try{
 
- const updated = await Internship.findByIdAndUpdate(
+ const updated =
+ await Internship.findByIdAndUpdate(
 
  req.params.id,
-
  req.body,
-
  { new:true }
 
  );
-
-
 
  res.json(updated);
 
@@ -367,9 +351,7 @@ router.put("/:id", async (req,res)=>{
 
 });
 
-
-
-/* ================= GET SINGLE INTERNSHIP ================= */
+/* ================= GET SINGLE ================= */
 
 router.get("/:id", async (req,res)=>{
 
@@ -377,8 +359,6 @@ router.get("/:id", async (req,res)=>{
 
  const internship =
  await Internship.findById(req.params.id);
-
-
 
  if(!internship){
 
@@ -390,17 +370,11 @@ router.get("/:id", async (req,res)=>{
 
  }
 
-
-
  res.json(internship);
 
  }
 
  catch(err){
-
- console.log(err);
-
-
 
  res.status(500).json({
 
@@ -411,7 +385,5 @@ router.get("/:id", async (req,res)=>{
  }
 
 });
-
-
 
 module.exports = router;

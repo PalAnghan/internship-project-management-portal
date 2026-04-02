@@ -64,8 +64,20 @@ const handleSubmit = async () => {
 
  const formData = new FormData();
 
+ /* BASIC DETAILS */
+
  formData.append("title", internship.title);
  formData.append("description", internship.description);
+
+formData.append(
+"requiredSkills",
+JSON.stringify(
+ internship.requiredSkills
+ .split(",")
+ .map(s=>s.trim())
+)
+);
+
  formData.append("duration", internship.duration);
  formData.append("applicationDeadline", internship.applicationDeadline);
  formData.append("maxApplicants", internship.maxApplicants);
@@ -73,16 +85,13 @@ const handleSubmit = async () => {
  formData.append("companyName", internship.companyName);
  formData.append("companyAddress", internship.companyAddress);
 
- internship.requiredSkills
- .split(",")
- .map(s=>s.trim())
- .forEach(skill=>{
-  formData.append("requiredSkills[]", skill);
- });
+ /* COMPANY DETAILS (FROM form STATE) */
 
  formData.append("companyWebsite", form.companyWebsite);
  formData.append("companyDescription", form.companyDescription);
  formData.append("industryType", form.industryType);
+
+ /* INTERNSHIP DETAILS (FROM form STATE) */
 
  formData.append("stipend", form.stipend);
  formData.append("internshipType", form.internshipType);
@@ -90,41 +99,51 @@ const handleSubmit = async () => {
  formData.append("perks", form.perks);
  formData.append("selectionProcess", form.selectionProcess);
 
+ /* FILES */
+
  if(form.logo){
-  formData.append("logo", form.logo);
+ formData.append("logo", form.logo);
  }
 
  if(form.pdf){
-  formData.append("pdf", form.pdf);
+ formData.append("pdf", form.pdf);
  }
 
+ /* DEPARTMENT */
+
  department.forEach(dep=>{
-  formData.append("department", dep);
+ formData.append("department", dep);
  });
 
-const res = await fetch(
-"https://internship-backend-yn3q.onrender.com/api/internships",
-{
+ console.log("Sending data...");
+
+ const res = await fetch(
+ "https://internship-backend-yn3q.onrender.com/api/internships",
+ // "http://localhost:5000/api/internships",
+ {
  method:"POST",
  body: formData
-}
-);  
- 
+ }
+ );
+
+ const data = await res.json();
+
+ console.log("SERVER RESPONSE:", data);
 
  if(res.ok){
 
- alert("Internship added successfully");
+ alert("Internship added successfully ✅");
 
  navigate("/admin-internships");
 
- }
- else{
+ }else{
 
- alert("Error adding internship");
-
- }
+ alert(data.error || "Error adding internship");
 
  }
+
+ }
+
  catch(err){
 
  console.log(err);
