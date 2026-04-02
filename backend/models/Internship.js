@@ -2,15 +2,15 @@ const mongoose = require("mongoose");
 
 const internshipSchema = new mongoose.Schema({
 
- title:{
-  type:String,
-  required:true
- },
+title:{
+ type:String,
+ required:true
+},
 
- description:{
-  type:String,
-  required:true
- },
+description:{
+ type:String,
+ required:true
+},
 
 requiredSkills:[String],
 
@@ -19,19 +19,20 @@ department:{
  default:[]
 },
 
-companyWebsite:String,
-companyDescription:String,
-industryType:String,
+duration:String,
 
-stipend:String,
+applicationDeadline:Date,
+
+maxApplicants:Number,
+
+companyName:String,
+
+companyAddress:String,
+
 internshipType:String,
-experience:String,
 
-perks:String,
-selectionProcess:String,
-
-logo:String,
 pdf:String
+
 },{ timestamps:true });
 
 module.exports =

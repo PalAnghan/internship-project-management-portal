@@ -77,96 +77,61 @@ router.get("/", async (req,res)=>{
 
 router.post(
 "/",
-
-upload.fields([
- { name:"logo", maxCount:1 },
- { name:"pdf", maxCount:1 }
-]),
-
+upload.single("pdf"),
 async (req,res)=>{
 
- try{
+try{
 
- console.log("BODY:",req.body);
- console.log("FILES:",req.files);
+const internship = new Internship({
 
- const internship = new Internship({
+title: req.body.title,
 
- title: req.body.title || "",
+description: req.body.description,
 
- description: req.body.description || "",
+requiredSkills:
+Array.isArray(req.body.requiredSkills)
+? req.body.requiredSkills
+: [req.body.requiredSkills],
 
- requiredSkills:
- req.body.requiredSkills
- ? JSON.parse(req.body.requiredSkills)
- : [],
+duration: req.body.duration,
 
- duration: req.body.duration || "",
+applicationDeadline: req.body.applicationDeadline,
 
- applicationDeadline: req.body.applicationDeadline || "",
+maxApplicants: req.body.maxApplicants,
 
- maxApplicants: req.body.maxApplicants || "",
+companyName: req.body.companyName,
 
- companyName: req.body.companyName || "",
+companyAddress: req.body.companyAddress,
 
- companyAddress: req.body.companyAddress || "",
+internshipType: req.body.internshipType,
 
- department:
- req.body.department
- ? Array.isArray(req.body.department)
-  ? req.body.department
-  : [req.body.department]
- : [],
+department:
+Array.isArray(req.body["department[]"])
+? req.body["department[]"]
+: [req.body["department[]"]],
 
- /* ===== NEW REAL WORLD FIELDS ===== */
+pdf:
+req.file?.filename || ""
 
- companyWebsite: req.body.companyWebsite || "",
+});
 
- companyDescription: req.body.companyDescription || "",
+await internship.save();
 
- industryType: req.body.industryType || "",
+res.status(201).json({
+message:"Internship created"
+});
 
- stipend: req.body.stipend || "",
+}
 
- internshipType: req.body.internshipType || "",
+catch(err){
 
- experience: req.body.experience || "",
+console.log(err);
 
- perks: req.body.perks || "",
+res.status(500).json({
+error:err.message
+});
 
- selectionProcess: req.body.selectionProcess || "",
-
- /* ===== FILES ===== */
-
- logo:
- req.files?.logo?.[0]?.filename || "",
-
- pdf:
- req.files?.pdf?.[0]?.filename || ""
-
- });
-
- await internship.save();
-
- res.status(201).json({
-
- message:"Internship created successfully"
-
- });
-
- }
-
- catch(err){
-
- console.log("CREATE ERROR:",err);
-
- res.status(500).json({
-
- error: err.message
-
- });
-
- }
+}
 
 });
 

@@ -404,16 +404,25 @@ borderRadius:"8px"
 {skill}
 
 </span>
-
+    
 ))}
 
 </div>
 
 <p className="text-muted small mb-3">
-⏳ {getRemainingTime(item.applicationDeadline)}
+ {getRemainingTime(item.applicationDeadline)}
 </p>
 
 {/* BUTTONS */}
+
+<a
+href={`https://internship-backend-yn3q.onrender.com/uploads/${item.pdf}`}
+target="_blank"
+>
+
+View Company Details
+
+</a>
 
 <button
 

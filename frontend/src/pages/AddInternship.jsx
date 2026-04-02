@@ -5,22 +5,22 @@ function AddInternship(){
 
 const navigate = useNavigate();
 
-const [form,setForm] = useState({
+// const [form,setForm] = useState({
 
-companyWebsite:"",
-companyDescription:"",
-industryType:"",
+// companyWebsite:"",
+// companyDescription:"",
+// industryType:"",
 
-stipend:"",
-internshipType:"",
-experience:"",
-perks:"",
-selectionProcess:"",
+// stipend:"",
+// internshipType:"",
+// experience:"",
+// perks:"",
+// selectionProcess:"",
 
-logo:null,
-pdf:null
+// logo:null,
+// pdf:null
 
-});
+// });
 
 const [internship,setInternship] = useState({
 
@@ -31,7 +31,9 @@ duration:"",
 applicationDeadline:"",
 maxApplicants:"",
 companyName:"",
-companyAddress:""
+companyAddress:"",
+internshipType:"",
+pdf:null
 
 });
 
@@ -67,53 +69,27 @@ const handleSubmit = async () => {
  /* BASIC DETAILS */
 
  formData.append("title", internship.title);
- formData.append("description", internship.description);
+formData.append("description", internship.description);
 
 formData.append(
-"requiredSkills",
-JSON.stringify(
- internship.requiredSkills
- .split(",")
- .map(s=>s.trim())
-)
+ "requiredSkills",
+ internship.requiredSkills.split(",").map(s=>s.trim())
 );
 
- formData.append("duration", internship.duration);
- formData.append("applicationDeadline", internship.applicationDeadline);
- formData.append("maxApplicants", internship.maxApplicants);
+formData.append("duration", internship.duration);
+formData.append("applicationDeadline", internship.applicationDeadline);
+formData.append("maxApplicants", internship.maxApplicants);
 
- formData.append("companyName", internship.companyName);
- formData.append("companyAddress", internship.companyAddress);
+formData.append("companyName", internship.companyName);
+formData.append("companyAddress", internship.companyAddress);
 
- /* COMPANY DETAILS (FROM form STATE) */
+formData.append("internshipType", internship.internshipType);
 
- formData.append("companyWebsite", form.companyWebsite);
- formData.append("companyDescription", form.companyDescription);
- formData.append("industryType", form.industryType);
+formData.append("pdf", internship.pdf);
 
- /* INTERNSHIP DETAILS (FROM form STATE) */
-
- formData.append("stipend", form.stipend);
- formData.append("internshipType", form.internshipType);
- formData.append("experience", form.experience);
- formData.append("perks", form.perks);
- formData.append("selectionProcess", form.selectionProcess);
-
- /* FILES */
-
- if(form.logo){
- formData.append("logo", form.logo);
- }
-
- if(form.pdf){
- formData.append("pdf", form.pdf);
- }
-
- /* DEPARTMENT */
-
- department.forEach(dep=>{
- formData.append("department", dep);
- });
+department.forEach(dep=>{
+ formData.append("department[]", dep);
+});
 
  console.log("Sending data...");
 
