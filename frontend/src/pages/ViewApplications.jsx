@@ -285,30 +285,30 @@ function ViewApplications() {
 
  {/* RESUME */}
 
- {app.studentId?.resume ? (
+{app.studentId?.resume ? (
 
- <a
- href={`https://internship-backend-yn3q.onrender.com/uploads/${app.studentId.resume}`}
- target="_blank"
- rel="noreferrer"
- >
+<a
+href={`https://internship-backend-yn3q.onrender.com/uploads/${app.studentId.resume}`}
+target="_blank"
+rel="noreferrer"
+>
 
- <button className="btn btn-dark btn-sm w-100 mt-2">
- View Resume
- </button>
+<button className="btn btn-dark btn-sm w-100 mt-2">
+View Resume
+</button>
 
- </a>
+</a>
 
- ) : (
+) : (
 
- <button
- className="btn btn-secondary btn-sm w-100 mt-2"
- disabled
- >
- No Resume
- </button>
+<button
+className="btn btn-secondary btn-sm w-100 mt-2"
+disabled
+>
+No Resume
+</button>
 
- )}
+)}
 
  </div>
 

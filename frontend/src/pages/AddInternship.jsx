@@ -93,7 +93,7 @@ department.forEach(dep=>{
 
  if(res.ok){
 
- alert("Internship added successfully ✅");
+ alert("Internship added successfully ");
 
  navigate("/admin-internships");
 
@@ -286,10 +286,6 @@ onChange={(e)=>setInternship({...internship,maxApplicants:e.target.value})}
 </div>
 
 </div>
-
-
-
-
 
 
 {/* DEPARTMENT */}

@@ -15,6 +15,7 @@ import AdminRegister from "./pages/AdminRegister";
 import AddInternship from "./pages/AddInternship";
 import ViewApplications from "./pages/ViewApplications";
 import Profile from "./pages/Profile";
+import SavedInternships from "./pages/SavedInternships";
 import HomePage from "./pages/HomePage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CompanyDashboard from "./pages/CompanyDashboard";
@@ -30,6 +31,8 @@ function App() {
         <Route path="/" element={<HomePage />} />
         
         <Route path="/login" element={<Login />} />
+
+        <Route path="/saved" element={<SavedInternships/>} />
 
         <Route path="/register" element={<Register />} />
 

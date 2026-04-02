@@ -1,13 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const XLSX = require("xlsx");
+const ExcelJS = require("exceljs");
 
 const Application = require("../models/Application");
+const Internship = require("../models/Internship");
 
 
-// ===============================
-// ALL STUDENTS EXCEL
-// ===============================
+/* ================= EXPORT ALL ================= */
+
 router.get("/", async (req,res)=>{
 
  try{
@@ -17,147 +17,183 @@ router.get("/", async (req,res)=>{
   .populate("studentId")
   .populate("internshipId");
 
+  const workbook = new ExcelJS.Workbook();
 
-  const data = applications.map(app=>({
+  const worksheet =
+  workbook.addWorksheet("Students");
 
-   StudentName:
-   app.studentId?.name || "N/A",
+  worksheet.columns = [
 
-   Email:
-   app.studentId?.email || "N/A",
+   {
+    header:"StudentName",
+    key:"name",
+    width:25
+   },
 
-   Enrollment:
-   app.studentId?.enrollment || "N/A",
+   {
+    header:"Email",
+    key:"email",
+    width:30
+   },
 
-   Company:
-   app.internshipId?.companyName || "N/A",
+   {
+    header:"Skills",
+    key:"skills",
+    width:35
+   },
 
-   Internship:
-   app.internshipId?.title || "N/A",
+   {
+    header:"ResumeLink",
+    key:"resume",
+    width:45
+   }
 
-   Status:
-   app.status || "Applied"
+  ];
 
-  }));
+  applications.forEach(app=>{
 
+   worksheet.addRow({
 
-  const sheet =
-  XLSX.utils.json_to_sheet(data);
+    name:
+    app.studentId?.name || "",
 
-  const book =
-  XLSX.utils.book_new();
+    email:
+    app.studentId?.email || "",
 
-  XLSX.utils.book_append_sheet(
-   book,
-   sheet,
-   "All Students"
-  );
+    skills:
+    app.detectedSkills?.join(", ") || "",
 
+    resume:
+    app.studentId?.resume
+    ? `https://internship-backend-yn3q.onrender.com/uploads/${app.studentId.resume}`
+    : ""
 
-  const buffer =
-  XLSX.write(book,{
-   type:"buffer",
-   bookType:"xlsx"
+   });
+
   });
 
+  res.setHeader(
+   "Content-Type",
+   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  );
 
   res.setHeader(
    "Content-Disposition",
-   "attachment; filename=All_Students.xlsx"
+   "attachment; filename=students.xlsx"
   );
 
-  res.send(buffer);
+  await workbook.xlsx.write(res);
+
+  res.end();
 
  }
-
  catch(err){
 
   console.log(err);
 
-  res.status(500).send("Excel error");
+  res.status(500).json({
+   message:"Export error"
+  });
 
  }
 
 });
 
 
+/* ================= EXPORT BY COMPANY ================= */
 
-// ===============================
-// COMPANY WISE EXCEL
-// ===============================
 router.get("/company/:id", async (req,res)=>{
 
  try{
 
   const applications =
   await Application.find({
-
    internshipId:req.params.id
-
   })
-
   .populate("studentId")
   .populate("internshipId");
 
+  const internship =
+  await Internship.findById(req.params.id);
 
-  const data =
-  applications.map(app=>({
+  const workbook =
+  new ExcelJS.Workbook();
 
-   StudentName:
-   app.studentId?.name,
+  const worksheet =
+  workbook.addWorksheet("Company Students");
 
-   Email:
-   app.studentId?.email,
+  worksheet.columns = [
 
-   Enrollment:
-   app.studentId?.enrollment,
+   {
+    header:"StudentName",
+    key:"name",
+    width:25
+   },
 
-   Company:
-   app.internshipId?.companyName,
+   {
+    header:"Email",
+    key:"email",
+    width:30
+   },
 
-   Internship:
-   app.internshipId?.title,
+   {
+    header:"Skills",
+    key:"skills",
+    width:35
+   },
 
-   Status:
-   app.status
+   {
+    header:"ResumeLink",
+    key:"resume",
+    width:45
+   }
 
-  }));
+  ];
 
+  applications.forEach(app=>{
 
-  const sheet =
-  XLSX.utils.json_to_sheet(data);
+   worksheet.addRow({
 
-  const book =
-  XLSX.utils.book_new();
+    name:
+    app.studentId?.name || "",
 
-  XLSX.utils.book_append_sheet(
-   book,
-   sheet,
-   "Company Students"
-  );
+    email:
+    app.studentId?.email || "",
 
+    skills:
+    app.detectedSkills?.join(", ") || "",
 
-  const buffer =
-  XLSX.write(book,{
-   type:"buffer",
-   bookType:"xlsx"
+    resume:
+    app.studentId?.resume
+    ? `https://internship-backend-yn3q.onrender.com/uploads/${app.studentId.resume}`
+    : ""
+
+   });
+
   });
 
+  res.setHeader(
+   "Content-Type",
+   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  );
 
   res.setHeader(
    "Content-Disposition",
-   `attachment; filename=company_${req.params.id}.xlsx`
+   "attachment; filename=company_students.xlsx"
   );
 
-  res.send(buffer);
+  await workbook.xlsx.write(res);
+
+  res.end();
 
  }
-
  catch(err){
 
   console.log(err);
 
-  res.status(500).send("Excel error");
+  res.status(500).json({
+   message:"Company export error"``
+  });
 
  }
 

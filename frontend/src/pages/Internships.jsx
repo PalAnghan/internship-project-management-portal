@@ -500,36 +500,58 @@ paddingBottom:"60px"
 >
 
 {/* NAVBAR */}
-
 <nav
-
-className="navbar px-4"
-
 style={{
 
+display:"flex",
+alignItems:"center",
+justifyContent:"space-between",
+padding:"14px 28px",
 background:"rgba(0,0,0,0.35)",
-
-backdropFilter:"blur(10px)"
+backdropFilter:"blur(10px)",
+borderBottom:"1px solid rgba(255,255,255,0.08)"
 
 }}
-
 >
 
-<h4 className="text-white fw-bold">
+{/* LEFT */}
+<h4
+style={{
+color:"white",
+fontWeight:"700",
+letterSpacing:"0.4px"
+}}
+>
 Internships Portal
 </h4>
 
+
+{/* RIGHT */}
+<div style={{display:"flex",gap:"10px"}}>
+
 <button
-
 className="btn btn-outline-light"
-
+style={{
+borderRadius:"10px",
+padding:"6px 18px"
+}}
 onClick={()=>navigate("/student-dashboard")}
-
 >
-
 Home
-
 </button>
+
+<button
+className="btn btn-outline-light"
+style={{
+borderRadius:"10px",
+padding:"6px 18px"
+}}
+onClick={()=>navigate("/saved")}
+>
+Saved
+</button>
+
+</div>
 
 </nav>
 
@@ -628,6 +650,7 @@ Data Science
 
 {/* SECTIONS */}
 
+
 <h4 className="text-white mb-3">
 Recommended
 </h4>
@@ -642,19 +665,7 @@ Recommended
 
 </div>
 
-<h4 className="text-white mt-4 mb-3">
-Trending
-</h4>
 
-<div className="row">
-
-{trending.map(item=>(
-
-<Card key={item._id} item={item} />
-
-))}
-
-</div>
 
 <h4 className="text-white mt-4 mb-3">
 All Internships
