@@ -16,7 +16,7 @@ exports.applyInternship = async (req, res) => {
       });
     }
 
-    // ⛔ DEADLINE CHECK
+    //  DEADLINE CHECK
     if (new Date() > new Date(internship.applicationDeadline)) {
       return res.status(400).json({
         message: "Application deadline finished"

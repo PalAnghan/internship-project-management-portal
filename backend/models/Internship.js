@@ -61,7 +61,19 @@ companyAddress: {
  department:{
  type:[String],
  required:true
-}
+},
+companyWebsite:String,
+companyDescription:String,
+industryType:String,
+
+stipend:String,
+internshipType:String,
+experience:String,
+perks:String,
+selectionProcess:String,
+
+logo:String,
+pdf:String  
 
 },{ timestamps:true });
 

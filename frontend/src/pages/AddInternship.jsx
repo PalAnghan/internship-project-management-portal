@@ -5,6 +5,23 @@ function AddInternship(){
 
 const navigate = useNavigate();
 
+const [form,setForm] = useState({
+
+companyWebsite:"",
+companyDescription:"",
+industryType:"",
+
+stipend:"",
+internshipType:"",
+experience:"",
+perks:"",
+selectionProcess:"",
+
+logo:null,
+pdf:null
+
+});
+
 const [internship,setInternship] = useState({
 
 title:"",
@@ -42,74 +59,89 @@ setDepartment(prev => prev.filter(dep => dep !== value));
 
 /* ================= SUBMIT ================= */
 
-const handleSubmit = async ()=>{
+const handleSubmit = async () => {
 
-try{
+ try{
 
-const res = await fetch(
+ const formData = new FormData();
 
-"https://internship-backend-yn3q.onrender.com/api/internships",
+ // basic internship fields
+ formData.append("title", internship.title);
+ formData.append("description", internship.description);
 
-{
-
-method:"POST",
-
-headers:{"Content-Type":"application/json"},
-
-body: JSON.stringify({
-
-title: internship.title,
-description: internship.description,
-
-requiredSkills:
 internship.requiredSkills
 .split(",")
-.map(skill => skill.trim())
-.filter(skill => skill !== ""),
+.map(skill=>skill.trim())
+.forEach(skill=>{
+ formData.append("requiredSkills[]", skill);
+});
 
-duration: internship.duration,
+ formData.append("duration", internship.duration);
+ formData.append("applicationDeadline", internship.applicationDeadline);
+ formData.append("maxApplicants", internship.maxApplicants);
 
-applicationDeadline:
-internship.applicationDeadline,
+ formData.append("companyName", internship.companyName);
+ formData.append("companyAddress", internship.companyAddress);
 
-maxApplicants:
-Number(internship.maxApplicants),
+ // NEW COMPANY DETAILS (FROM form STATE)
+ formData.append("companyWebsite", form.companyWebsite);
+ formData.append("companyDescription", form.companyDescription);
+ formData.append("industryType", form.industryType);
 
-companyName:
-internship.companyName,
+ // NEW INTERNSHIP DETAILS
+ formData.append("stipend", form.stipend);
+ formData.append("internshipType", form.internshipType);
+ formData.append("experience", form.experience);
+ formData.append("perks", form.perks);
+ formData.append("selectionProcess", form.selectionProcess);
 
-companyAddress:
-internship.companyAddress,
+ // FILES
+ if(form.logo){
+  formData.append("logo", form.logo);
+ }
 
-department: department
+ if(form.pdf){
+  formData.append("pdf", form.pdf);
+ }
 
-})
+ // department array
+ department.forEach(dep=>{
+  formData.append("department", dep);
+ });
 
-}
+ const res = await fetch(
 
-);
+ "https://internship-backend-yn3q.onrender.com/api/internships",
 
-if(res.ok){
+ {
+ method:"POST",
+ body: formData
+ }
 
-alert("Internship added successfully");
-navigate("/admin");
+ );
 
-}
+ if(res.ok){
 
-else{
+ alert("Internship added successfully");
 
-alert("Error adding internship");
+ navigate("/admin-internships");
 
-}
+ }
+ else{
 
-}
+ alert("Error adding internship");
 
-catch(err){
+ }
 
-console.log(err);
-alert("Server error");
+ }
 
-}
+ catch(err){
+
+ console.log(err);
+
+ alert("Server error");
+
+ }
 
 };
 
@@ -161,6 +193,43 @@ Add Internship
 </h3>
 
 
+<input
+type="text"
+placeholder="Company Website (optional)"
+className="form-control"
+onChange={(e)=>
+setForm({...form,companyWebsite:e.target.value})
+}
+/>
+
+<textarea
+placeholder="Company Description"
+className="form-control"
+onChange={(e)=>
+setForm({...form,companyDescription:e.target.value})
+}
+/>
+
+<select
+className="form-control"
+onChange={(e)=>
+setForm({...form,industryType:e.target.value})
+}
+>
+<option value="">Industry Type</option>
+<option>IT</option>
+<option>Finance</option>
+<option>Healthcare</option>
+<option>Marketing</option>
+<option>Education</option>
+<option>Startup</option>
+</select>
+
+
+
+
+
+
 {/* GRID FORM */}
 
 <div className="row">
@@ -198,6 +267,78 @@ onChange={(e)=>setInternship({...internship,duration:e.target.value})}
 </div>
 
 </div>
+
+<select
+className="form-control"
+onChange={(e)=>
+setForm({...form,internshipType:e.target.value})
+}
+>
+<option value="">Internship Type</option>
+<option>Remote</option>
+<option>On-site</option>
+<option>Hybrid</option>
+</select>
+
+<input
+type="text"
+placeholder="Stipend (₹5000/month)"
+className="form-control"
+onChange={(e)=>
+setForm({...form,stipend:e.target.value})
+}
+/>
+
+<select
+className="form-control"
+onChange={(e)=>
+setForm({...form,experience:e.target.value})
+}
+>
+<option value="">Required Experience</option>
+<option>Fresher</option>
+<option>0-1 years</option>
+<option>Basic knowledge required</option>
+</select>
+
+<input
+type="text"
+placeholder="Perks (certificate, job offer)"
+className="form-control"
+onChange={(e)=>
+setForm({...form,perks:e.target.value})
+}
+/>
+
+<input
+type="text"
+placeholder="Selection Process (HR interview)"
+className="form-control"
+onChange={(e)=>
+setForm({...form,selectionProcess:e.target.value})
+}
+/>
+
+
+<label>Company Logo</label>
+
+<input
+type="file"
+accept="image/*"
+onChange={(e)=>
+setForm({...form,logo:e.target.files[0]})
+}
+/>
+
+<label>Company PDF</label>
+
+<input
+type="file"
+accept=".pdf"
+onChange={(e)=>
+setForm({...form,pdf:e.target.files[0]})
+}
+/>
 
 
 {/* DESCRIPTION */}
@@ -242,6 +383,10 @@ onChange={(e)=>setInternship({...internship,maxApplicants:e.target.value})}
 </div>
 
 </div>
+
+
+
+
 
 
 {/* DEPARTMENT */}

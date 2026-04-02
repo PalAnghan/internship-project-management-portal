@@ -367,6 +367,8 @@ return `${d}d ${h}h`;
 
 const Card = ({ item }) => {
 
+  
+
  const applied =
  appliedIds.includes(item._id);
 
@@ -381,6 +383,44 @@ const Card = ({ item }) => {
  return (
 
  <div className="col-lg-4 col-md-6 mb-4">
+
+  <p>
+Stipend: {item.stipend}
+</p>
+
+<p>
+Type: {item.internshipType}
+</p>
+
+<p>
+Experience: {item.experience}
+</p>
+
+<p>
+Perks: {item.perks}
+</p>
+
+<p>
+Selection: {item.selectionProcess}
+</p>
+
+<a
+href={item.companyWebsite}
+target="_blank"
+>
+
+Company Website
+
+</a>
+
+<a
+href={`https://internship-backend-url/uploads/${item.pdf}`}
+target="_blank"
+>
+
+Download Company PDF
+
+</a>
 
  <div
 
