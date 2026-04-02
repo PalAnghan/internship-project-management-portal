@@ -5,6 +5,7 @@ const ExcelJS = require("exceljs");
 const Application = require("../models/Application");
 const Internship = require("../models/Internship");
 
+
 /* ================= EXPORT ALL ================= */
 
 router.get("/", async (req,res)=>{
@@ -24,7 +25,7 @@ router.get("/", async (req,res)=>{
   worksheet.columns = [
 
    {
-    header:"StudentName",
+    header:"Student Name",
     key:"name",
     width:25
    },
@@ -36,11 +37,22 @@ router.get("/", async (req,res)=>{
    },
 
    {
+    header:"Enrollment No",
+    key:"enrollment",
+    width:20
+   },
+
+   {
+    header:"Internship",
+    key:"internship",
+    width:25
+   },
+
+   {
     header:"Department",
     key:"department",
     width:25
    },
-
   ];
 
   applications.forEach(app=>{
@@ -53,9 +65,14 @@ router.get("/", async (req,res)=>{
     email:
     app.studentId?.email || "",
 
+    enrollment:
+    app.studentId?.enrollmentNumber || "",
+
+    internship:
+    app.internshipId?.title || "",
+
     department:
     app.internshipId?.department?.join(", ") || "",
-
 
    });
 
@@ -102,6 +119,9 @@ router.get("/company/:id", async (req,res)=>{
   .populate("studentId")
   .populate("internshipId");
 
+  const internship =
+  await Internship.findById(req.params.id);
+
   const workbook =
   new ExcelJS.Workbook();
 
@@ -111,7 +131,7 @@ router.get("/company/:id", async (req,res)=>{
   worksheet.columns = [
 
    {
-    header:"StudentName",
+    header:"Student Name",
     key:"name",
     width:25
    },
@@ -123,10 +143,23 @@ router.get("/company/:id", async (req,res)=>{
    },
 
    {
+    header:"Enrollment No",
+    key:"enrollment",
+    width:20
+   },
+
+   {
+    header:"Internship",
+    key:"internship",
+    width:25
+   },
+
+   {
     header:"Department",
     key:"department",
     width:25
    },
+
 
   ];
 
@@ -140,8 +173,15 @@ router.get("/company/:id", async (req,res)=>{
     email:
     app.studentId?.email || "",
 
+    enrollment:
+    app.studentId?.enrollmentNumber || "",
+
+    internship:
+    internship?.title || "",
+
     department:
-    app.internshipId?.department?.join(", ") || "",
+    internship?.department?.join(", ") || "",
+
 
    });
 
@@ -154,7 +194,7 @@ router.get("/company/:id", async (req,res)=>{
 
   res.setHeader(
    "Content-Disposition",
-   "attachment; filename=company_students.xlsx"
+   `attachment; filename=${internship.title}.xlsx`
   );
 
   await workbook.xlsx.write(res);
@@ -173,5 +213,6 @@ router.get("/company/:id", async (req,res)=>{
  }
 
 });
+
 
 module.exports = router;
