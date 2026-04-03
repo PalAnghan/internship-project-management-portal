@@ -23,6 +23,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/uploads", express.static("uploads"));
 
 app.get("/", (req, res) => {
   res.send("Backend working ");
@@ -45,7 +46,6 @@ app.use("/api/export", exportExcel);
 
 app.use("/api/resume",resumeRoutes);
 
-app.use("/uploads", express.static("uploads"));
 
 // Test API
 app.get("/api/test", (req, res) => {
