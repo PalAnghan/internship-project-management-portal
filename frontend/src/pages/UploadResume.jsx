@@ -30,9 +30,14 @@ formData.append("enrollment", enrollment);
 
    setUploading(true);
 
-  await axios.post(
+ await axios.post(
 "https://internship-backend-yn3q.onrender.com/api/resume/upload",
-formData
+formData,
+{
+ headers:{
+  "Content-Type":"multipart/form-data"
+ }
+}
 );
    setSuccess(true);
 
