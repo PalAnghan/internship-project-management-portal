@@ -219,39 +219,36 @@ function AllStudents(){
 
  <td>
 
- {s.resume ? (
+{s.resume ? (
 
- <div className="d-flex gap-2">
+<>
 
- <a
- href={s.resume}
- target="_blank"
- rel="noreferrer"
- className="btn btn-success btn-sm"
- >
- View
- </a>
+<a
+href={`https://internship-backend-yn3q.onrender.com/uploads/${s.resume}`}
+target="_blank"
+rel="noreferrer"
+className="btn btn-success btn-sm me-2"
+>
+View
+</a>
 
- <a
- href={s.resume}
- download
- className="btn btn-primary btn-sm"
- >
- Download
- </a>
+<a
+href={`https://internship-backend-yn3q.onrender.com/uploads/${s.resume}`}
+download
+className="btn btn-primary btn-sm"
+>
+Download
+</a>
 
- </div>
+</>
 
- ) : (
+) : (
 
- <span className="text-danger">
- No Resume
- </span>
+<span style={{color:"red"}}>No Resume</span>
 
- )}
+)}
 
- </td>
-
+</td>
  </tr>
 
  ))}
