@@ -28,7 +28,7 @@ router.post(
    }
 
    const user = await User.findOne({
-    enrollmentNumber: enrollment
+    enrollment: enrollment
    });
 
    if(!user){

@@ -75,7 +75,7 @@ async (req,res)=>{
   }
 
   const user = await User.findOne({
-   enrollment: enrollment
+   enrollmentNumber: enrollment   // FIXED
   });
 
   if(!user){
@@ -90,13 +90,14 @@ async (req,res)=>{
 
   res.json({
    message:"Resume uploaded",
-   file:req.file.filename
+   resume:user.resume
   });
 
  }
+
  catch(err){
 
-  console.log("UPLOAD ERROR:", err);
+  console.log(err);
 
   res.status(500).json({
    message:"Upload error"

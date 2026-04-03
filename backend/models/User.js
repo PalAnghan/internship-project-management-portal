@@ -37,12 +37,7 @@ const userSchema = new mongoose.Schema({
  type:String
 },
 
-// enrollment:{
-//   type:String
-//  },
-
-enrollment:{
-  type:String},
+enrollment:String,
 
  profileImage:{
  type:String
