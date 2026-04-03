@@ -10,10 +10,6 @@ require("../controller/usercontroller");
 
 const User = require("../models/User");
 
-
-
-
-
 router.post("/register", upload.single("resume"), register);
 router.post("/login", login);
 router.get("/:id", getUserById);
