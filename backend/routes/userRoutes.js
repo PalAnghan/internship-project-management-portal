@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
+const path = require("path"); 
 
 const User = require("../models/User");
 
@@ -13,19 +14,7 @@ const {
 } = require("../controller/usercontroller");
 
 
-// ================= MULTER CONFIG =================
 
-// resume upload
-const storageResume = multer.diskStorage({
- destination: (req, file, cb) => {
-  cb(null, "uploads/");
- },
- filename: (req, file, cb) => {
-  cb(null, Date.now() + "-" + file.originalname);
- }
-});
-
-const uploadResume = multer({ storage: storageResume });
 
 
 // profile image upload
@@ -54,11 +43,25 @@ router.put("/profile", updateProfile);
 router.put("/update-user", updateProfile);
 
 
-// ================= RESUME UPLOAD =================
+/* storage config */
+
+const storage = multer.diskStorage({
+
+ destination: "uploads/",
+
+ filename: (req, file, cb) => {
+  cb(null, Date.now() + "-" + file.originalname);
+ }
+
+});
+
+const upload = multer({ storage });
+
+/* upload resume */
 
 router.post(
  "/upload-resume",
- uploadResume.single("resume"),
+ upload.single("resume"),
  async (req, res) => {
 
   try {
@@ -96,13 +99,12 @@ router.post(
    console.log(err);
 
    res.status(500).json({
-    message: "Upload failed"
+    message: "Upload error"
    });
 
   }
 
- }
-);
+ });
 
 
 // ================= PROFILE IMAGE =================
