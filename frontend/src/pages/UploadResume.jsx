@@ -31,12 +31,9 @@ const UploadResume = () => {
    setUploading(true);
 
    await axios.post(
-
-    "https://internship-backend-yn3q.onrender.com/api/users/upload-resume",
-
-    formData
-
-   );
+ "https://internship-backend-yn3q.onrender.com/api/resume/upload",
+ formData
+);
 
    setSuccess(true);
 

@@ -21,7 +21,7 @@ function AllStudents(){
 
  s.name?.toLowerCase().includes(search.toLowerCase()) ||
  s.email?.toLowerCase().includes(search.toLowerCase()) ||
- s.enrollment?.toLowerCase().includes(search.toLowerCase())
+ s.enrollmentNumber?.toLowerCase().includes(search.toLowerCase())
 
  );
 
@@ -189,7 +189,7 @@ function AllStudents(){
 
  <td>
  <span className="badge bg-info">
- {s.enrollment || "-"}
+ {s.enrollmentNumber || "-"}
  </span>
  </td>
 

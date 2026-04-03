@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
+const User = require("../models/User");
 
 const storage = multer.diskStorage({
  destination:"uploads/",
@@ -11,25 +12,43 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage});
 
-
 router.post(
  "/upload",
  upload.single("resume"),
- (req,res)=>{
+ async (req,res)=>{
 
   try{
+
+   const { enrollment } = req.body;
+
+   const user = await User.findOne({
+    enrollmentNumber: enrollment
+   });
+
+   if(!user){
+
+    return res.status(404).json({
+     message:"Student not found"
+    });
+
+   }
+
+   user.resume = req.file.filename;
+
+   await user.save();
 
    res.json({
 
     message:"Resume uploaded",
-
-    file:req.file
+    file:req.file.filename
 
    });
 
   }
 
   catch(err){
+
+   console.log(err);
 
    res.status(500).json({
 
