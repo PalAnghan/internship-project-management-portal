@@ -34,20 +34,18 @@ ConnectDB();
 // Static uploads folder (FOR RESUME DOWNLOAD)
 // app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-app.use("/uploads", express.static("uploads"));
-
 
 // Routes
-app.use("/api/users", userRoutes);
+// app.use("/api/users", userRoutes);
 app.use("/api/admins", adminRoutes);
 app.use("/api/internships", internshipRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/export", exportExcel);
-// app.use("/api/users", require("./routes/userRoutes"));
 
 app.use("/api/internships", require("./routes/internshipRoutes"));
 app.use("/api/resume",resumeRoutes);
 
+app.use("/uploads", express.static("uploads"));
 
 // Test API
 app.get("/api/test", (req, res) => {
