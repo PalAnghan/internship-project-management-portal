@@ -3,20 +3,14 @@ const router = express.Router();
 const multer = require("multer");
 const User = require("../models/User");
 
-/* storage config */
 const storage = multer.diskStorage({
-
- destination: "uploads/",
-
- filename: (req, file, cb) => {
-  cb(null, Date.now() + "-" + file.originalname);
+ destination:"uploads/",
+ filename:(req,file,cb)=>{
+  cb(null, Date.now()+"-"+file.originalname);
  }
-
 });
 
-const upload = multer({ storage });
-
-/* upload resume */
+const upload = multer({storage});
 
 router.post("/upload", upload.single("resume"), async (req,res)=>{
 
@@ -50,6 +44,7 @@ router.post("/upload", upload.single("resume"), async (req,res)=>{
   });
 
  }
+
  catch(err){
 
   console.log(err);
