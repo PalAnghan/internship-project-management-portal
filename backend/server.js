@@ -40,7 +40,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/admins", adminRoutes);
 app.use("/api/internships", internshipRoutes);
 app.use("/api/applications", applicationRoutes);
-app.use("/api/export", exportExcel);
+app.use("/api/export", exportExcel);  
 
 
 app.use("/api/resume",resumeRoutes);
