@@ -23,45 +23,46 @@ router.post(
  "/upload-resume",
  upload.single("resume"),
  async (req,res)=>{
- try{
+  try{
 
-  const { enrollment } = req.body;
+   const { enrollment } = req.body;
 
-  if(!req.file){
-   return res.status(400).json({
-    message:"No file uploaded"
+   if(!req.file){
+    return res.status(400).json({
+     message:"No file uploaded"
+    });
+   }
+
+   const user = await User.findOne({
+    enrollmentNumber: enrollment
    });
-  }
 
-  const user = await User.findOne({ enrollment });
+   if(!user){
+    return res.status(404).json({
+     message:"User not found"
+    });
+   }
 
-  if(!user){
-   return res.status(404).json({
-    message:"User not found"
+   user.resume = req.file.filename;
+
+   await user.save();
+
+   res.json({
+    message:"Resume uploaded successfully",
+    file:req.file.filename
    });
+
   }
+  catch(err){
 
-  user.resume = req.file.filename;
+   console.log(err);
 
-  await user.save();
+   res.status(500).json({
+    message:"Upload error"
+   });
 
-  res.json({
-   message:"Resume uploaded successfully",
-   file:req.file.filename
-  });
-
- }
- catch(err){
-
-  console.log(err);
-
-  res.status(500).json({
-   message:"Upload error"
-  });
-
- }
+  }
 });
-
 
 exports.updateProfile = async (req,res)=>{
 
