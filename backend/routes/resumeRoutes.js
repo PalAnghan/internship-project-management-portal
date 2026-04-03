@@ -43,7 +43,7 @@ async (req,res)=>{
 
   const user = await User.findOne({
 
-   enrollment: enrollment
+   enrollmentNumber: enrollment
 
   });
 
