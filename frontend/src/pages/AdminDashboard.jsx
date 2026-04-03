@@ -88,7 +88,7 @@ function AdminDashboard() {
         {menuBtn("Search Data", () => navigate("/search"))}
 
         <button
-          onClick={() => window.open("http://localhost:5000/api/export")}
+          onClick={() => window.open("https://internship-backend-yn3q.onrender.com/api/export")}
           style={menuStyle}
         >
           Export Data
@@ -191,7 +191,7 @@ function AdminDashboard() {
                   style={{ borderRadius: "10px" }}
                   onClick={() => {
                     if (card.action === "export") {
-                      window.open("http://localhost:5000/api/export");
+                      window.open("https://internship-backend-yn3q.onrender.com/api/export");
                     } else {
                       navigate(card.route);
                     }
