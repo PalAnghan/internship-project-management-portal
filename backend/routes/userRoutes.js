@@ -19,43 +19,47 @@ router.put("/update-user", updateProfile);
 
 router.post("/upload-image", upload.single("image"), uploadImage);
 
-router.post("/upload-resume", upload.single("resume"), async (req, res) => {
-  try {
+router.post(
+ "/upload-resume",
+ upload.single("resume"),
+ async (req,res)=>{
+ try{
 
-    const { userId, enrollment } = req.body;
-    if (!req.file) {
-      return res.status(400).json({
-        message: "No file uploaded"
-      });
-    }
+  const { enrollment } = req.body;
 
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found"
-      });
-    }
-
-    user.resume = req.file.filename;
-    user.enrollment = enrollment;   
-
-    await user.save();
-
-    res.json({
-      message: "Resume uploaded successfully",
-      filename: req.file.filename
-    });
-
-  } catch (error) {
-
-    console.log(error);
-
-    res.status(500).json({
-      error: error.message
-    });
-
+  if(!req.file){
+   return res.status(400).json({
+    message:"No file uploaded"
+   });
   }
+
+  const user = await User.findOne({ enrollment });
+
+  if(!user){
+   return res.status(404).json({
+    message:"User not found"
+   });
+  }
+
+  user.resume = req.file.filename;
+
+  await user.save();
+
+  res.json({
+   message:"Resume uploaded successfully",
+   file:req.file.filename
+  });
+
+ }
+ catch(err){
+
+  console.log(err);
+
+  res.status(500).json({
+   message:"Upload error"
+  });
+
+ }
 });
 
 
