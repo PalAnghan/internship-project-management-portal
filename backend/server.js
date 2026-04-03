@@ -11,7 +11,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const internshipRoutes = require("./routes/internshipRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
-
+const resumeRoutes = require("./routes/resumeRoutes");
 
 const exportExcel = require("./routes/exportExcel");
 
@@ -25,7 +25,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/uploads", express.static("uploads"));
 
-const resumeRoutes = require("./routes/resumeRoutes");
 
 app.get("/", (req, res) => {
   res.send("Backend working ");
@@ -46,7 +45,7 @@ app.use("/api/applications", applicationRoutes);
 app.use("/api/export", exportExcel);  
 
 
-app.use("/api/resume",resumeRoutes);
+app.use("/api/resume", resumeRoutes);
 
 
 // Test API

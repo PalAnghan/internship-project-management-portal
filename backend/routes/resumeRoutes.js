@@ -3,14 +3,20 @@ const router = express.Router();
 const multer = require("multer");
 const User = require("../models/User");
 
+/* storage config */
 const storage = multer.diskStorage({
- destination:"uploads/",
- filename:(req,file,cb)=>{
-  cb(null, Date.now()+"-"+file.originalname);
+
+ destination: "uploads/",
+
+ filename: (req, file, cb) => {
+  cb(null, Date.now() + "-" + file.originalname);
  }
+
 });
 
-const upload = multer({storage});
+const upload = multer({ storage });
+
+/* upload resume */
 
 router.post("/upload", upload.single("resume"), async (req,res)=>{
 
@@ -25,7 +31,7 @@ router.post("/upload", upload.single("resume"), async (req,res)=>{
   }
 
   const user = await User.findOne({
-   enrollmentNumber: enrollment
+   enrollment: enrollment
   });
 
   if(!user){
