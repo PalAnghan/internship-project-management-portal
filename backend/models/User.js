@@ -44,11 +44,9 @@ const userSchema = new mongoose.Schema({
 enrollmentNumber:{  
   type:String},
 
- 
  profileImage:{
  type:String
 },
-
 
 });
 

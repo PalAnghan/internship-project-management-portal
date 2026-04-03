@@ -66,7 +66,7 @@ router.post(
 
   try {
 
-   const { enrollment } = req.body;
+   const { enrollmentNumber } = req.body;
 
    if (!req.file) {
     return res.status(400).json({

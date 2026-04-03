@@ -24,7 +24,7 @@ const UploadResume = () => {
   const formData = new FormData();
 
   formData.append("resume",file);
-  formData.append("enrollment",enrollment);
+ formData.append("enrollmentNumber", enrollment);
 
   try{
 
