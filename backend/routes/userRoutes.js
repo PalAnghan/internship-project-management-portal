@@ -1,35 +1,73 @@
 const express = require("express");
 const router = express.Router();
-
-
-const upload = require("../middleware/resume");
-
-const { register, login, getUserById, updateProfile, uploadImage } =
-require("../controller/usercontroller");
-
+const multer = require("multer");
 
 const User = require("../models/User");
 
-router.post("/register", upload.single("resume"), register);
+const {
+ register,
+ login,
+ getUserById,
+ updateProfile,
+ uploadImage
+} = require("../controller/usercontroller");
+
+
+// ================= MULTER CONFIG =================
+
+// resume upload
+const storageResume = multer.diskStorage({
+ destination: (req, file, cb) => {
+  cb(null, "uploads/");
+ },
+ filename: (req, file, cb) => {
+  cb(null, Date.now() + "-" + file.originalname);
+ }
+});
+
+const uploadResume = multer({ storage: storageResume });
+
+
+// profile image upload
+const storageProfile = multer.diskStorage({
+ destination: (req, file, cb) => {
+  cb(null, "uploads/profile/");
+ },
+ filename: (req, file, cb) => {
+  cb(null, Date.now() + "-" + file.originalname);
+ }
+});
+
+const uploadProfile = multer({ storage: storageProfile });
+
+
+// ================= AUTH ROUTES =================
+
+router.post("/register", register);
+
 router.post("/login", login);
+
 router.get("/:id", getUserById);
+
 router.put("/profile", updateProfile);
 
 router.put("/update-user", updateProfile);
 
-router.post("/upload-image", upload.single("image"), uploadImage);
+
+// ================= RESUME UPLOAD =================
 
 router.post(
  "/upload-resume",
- upload.single("resume"),
- async (req,res)=>{
-  try{
+ uploadResume.single("resume"),
+ async (req, res) => {
+
+  try {
 
    const { enrollment } = req.body;
 
-   if(!req.file){
+   if (!req.file) {
     return res.status(400).json({
-     message:"No file uploaded"
+     message: "No file uploaded"
     });
    }
 
@@ -37,9 +75,9 @@ router.post(
     enrollmentNumber: enrollment
    });
 
-   if(!user){
+   if (!user) {
     return res.status(404).json({
-     message:"User not found"
+     message: "Student not found"
     });
    }
 
@@ -48,101 +86,106 @@ router.post(
    await user.save();
 
    res.json({
-    message:"Resume uploaded successfully",
-    file:req.file.filename
+    message: "Resume uploaded successfully",
+    file: req.file.filename
    });
 
   }
-  catch(err){
+  catch (err) {
 
    console.log(err);
 
    res.status(500).json({
-    message:"Upload error"
+    message: "Upload failed"
    });
 
   }
-});
-
-exports.updateProfile = async (req,res)=>{
-
- try{
-
-  console.log("incoming data:", req.body);
-
-  const updatedUser =
-  await User.findByIdAndUpdate(
-
-   req.body._id,
-
-   {
-    name:req.body.name,
-    bio:req.body.bio,
-    github:req.body.github,
-    linkedin:req.body.linkedin,
-    skills:req.body.skills,
-
-    department:req.body.department,  // IMPORTANT
-    enrollment:req.body.enrollment   // keep existing field
-   },
-
-   { new:true }
-
-  );
-
-  console.log("updated user:", updatedUser);
-
-  res.json(updatedUser);
 
  }
- catch(error){
+);
 
-  console.log(error);
 
-  res.status(500).json({
+// ================= PROFILE IMAGE =================
 
-   message:"profile update failed"
+router.post(
+ "/upload-profile",
+ uploadProfile.single("image"),
+ async (req, res) => {
 
-  });
+  try {
+
+   const userId = req.body.userId;
+
+   if (!req.file) {
+    return res.status(400).json({
+     message: "No file uploaded"
+    });
+   }
+
+   const imagePath = `uploads/profile/${req.file.filename}`;
+
+   const user = await User.findByIdAndUpdate(
+    userId,
+    { profileImage: imagePath },
+    { new: true }
+   );
+
+   res.json(user);
+
+  }
+  catch (err) {
+
+   console.log(err);
+
+   res.status(500).json({
+    message: "Upload failed"
+   });
+
+  }
 
  }
+);
 
-};
 
-router.get("/", async (req,res)=>{
+// ================= GET USERS =================
 
-const users = await User.find();
+router.get("/", async (req, res) => {
 
-res.json(users);
+ const users = await User.find();
+
+ res.json(users);
 
 });
 
-router.get("/search/:text", async(req,res)=>{
+
+// ================= SEARCH =================
+
+router.get("/search/:text", async (req, res) => {
 
  const text = req.params.text;
 
  const users = await User.find({
 
-  $or:[
+  $or: [
 
    {
-    name:{
-     $regex:text,
-     $options:"i"
+    name: {
+     $regex: text,
+     $options: "i"
     }
    },
 
    {
-    email:{
-     $regex:text,
-     $options:"i"
+    email: {
+     $regex: text,
+     $options: "i"
     }
    },
 
    {
-    enrollment:{
-     $regex:text,
-     $options:"i"
+    enrollmentNumber: {
+     $regex: text,
+     $options: "i"
     }
    }
 
@@ -155,69 +198,4 @@ router.get("/search/:text", async(req,res)=>{
 });
 
 
-
-
-const multer = require("multer");
-
-const storage = multer.diskStorage({
-
- destination:(req,file,cb)=>{
-  cb(null,"uploads/profile");
- },
-
- filename:(req,file,cb)=>{
-  cb(null, Date.now()+"-"+file.originalname);
- }
-
-});
-
-const uploadProfile = multer({ storage });
-
-router.post(
-"/upload-profile",
-uploadProfile.single("image"),
-async (req,res)=>{
-
- try{
-
-  console.log(req.body);   // debug
-  console.log(req.file);   // debug
-
-  const userId = req.body.userId;
-
-  if(!req.file){
-   return res.status(400).json({
-    message:"No file uploaded"
-   });
-  }
-
-  if(!userId){
-   return res.status(400).json({
-    message:"User ID missing"
-   });
-  }
-
-  const imagePath = `uploads/profile/${req.file.filename}`;
-
-  const user = await User.findByIdAndUpdate(
-   userId,
-   { profileImage:imagePath },
-   { new:true }
-  );
-
-  res.json(user);
-
- }
- catch(err){
-
-  console.log("UPLOAD ERROR:", err);
-
-  res.status(500).json({
-   message:"Upload failed",
-   error:err.message
-  });
-
- }
-
-});
 module.exports = router;
