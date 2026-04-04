@@ -15,13 +15,12 @@ const storage = multer.diskStorage({
  destination:"uploads/",
 
  filename:(req,file,cb)=>{
-  cb(null,Date.now()+"-"+file.originalname);
+  cb(null, Date.now()+"-"+file.originalname);
  }
 
 });
 
 const upload = multer({ storage });
-
 /* ================= GET INTERNSHIPS WITH MATCH SCORE ================= */
 
 router.get("/", async (req,res)=>{

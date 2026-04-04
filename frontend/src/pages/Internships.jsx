@@ -370,14 +370,10 @@ Website
 {item.pdf && (
 
 <a
-href={`https://internship-backend-yn3q.onrender.com/uploads/${item.pdf}`}
-target="_blank"
-rel="noreferrer"
-className="small text-success fw-semibold"
+ href={`https://internship-backend-yn3q.onrender.com/uploads/${item.pdf}`}
+ target="_blank"
 >
-
-Company PDF
-
+ View PDF
 </a>
 
 )} 
