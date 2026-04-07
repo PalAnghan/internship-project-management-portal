@@ -20,6 +20,32 @@ const studentSkills =
 (user?.skills||[])
 .map(s=>s.toLowerCase().trim());
 
+
+const getMatchPercent = (studentSkills, requiredSkills) => {
+
+ if(!studentSkills || !requiredSkills) return 0;
+
+ const normalize = (arr) =>
+  arr.map(s =>
+   s
+   .toLowerCase()
+   .replace(/\s+/g,"")
+   .trim()
+  );
+
+ const student = normalize(studentSkills);
+ const required = normalize(requiredSkills);
+
+ const match = required.filter(skill =>
+  student.includes(skill)
+ );
+
+ return Math.round(
+  (match.length / required.length) * 100
+ );
+
+};
+
 /* ================= FETCH ================= */
 
 useEffect(()=>{
@@ -44,31 +70,35 @@ const fetchInternships = async () => {
 
  const data = await res.json();
 
- const withScore =
- data.map(item=>{
+//  const withScore =
+//  data.map(item=>{
 
- const required =
- (item.requiredSkills||[])
- .map(s=>s.toLowerCase());
+//  const required =
+//  (item.requiredSkills||[])
+//  .map(s=>s.toLowerCase());
 
- const matchCount =
- required.filter(skill=>
- studentSkills.includes(skill)
- ).length;
+//  const matchCount =
+//  required.filter(skill=>
+//  studentSkills.includes(skill)
+//  ).length;
 
- const matchScore =
- required.length>0
- ? Math.round((matchCount/required.length)*100)
- : 0;
+//  const matchScore =
+//  required.length>0
+//  ? Math.round((matchCount/required.length)*100)
+//  : 0;
 
- return{
- ...item,
- matchScore
- };
+//  return{
+//  ...item,
+//  matchScore
+//  };
 
- });
+//  });
 
- setInternships(withScore);
+
+
+
+
+ setInternships(data);
 
  }
  catch(err){
@@ -243,10 +273,7 @@ internships
 
 );
 
-const sorted =
-[...filtered].sort((a,b)=>
-(b.matchScore||0)-(a.matchScore||0)
-);
+const sorted = filtered;
 
 const recommended = sorted;
 const trending = sorted;
@@ -306,7 +333,7 @@ style={{
 height:"6px",
 borderRadius:"10px",
 background:"linear-gradient(90deg,#00c853,#64dd17)",
-width:`${item.matchScore || 50}%`,
+
 marginBottom:"12px"
 }}
 
@@ -317,6 +344,19 @@ marginBottom:"12px"
 <h5 className="fw-bold mb-1">
 {item.title}
 </h5>
+
+<p>
+Skill Match:
+<b>
+{getMatchPercent(
+ JSON.parse(localStorage.getItem("user"))?.skills || [],
+ Array.isArray(item.requiredSkills)
+ ? item.requiredSkills
+ : item.requiredSkills.split(",")
+)
+}%
+</b>
+</p>
 
 <p className="text-muted mb-2">
 {item.companyName}
@@ -393,7 +433,13 @@ style={{
 background:"#e3f2fd",
 color:"#0d47a1",
 padding:"6px 10px",
-borderRadius:"8px"
+borderRadius:"8px",
+width: `${getMatchPercent(
+ studentSkills,
+ Array.isArray(item.requiredSkills)
+ ? item.requiredSkills
+ : item.requiredSkills.split(",")
+)}%`
 }}
 >
 
@@ -436,7 +482,26 @@ fontWeight:"600"
 
 disabled={applied}
 
-onClick={()=>handleApply(item._id)}
+// onClick={()=>handleApply(item._id)}
+
+onClick={()=>{
+
+const user =
+ JSON.parse(localStorage.getItem("user"));
+
+if(!user.skills || user.skills.length===0){
+
+ alert("Please complete profile first");
+
+ navigate("/profile");
+
+ return;
+
+}
+
+handleApply(item._id);
+
+}}
 
 >
 

@@ -58,7 +58,11 @@ formData.append("description", internship.description);
 
 formData.append(
  "requiredSkills",
- internship.requiredSkills.split(",").map(s=>s.trim())
+ JSON.stringify(
+  internship.requiredSkills
+  .split(",")
+  .map(s => s.trim())
+ )
 );
 
 formData.append("duration", internship.duration);

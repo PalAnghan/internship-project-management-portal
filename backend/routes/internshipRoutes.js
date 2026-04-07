@@ -87,10 +87,8 @@ title: req.body.title,
 
 description: req.body.description,
 
-requiredSkills:
-Array.isArray(req.body.requiredSkills)
-? req.body.requiredSkills
-: [req.body.requiredSkills],
+ requiredSkills:
+ JSON.parse(req.body.requiredSkills),
 
 duration: req.body.duration,
 

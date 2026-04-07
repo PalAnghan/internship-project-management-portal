@@ -380,41 +380,20 @@ enrollment:e.target.value
 {/* SKILLS */}
 
 <label className="fw-semibold">
-
 Skills
-
 </label>
 
 <input
-
 className="form-control mb-3"
-
-value={form.skills}
-
 placeholder="react, node, css"
-
+value={form.skills || ""}
 onChange={(e)=>
-
 setForm({
-
-...form,
-
-skills:e.target.value
-
+ ...form,
+ skills:e.target.value
 })
-
 }
-
-style={{
-
-borderRadius:"10px",
-
-padding:"10px"
-
-}}
-
 />
-
 
 
 {/* BIO */}
