@@ -157,7 +157,7 @@ internshipId:id
 
 })
 
-}
+}   
 
 );
 
@@ -491,12 +491,20 @@ const user =
 
 if(!user.skills || user.skills.length===0){
 
- alert("Please complete profile first");
+ alert("Please add skills in profile");
 
  navigate("/profile");
 
  return;
+}
 
+if(!user.resume || user.resume === ""){
+
+ alert("Resume required before applying");
+
+ navigate("/upload-resume");
+
+ return;
 }
 
 handleApply(item._id);

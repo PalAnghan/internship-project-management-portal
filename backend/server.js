@@ -45,7 +45,7 @@ app.use("/api/applications", applicationRoutes);
 app.use("/api/export", exportExcel);  
 
 
-app.use("/api/resume", resumeRoutes);
+// app.use("/api/resume", resumeRoutes);
 
 
 // Test API

@@ -56,14 +56,11 @@ const handleSubmit = async () => {
  formData.append("title", internship.title);
 formData.append("description", internship.description);
 
-formData.append(
- "requiredSkills",
- JSON.stringify(
-  internship.requiredSkills
-  .split(",")
-  .map(s => s.trim())
- )
-);
+internship.requiredSkills
+.split(",")
+.forEach(skill => {
+ formData.append("requiredSkills[]", skill.trim());
+});
 
 formData.append("duration", internship.duration);
 formData.append("applicationDeadline", internship.applicationDeadline);
