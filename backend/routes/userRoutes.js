@@ -76,7 +76,7 @@ async (req,res)=>{
   }
 
   const user = await User.findOne({
-   enrollmentNumber: enrollment   // FIXED
+   enrollment: enrollment   // FIXED
   });
 
   if(!user){
