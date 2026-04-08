@@ -11,7 +11,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const userRoutes = require("./routes/userRoutes");
 const internshipRoutes = require("./routes/internshipRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
-const resumeRoutes = require("./routes/resumeRoutes");
+// const resumeRoutes = require("./routes/resumeRoutes");
 
 const exportExcel = require("./routes/exportExcel");
 
@@ -34,7 +34,7 @@ app.get("/", (req, res) => {
 ConnectDB();
 
 // Static uploads folder (FOR RESUME DOWNLOAD)
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
 // Routes

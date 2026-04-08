@@ -48,7 +48,7 @@ router.put("/update-user", updateProfile);
 
 const storage = multer.diskStorage({
 
- destination: "uploads/",
+ destination: "uploads/resume/",
 
  filename: (req, file, cb) => {
   cb(null, Date.now() + "-" + file.originalname);
