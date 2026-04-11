@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const multer = require("multer");
 
+const path = require("path");
+
 const User = require("../models/User");
 
 const {
@@ -14,9 +16,18 @@ const {
 
 // ================= PROFILE IMAGE STORAGE =================
 
+// const storageProfile = multer.diskStorage({
+//  destination: (req, file, cb) => {
+//   cb(null, "uploads/profile/");
+//  },
+//  filename: (req, file, cb) => {
+//   cb(null, Date.now() + "-" + file.originalname);
+//  }
+// });
+
 const storageProfile = multer.diskStorage({
  destination: (req, file, cb) => {
-  cb(null, "uploads/profile/");
+  cb(null, path.join(__dirname, "../uploads/profile"));
  },
  filename: (req, file, cb) => {
   cb(null, Date.now() + "-" + file.originalname);
@@ -28,8 +39,18 @@ const uploadProfile = multer({ storage: storageProfile });
 
 // ================= RESUME STORAGE =================
 
+// const storageResume = multer.diskStorage({
+//  destination: "uploads/resume/",
+//  filename: (req, file, cb) => {
+//   cb(null, Date.now() + "-" + file.originalname);
+//  }
+// });
+
+
 const storageResume = multer.diskStorage({
- destination: "uploads/resume/",
+ destination: (req, file, cb) => {
+  cb(null, path.join(__dirname, "../uploads/resume"));
+ },
  filename: (req, file, cb) => {
   cb(null, Date.now() + "-" + file.originalname);
  }
