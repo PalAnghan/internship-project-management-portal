@@ -21,42 +21,21 @@ const UploadResume = () => {
    return;
 
   }
+const formData = new FormData();
 
-  const formData = new FormData();
-
-  formData.append("resume",file);
-
-formData.append("enrollmentNumber", enrollment);
-  try{
-
-   setUploading(true);
+formData.append("resume", file);
+formData.append("enrollment", enrollment);
 
 await axios.post(
  "https://internship-backend-yn3q.onrender.com/api/users/upload-resume",
  formData,
  {
-  headers: {
-   "Content-Type": "multipart/form-data"
+  headers:{
+   "Content-Type":"multipart/form-data"
   }
  }
 );
-   setSuccess(true);
-
-   setUploading(false);
-
-  }
-
-  catch(err){
-
-   console.log(err);
-
-   alert("Upload failed");
-
-   setUploading(false);
-
-  }
-
- };
+ }
 
  return (
 
