@@ -56,17 +56,9 @@ router.post(
  async (req,res)=>{
   try{
 
-   if(!req.file){
-    return res.status(400).json({
-     message:"No file uploaded"
-    });
-   }
-
- const { enrollmentNumber } = req.body;
-
-const user = await User.findOne({
-  enrollmentNumber: enrollmentNumber
-});
+   const user = await User.findOne({
+    enrollmentNumber:req.body.enrollmentNumber
+   });
 
    if(!user){
     return res.status(404).json({
@@ -79,23 +71,19 @@ const user = await User.findOne({
    await user.save();
 
    res.json({
-    message:"Resume uploaded",
-    resume:user.resume
+    message:"Resume uploaded"
    });
 
   }
-
   catch(err){
-
-   console.log(err);
-
    res.status(500).json({
     message:"Upload error"
    });
-
   }
  }
 );
+
+
 
 
 // upload profile image

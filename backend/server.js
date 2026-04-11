@@ -94,6 +94,21 @@ app.use("/uploads", express.static("uploads"));
 // connect database
 ConnectDB();
 
+
+const fs = require("fs");
+
+if (!fs.existsSync("uploads")){
+ fs.mkdirSync("uploads");
+}
+
+if (!fs.existsSync("uploads/resume")){
+ fs.mkdirSync("uploads/resume");
+}
+
+if (!fs.existsSync("uploads/profile")){
+ fs.mkdirSync("uploads/profile");
+}
+
 // routes
 app.use("/api/users", userRoutes);
 app.use("/api/admins", adminRoutes);
