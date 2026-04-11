@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("/uploads", express.static("uploads"));
+// app.use("/uploads", express.static("uploads"));
 
 
 app.get("/", (req, res) => {
@@ -34,7 +34,7 @@ app.get("/", (req, res) => {
 ConnectDB();
 
 // Static uploads folder (FOR RESUME DOWNLOAD)
-// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
 // Routes
