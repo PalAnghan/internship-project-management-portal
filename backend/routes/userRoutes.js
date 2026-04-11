@@ -36,7 +36,6 @@ router.post("/register", register);
 
 router.post("/login", login);
 
-router.get("/:id", getUserById);
 
 router.put("/profile", updateProfile);
 
@@ -107,6 +106,9 @@ async (req,res)=>{
  }
 
 });
+
+
+router.get("/:id", getUserById);
 
 
 // ================= PROFILE IMAGE =================
