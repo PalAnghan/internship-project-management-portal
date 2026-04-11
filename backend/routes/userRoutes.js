@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const multer = require("multer");
-const path = require("path"); 
 
 const User = require("../models/User");
 
@@ -9,15 +8,12 @@ const {
  register,
  login,
  getUserById,
- updateProfile,
- uploadImage
+ updateProfile
 } = require("../controller/usercontroller");
 
 
+// ================= PROFILE IMAGE STORAGE =================
 
-
-
-// profile image upload
 const storageProfile = multer.diskStorage({
  destination: (req, file, cb) => {
   cb(null, "uploads/profile/");
@@ -30,101 +26,91 @@ const storageProfile = multer.diskStorage({
 const uploadProfile = multer({ storage: storageProfile });
 
 
-// ================= AUTH ROUTES =================
+// ================= RESUME STORAGE =================
 
-router.post("/register", register);
-
-router.post("/login", login);
-
-
-router.put("/profile", updateProfile);
-
-router.put("/update-user", updateProfile);
-
-
-
-/* storage config */
-
-const storage = multer.diskStorage({
-
+const storageResume = multer.diskStorage({
  destination: "uploads/resume/",
-
  filename: (req, file, cb) => {
   cb(null, Date.now() + "-" + file.originalname);
  }
-
 });
 
-const upload = multer({ storage });
+const uploadResume = multer({ storage: storageResume });
 
-/* upload resume */
 
+// ================= AUTH ROUTES =================
+
+router.post("/register", register);
+router.post("/login", login);
+
+router.put("/profile", updateProfile);
+router.put("/update-user", updateProfile);
+
+
+// ================= UPLOAD ROUTES (KEEP ABOVE :id) =================
+
+// upload resume
 router.post(
-"/upload-resume",
-upload.single("resume"),
-async (req,res)=>{
+ "/upload-resume",
+ uploadResume.single("resume"),
+ async (req,res)=>{
+  try{
 
- try{
+   const { enrollment } = req.body;
 
-  const { enrollment } = req.body;
+   if(!req.file){
+    return res.status(400).json({
+     message:"No file uploaded"
+    });
+   }
 
-  if(!req.file){
-   return res.status(400).json({
-    message:"No file uploaded"
+   const user = await User.findOne({
+    enrollment: enrollment
    });
+
+   if(!user){
+    return res.status(404).json({
+     message:"Student not found"
+    });
+   }
+
+   user.resume = req.file.filename;
+
+   await user.save();
+
+   res.json({
+    message:"Resume uploaded",
+    resume:user.resume
+   });
+
   }
 
-  const user = await User.findOne({
-   enrollment: enrollment   // FIXED
-  });
+  catch(err){
 
-  if(!user){
-   return res.status(404).json({
-    message:"Student not found"
+   console.log(err);
+
+   res.status(500).json({
+    message:"Upload error"
    });
+
   }
-
-  user.resume = req.file.filename;
-
-  await user.save();
-
-  res.json({
-   message:"Resume uploaded",
-   resume:user.resume
-  });
-
  }
-
- catch(err){
-
-  console.log(err);
-
-  res.status(500).json({
-   message:"Upload error"
-  });
-
- }
-
-});
+);
 
 
-router.get("/:id", getUserById);
-
-
-// ================= PROFILE IMAGE =================
-
+// upload profile image
 router.post(
  "/upload-profile",
  uploadProfile.single("image"),
- async (req, res) => {
+ async (req,res)=>{
 
-  try {
+  try{
 
    const userId = req.body.userId;
 
-   if (!req.file) {
+   if(!req.file){
     return res.status(400).json({
-     message: "No file uploaded"
+     message:"No file uploaded"
     });
    }
 
@@ -132,19 +118,20 @@ router.post(
 
    const user = await User.findByIdAndUpdate(
     userId,
-    { profileImage: imagePath },
-    { new: true }
+    { profileImage:imagePath },
+    { new:true }
    );
 
    res.json(user);
 
   }
-  catch (err) {
+
+  catch(err){
 
    console.log(err);
 
    res.status(500).json({
-    message: "Upload failed"
+    message:"Upload failed"
    });
 
   }
@@ -153,48 +140,35 @@ router.post(
 );
 
 
-// ================= GET USERS =================
-
-router.get("/", async (req, res) => {
-
- const users = await User.find();
-
- res.json(users);
-
-});
-
-
 // ================= SEARCH =================
 
-router.get("/search/:text", async (req, res) => {
+router.get("/search/:text", async (req,res)=>{
 
  const text = req.params.text;
 
  const users = await User.find({
 
-  $or: [
-
+  $or:[
    {
-    name: {
-     $regex: text,
-     $options: "i"
+    name:{
+     $regex:text,
+     $options:"i"
     }
    },
 
    {
-    email: {
-     $regex: text,
-     $options: "i"
+    email:{
+     $regex:text,
+     $options:"i"
     }
    },
 
    {
-    enrollmentNumber: {
-     $regex: text,
-     $options: "i"
+    enrollmentNumber:{
+     $regex:text,
+     $options:"i"
     }
    }
-
   ]
 
  });
@@ -202,6 +176,21 @@ router.get("/search/:text", async (req, res) => {
  res.json(users);
 
 });
+
+
+// ================= GET ALL USERS =================
+
+router.get("/", async (req,res)=>{
+ const users = await User.find();
+ res.json(users);
+});
+
+
+// ================= DYNAMIC ROUTES (ALWAYS LAST) =================
+
+router.get("/:id", getUserById);
+
+router.put("/:id", updateProfile);
 
 
 module.exports = router;
