@@ -80,6 +80,7 @@ const internshipRoutes = require("./routes/internshipRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
 const exportExcel = require("./routes/exportExcel");
 
+
 const app = express();
 
 // middleware
@@ -88,7 +89,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
- app.use("/api/resume", resumeRoutes);
+//  app.use("/api/resume", resumeRoutes);
 
 // static uploads folder
 app.use("/uploads", express.static("uploads"));
@@ -117,7 +118,7 @@ app.use("/api/admins", adminRoutes);
 app.use("/api/internships", internshipRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/export", exportExcel);
-app.use("/api/resume", require("./routes/resumeRoute"));
+
 
 // test route
 app.get("/", (req, res) => {
