@@ -32,7 +32,7 @@ formData.append("enrollmentNumber", enrollment);
    setUploading(true);
 
 await axios.post(
- "https://internship-backend-yn3q.onrender.com/api/users/upload-resume",
+ "https://internship-backend-yn3q.onrender.com/api/resume/upload-resume",
  formData,
  {
   headers: {
