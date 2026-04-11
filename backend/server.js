@@ -25,6 +25,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // app.use("/uploads", express.static("uploads"));
 
+app.use("/api/users", require("./routes/userRoutes"));
+
 
 app.get("/", (req, res) => {
   res.send("Backend working ");
