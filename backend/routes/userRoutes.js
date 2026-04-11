@@ -56,17 +56,17 @@ router.post(
  async (req,res)=>{
   try{
 
-   const { enrollment } = req.body;
-
    if(!req.file){
     return res.status(400).json({
      message:"No file uploaded"
     });
    }
 
-   const user = await User.findOne({
-    enrollment: enrollment
-   });
+ const { enrollmentNumber } = req.body;
+
+const user = await User.findOne({
+  enrollmentNumber: enrollmentNumber
+});
 
    if(!user){
     return res.status(404).json({

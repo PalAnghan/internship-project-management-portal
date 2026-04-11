@@ -10,6 +10,7 @@ const UploadResume = () => {
  const [enrollment,setEnrollment] = useState("");
  const [uploading,setUploading] = useState(false);
  const [success,setSuccess] = useState(false);
+ 
 
  const handleUpload = async ()=>{
 
@@ -24,8 +25,8 @@ const UploadResume = () => {
   const formData = new FormData();
 
   formData.append("resume",file);
-formData.append("enrollment", enrollment);
 
+formData.append("enrollmentNumber", enrollment);
   try{
 
    setUploading(true);
