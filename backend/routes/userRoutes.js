@@ -77,9 +77,9 @@ router.post(
  async (req,res)=>{
   try{
 
-   const user = await User.findOne({
-    enrollmentNumber:req.body.enrollmentNumber
-   });
+const user = await User.findOne({
+ enrollmentNumber: enrollment
+});
 
    if(!user){
     return res.status(404).json({
