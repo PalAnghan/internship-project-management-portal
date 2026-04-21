@@ -52,6 +52,8 @@ router.put("/update-user", async (req, res) => {
   }
 });
 
+
+
 /* ================= IMAGE UPLOAD ================= */
 
 router.post(
@@ -88,6 +90,68 @@ router.post(
       });
     }
   }
+);
+
+
+/* ========= RESUME UPLOAD ========= */
+
+const resumeStorage = multer.diskStorage({
+ destination: (req, file, cb) => {
+  cb(null, "uploads/resume/");
+ },
+ filename: (req, file, cb) => {
+  cb(null, Date.now() + "-" + file.originalname);
+ }
+});
+
+const uploadResume = multer({ storage: resumeStorage });
+
+router.post(
+ "/upload-resume",
+ uploadResume.single("resume"),
+ async (req, res) => {
+
+  try {
+
+   const { enrollment } = req.body;
+
+   if (!req.file) {
+    return res.status(400).json({
+     message: "No file uploaded"
+    });
+   }
+
+   const user = await User.findOne({
+    enrollment: enrollment
+   });
+
+   if (!user) {
+    return res.status(404).json({
+     message: "Student not found"
+    });
+   }
+
+   user.resume = req.file.filename;
+
+   await user.save();
+
+   res.json({
+    message: "Resume uploaded successfully",
+    resume: user.resume
+   });
+
+  }
+  catch (err) {
+
+   console.log(err);
+
+   res.status(500).json({
+    message: "Upload error"
+   });
+
+  }
+
+ }
 );
 
 module.exports = router;
