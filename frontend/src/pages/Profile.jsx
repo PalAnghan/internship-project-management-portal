@@ -34,19 +34,28 @@ const handleImageUpload = async () => {
 
 formData.append("profileImage", image);
 
- formData.append("userId", userData.user._id);
+formData.append("userId", userData._id);
 
   try{
 
     const res = await fetch(
-      "https://internship-backend-yn3q.onrender.com/api/users/upload-profile",
+      "http://localhost:5000/api/users/upload-profile",
       {
         method: "POST",
         body: formData
       }
     );
 
-    const data = await res.json();
+    let data;
+
+try {
+  data = await res.json();
+} catch (err) {
+  const text = await res.text();
+  console.error("Server error response:", text);
+  alert("Server error (check backend)");
+  return;
+}
 
 // save updated user with new image
 localStorage.setItem("user", JSON.stringify(data));
@@ -91,7 +100,7 @@ const handleUpdate = async () => {
 
   skills: skillsArray,
 
-  department: form.department,
+  department: department,
 
   enrollment: form.enrollment
 
@@ -100,7 +109,7 @@ const handleUpdate = async () => {
  console.log("sending", updatedUser);
 
  const res = await fetch(
-"https://internship-backend-yn3q.onrender.com/api/users/update-user",
+"http://localhost:5000/api/users/update-user",
  {
   method:"PUT",
   headers:{
@@ -117,6 +126,9 @@ const handleUpdate = async () => {
  JSON.stringify(data));
 
  alert("Profile updated");
+
+ // ✅ go to dashboard after update
+navigate("/student-dashboard");
 
 };
 
@@ -147,21 +159,6 @@ paddingBottom:"50px"
 Student Portal
 
 </h5>
-
-<button
-
-className="btn btn-outline-light"
-
-onClick={()=>
-navigate("/student-dashboard")
-
-}
-
->
-
-Home
-
-</button>
 
 </nav>
 
@@ -222,7 +219,7 @@ marginBottom:"25px"
 <img
 src={
   user.profileImage
-    ? `https://internship-backend-yn3q.onrender.com/${user.profileImage}`
+    ? `http://localhost:5000/${user.profileImage}`
     : "https://ui-avatars.com/api/?name=" + user.name
 }
 alt="profile"
@@ -380,20 +377,41 @@ enrollment:e.target.value
 {/* SKILLS */}
 
 <label className="fw-semibold">
+
 Skills
+
 </label>
 
 <input
+
 className="form-control mb-3"
+
+value={form.skills}
+
 placeholder="react, node, css"
-value={form.skills || ""}
+
 onChange={(e)=>
+
 setForm({
- ...form,
- skills:e.target.value
+
+...form,
+
+skills:e.target.value
+
 })
+
 }
+
+style={{
+
+borderRadius:"10px",
+
+padding:"10px"
+
+}}
+
 />
+
 
 
 {/* BIO */}
