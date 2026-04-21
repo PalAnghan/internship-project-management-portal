@@ -25,7 +25,7 @@ const uploadProfile = multer({ storage });
 
 router.post("/register", register);
 router.post("/login", login);
-router.get("/:id", getUserById);
+
 
 // ✅ update profile
 router.put("/update-user", async (req, res) => {
@@ -118,10 +118,7 @@ const resumeStorage = multer.diskStorage({
 
 const uploadResume = multer({ storage: resumeStorage });
 
-router.post(
- "/upload-resume",
- uploadResume.single("resume"),
- async (req, res) => {
+router.post("/upload-resume",uploadResume.single("resume"),async (req, res) => {
 
   try {
 
@@ -184,5 +181,8 @@ router.get("/", async (req, res) => {
 
  }
 });
+
+router.get("/:id", getUserById);
+router.put("/:id", updateProfile);
 
 module.exports = router;
