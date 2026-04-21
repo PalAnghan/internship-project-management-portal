@@ -95,13 +95,25 @@ router.post(
 
 /* ========= RESUME UPLOAD ========= */
 
+const fs = require("fs");
+
 const resumeStorage = multer.diskStorage({
+
  destination: (req, file, cb) => {
-  cb(null, "uploads/resume/");
+
+  const dir = "uploads/resume/";
+
+  if (!fs.existsSync(dir)) {
+   fs.mkdirSync(dir, { recursive: true });
+  }
+
+  cb(null, dir);
  },
+
  filename: (req, file, cb) => {
   cb(null, Date.now() + "-" + file.originalname);
  }
+
 });
 
 const uploadResume = multer({ storage: resumeStorage });
@@ -121,7 +133,7 @@ router.post(
     });
    }
 
-   const user = await User.findOne({
+  const user = await User.findOne({
     enrollment: enrollment
    });
 
@@ -153,6 +165,8 @@ router.post(
 
  }
 );
+
+
 
 // GET ALL USERS (for testing)
 router.get("/", async (req, res) => {
