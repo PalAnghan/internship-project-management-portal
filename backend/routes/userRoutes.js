@@ -1,101 +1,37 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const path = require("path");
+const fs = require("fs");
 
-const { register, login, getUserById, updateProfile } =
-require("../controller/usercontroller");
-
+const { register, login, getUserById, updateProfile } = require("../controller/usercontroller");
 const User = require("../models/User");
 
-/* ================= MULTER CONFIG ================= */
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/profile");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+/* ================= MULTER PROFILE IMAGE ================= */
+
+const profileStorage = multer.diskStorage({
+
+ destination: (req, file, cb) => {
+
+  const dir = "uploads/profile/";
+
+  if (!fs.existsSync(dir)) {
+   fs.mkdirSync(dir, { recursive: true });
   }
+
+  cb(null, dir);
+ },
+
+ filename: (req, file, cb) => {
+  cb(null, Date.now() + "-" + file.originalname);
+ }
+
 });
 
-const uploadProfile = multer({ storage });
-
-/* ================= ROUTES ================= */
-
-router.post("/register", register);
-router.post("/login", login);
+const uploadProfile = multer({ storage: profileStorage });
 
 
-// ✅ update profile
-router.put("/update-user", async (req, res) => {
-  try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.body._id,
-      {
-        name: req.body.name,
-        bio: req.body.bio,
-        github: req.body.github,
-        linkedin: req.body.linkedin,
-        skills: req.body.skills,
-        department: req.body.department,
-        enrollment: req.body.enrollment
-      },
-      { new: true }
-    );
-
-    res.json(updatedUser);
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Profile update failed" });
-  }
-});
-
-
-
-/* ================= IMAGE UPLOAD ================= */
-
-router.post(
-  "/upload-profile",
-  uploadProfile.single("profileImage"), // ✅ FIXED
-  async (req, res) => {
-    try {
-
-      const userId = req.body.userId;
-
-      if (!req.file) {
-        return res.status(400).json({ message: "No file uploaded" });
-      }
-
-      if (!userId) {
-        return res.status(400).json({ message: "User ID missing" });
-      }
-
-      const imagePath = `uploads/profile/${req.file.filename}`;
-
-      const user = await User.findByIdAndUpdate(
-        userId,
-        { profileImage: imagePath },
-        { new: true }
-      );
-
-      res.json(user);
-
-    } catch (err) {
-      console.log("UPLOAD ERROR:", err);
-      res.status(500).json({
-        message: "Upload failed",
-        error: err.message
-      });
-    }
-  }
-);
-
-
-/* ========= RESUME UPLOAD ========= */
-
-const fs = require("fs");
+/* ================= MULTER RESUME ================= */
 
 const resumeStorage = multer.diskStorage({
 
@@ -118,26 +54,142 @@ const resumeStorage = multer.diskStorage({
 
 const uploadResume = multer({ storage: resumeStorage });
 
-router.post("/upload-resume",uploadResume.single("resume"),async (req, res) => {
+
+/* ================= AUTH ================= */
+
+router.post("/register", register);
+
+router.post("/login", login);
+
+
+/* ================= UPDATE PROFILE ================= */
+
+router.put("/update-user", async (req, res) => {
+
+ try {
+
+  const updatedUser = await User.findByIdAndUpdate(
+
+   req.body._id,
+
+   {
+    name: req.body.name,
+    bio: req.body.bio,
+    github: req.body.github,
+    linkedin: req.body.linkedin,
+    skills: req.body.skills,
+    department: req.body.department,
+    enrollment: req.body.enrollment
+   },
+
+   { new: true }
+
+  );
+
+  res.json(updatedUser);
+
+ }
+
+ catch (error) {
+
+  console.log(error);
+
+  res.status(500).json({
+   message: "Profile update failed"
+  });
+
+ }
+
+});
+
+
+/* ================= PROFILE IMAGE UPLOAD ================= */
+
+router.post(
+
+ "/upload-profile",
+
+ uploadProfile.single("profileImage"),
+
+ async (req, res) => {
+
+  try {
+
+   const userId = req.body.userId;
+
+   if (!req.file) {
+
+    return res.status(400).json({
+     message: "No file uploaded"
+    });
+
+   }
+
+   const imagePath = `uploads/profile/${req.file.filename}`;
+
+   const user = await User.findByIdAndUpdate(
+
+    userId,
+
+    { profileImage: imagePath },
+
+    { new: true }
+
+   );
+
+   res.json(user);
+
+  }
+
+  catch (err) {
+
+   console.log(err);
+
+   res.status(500).json({
+    message: "Upload failed"
+   });
+
+  }
+
+ }
+
+);
+
+
+/* ================= RESUME UPLOAD ================= */
+
+router.post(
+
+ "/upload-resume",
+
+ uploadResume.single("resume"),
+
+ async (req, res) => {
 
   try {
 
    const { enrollment } = req.body;
 
    if (!req.file) {
+
     return res.status(400).json({
      message: "No file uploaded"
     });
+
    }
 
-  const user = await User.findOne({
+   const user = await User.findOne({
+
     enrollment: enrollment
+
    });
 
    if (!user) {
+
     return res.status(404).json({
      message: "Student not found"
     });
+
    }
 
    user.resume = req.file.filename;
@@ -145,44 +197,88 @@ router.post("/upload-resume",uploadResume.single("resume"),async (req, res) => {
    await user.save();
 
    res.json({
+
     message: "Resume uploaded successfully",
+
     resume: user.resume
+
    });
 
   }
+
   catch (err) {
 
    console.log(err);
 
    res.status(500).json({
+
     message: "Upload error"
+
    });
 
   }
 
  }
+
 );
 
 
+/* ================= SEARCH ================= */
 
-// GET ALL USERS (for testing)
-router.get("/", async (req, res) => {
- try {
+router.get("/search/:text", async (req, res) => {
 
-  const users = await User.find();
+ const text = req.params.text;
 
-  res.json(users);
+ const users = await User.find({
 
- } catch (err) {
+  $or: [
 
-  res.status(500).json({
-   message: "Error fetching users"
-  });
+   {
+    name: {
+     $regex: text,
+     $options: "i"
+    }
+   },
 
- }
+   {
+    email: {
+     $regex: text,
+     $options: "i"
+    }
+   },
+
+   {
+    enrollment: {
+     $regex: text,
+     $options: "i"
+    }
+   }
+
+  ]
+
+ });
+
+ res.json(users);
+
 });
 
+
+/* ================= GET ALL USERS ================= */
+
+router.get("/", async (req, res) => {
+
+ const users = await User.find();
+
+ res.json(users);
+
+});
+
+
+/* ================= DYNAMIC ROUTES (ALWAYS LAST) ================= */
+
 router.get("/:id", getUserById);
+
 router.put("/:id", updateProfile);
+
 
 module.exports = router;
