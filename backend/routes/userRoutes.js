@@ -52,7 +52,7 @@ const resumeStorage = multer.diskStorage({
 
 });
 
-const uploadResume = multer({ storage: resumeStorage });
+// const uploadResume = multer({ storage: resumeStorage });
 
 
 /* ================= AUTH ================= */
@@ -157,7 +157,37 @@ router.post(
 
 
 /* ================= RESUME UPLOAD ================= */
+// resume storage
+const storageResume = multer.diskStorage({
 
+ destination: function (req, file, cb) {
+
+  const dir = "uploads/resume";
+
+  if (!fs.existsSync(dir)) {
+
+   fs.mkdirSync(dir, { recursive: true });
+
+  }
+
+  cb(null, dir);
+
+ },
+
+ filename: function (req, file, cb) {
+
+  cb(null, Date.now() + "-" + file.originalname);
+
+ }
+
+});
+
+const uploadResume = multer({
+ storage: storageResume
+});
+
+
+// upload resume route
 router.post(
  "/upload-resume",
  uploadResume.single("resume"),
@@ -168,9 +198,11 @@ router.post(
    const { enrollment } = req.body;
 
    if (!req.file) {
+
     return res.status(400).json({
      message: "No file uploaded"
     });
+
    }
 
    const user = await User.findOne({
@@ -178,9 +210,11 @@ router.post(
    });
 
    if (!user) {
+
     return res.status(404).json({
      message: "Student not found"
     });
+
    }
 
    user.resume = req.file.filename;
@@ -198,7 +232,7 @@ router.post(
    console.log(err);
 
    res.status(500).json({
-    message: "Upload error"
+    message: "Upload failed"
    });
 
   }
