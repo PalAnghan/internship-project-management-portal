@@ -178,31 +178,24 @@ router.post(
 
    }
 
-   const user = await User.findOne({
+const user = await User.findOne({
+ enrollment: enrollment
+});
 
-    enrollment: enrollment
+if (!user) {
+ return res.status(404).json({
+  message: "Student not found"
+ });
+}
 
-   });
+user.resume = req.file.filename;
 
-   if (!user) {
+await user.save();
 
-    return res.status(404).json({
-     message: "Student not found"
-    });
-
-   }
-
-   user.resume = req.file.filename;
-
-   await user.save();
-
-   res.json({
-
-    message: "Resume uploaded successfully",
-
-    resume: user.resume
-
-   });
+res.json({
+ message: "Resume uploaded successfully",
+ resume: user.resume
+});
 
   }
 
