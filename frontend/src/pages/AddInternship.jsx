@@ -81,7 +81,6 @@ department.forEach(dep=>{
 
  const res = await fetch(
  "https://internship-backend-yn3q.onrender.com/api/internships",
- // "http://localhost:5000/api/internships",
  {
  method:"POST",
  body: formData

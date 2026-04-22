@@ -39,7 +39,7 @@ formData.append("userId", userData._id);
   try{
 
     const res = await fetch(
-      "http://localhost:5000/api/users/upload-profile",
+       "https://internship-backend-yn3q.onrender.com/api/users/upload-profile",
       {
         method: "POST",
         body: formData
@@ -109,7 +109,8 @@ const handleUpdate = async () => {
  console.log("sending", updatedUser);
 
  const res = await fetch(
-"http://localhost:5000/api/users/update-user",
+"https://internship-backend-yn3q.onrender.com/api/users/update-user",
+
  {
   method:"PUT",
   headers:{
@@ -219,7 +220,7 @@ marginBottom:"25px"
 <img
 src={
   user.profileImage
-    ? `http://localhost:5000/${user.profileImage}`
+    ? `https://internship-backend-yn3q.onrender.com/${user.profileImage}`
     : "https://ui-avatars.com/api/?name=" + user.name
 }
 alt="profile"
