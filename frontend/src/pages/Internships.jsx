@@ -25,13 +25,24 @@ const getMatchPercent = (studentSkills, requiredSkills) => {
 
  if(!studentSkills || !requiredSkills) return 0;
 
- const normalize = (arr) =>
-  arr.map(s =>
-   s
-   .toLowerCase()
-   .replace(/\s+/g,"")
-   .trim()
+//  const normalize = (arr) =>
+//   arr.map(s =>
+//    s
+//    .toLowerCase()
+//    .replace(/\s+/g,"")
+//    .trim()
+//   );
+
+const normalize = (arr) => {
+  if (!Array.isArray(arr)) return [];
+
+  return arr.map(s =>
+    (s || "")
+      .toLowerCase()
+      .replace(/\s+/g, "")
+      .trim()
   );
+};
 
  const student = normalize(studentSkills);
  const required = normalize(requiredSkills);

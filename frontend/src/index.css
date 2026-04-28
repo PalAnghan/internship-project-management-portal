@@ -1,13 +1,81 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+  'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
+  'Helvetica Neue', sans-serif;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* ✅ ANIMATIONS */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(30px); }
+  100% { transform: translateY(0px); }
+}
+
+/* ✅ HOVER EFFECTS */
+
+button:hover {
+  transform: scale(1.05);
+}
+
+img:hover {
+  transform: scale(1.05);
+}
+
+/* BLOBS */
+
+.blob {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #3b82f6, transparent);
+  filter: blur(120px);
+  top: -100px;
+  left: -100px;
+  animation: float 8s ease-in-out infinite;
+}
+
+.blob2 {
+  top: 200px;
+  right: 100px;
+  background: radial-gradient(circle, #a855f7, transparent);
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(40px); }
+  100% { transform: translateY(0); }
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+img:hover {
+  transform: scale(1.05);
 }
